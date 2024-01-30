@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
-
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_ROOT = os.path.join(BASE_DIR, 'file')
@@ -58,8 +58,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 自分のアプリケーション
     'api',
-    # "rest_framework"
+    # サードパーティーライブラリ
+    'rest_framework',
+    'corsheaders',
+    'rest_framework_simplejwt'
 ]
 
 MIDDLEWARE = [
@@ -70,7 +74,40 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # CORS
+    "corsheaders.middleware.CorsMiddleware",
 ]
+
+# 自分で設定するやつ
+# DRF
+
+REST_FRAMEWORK = {
+    # jwtトークン認証
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )  
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT', ),
+    # JWT有効期限
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=60),
+    # idはuser_idなので教えてあげる(これがないとエラー起きる)
+    'USER_ID_FIELD': 'user_id',
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    "TOKEN_OBTAIN_SERIALIZER": "api.tokens.CustomTokenObtainPairSerializer",
+		# ↑これはserializer作ったら
+}
+
+
+# cors
+# アクセスを許可したいURL（アクセス元）を追加
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = ['http://localhost:3000']
+# csrf対策
+CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]
+
 
 ROOT_URLCONF = 'backend.urls'
 

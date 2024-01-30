@@ -1,14 +1,11 @@
-from tabnanny import verbose
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.core.validators import MinLengthValidator, MaxLengthValidator,RegexValidator, MaxValueValidator, MinValueValidator
+from django.core.validators import MinLengthValidator, MaxLengthValidator,RegexValidator
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 import os
-import io
-from PIL import Image
 
 
 def savePath(model, filename):
