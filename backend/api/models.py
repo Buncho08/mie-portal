@@ -142,8 +142,9 @@ class Classes(models.Model):
         else:
             raise ValidationError('教員を選択してください')
 
+
 def get_sentinel_classes():
-    return Classes.objects.get_or_create(class_name='無し')[0]
+    return Classes.objects.get_or_create(class_name='blank', class_teacher=UserTable.objects.get(user_id='blankUser'))[0]
 
 class TimeTable(models.Model):
     class Meta:

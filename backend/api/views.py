@@ -9,9 +9,9 @@ from .permissions import IsAdmin
 from .models import UserTable
 from .serializers import MyaccountUpdateSerializer, RegisterSerializer, LoginSerializer, UserSerilaizer
 
-# Create your views here.
 
 # ユーザー情報一覧
+# api/userView/
 class UserViewSet(views.APIView):
     # 認証ユーザーのみ閲覧可能
     permission_classes = (IsAdmin,)
@@ -22,6 +22,7 @@ class UserViewSet(views.APIView):
         return Response(serializer_class.data)
     
 # 登録ビュー
+# api/signup/
 class RegisterView(views.APIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
@@ -29,20 +30,13 @@ class RegisterView(views.APIView):
     def post(self, request, *args, **kwargs):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            # パスワードと確認パスワードが一致しない場合
-            if serializer.validated_data['password'] != request.data['password_again']:
-                return Response({'error': 2}, status=status.HTTP_400_BAD_REQUEST)
-
-            # UserIDがすでに使われていた場合
-            if UserTable.objects.filter(user_id=serializer.validated_data['user_id']).exists():
-                return Response({'error': 3}, status=status.HTTP_400_BAD_REQUEST)
-
             # エラーなし
             try:
                 if serializer.validated_data['user_grade'] == 2:
                     is_teacher=True
                 else:
                     is_teacher=False
+
                 user = UserTable(
                     user_id=serializer.validated_data['user_id'],
                     user_stdNum=serializer.validated_data['user_stdNum'],
@@ -58,7 +52,8 @@ class RegisterView(views.APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
+# ログイン、使わないかもしれない
+# api/login/
 class LoginView(views.APIView):
     # だれでもOK
     permission_classes = [AllowAny]
@@ -83,6 +78,8 @@ class LoginView(views.APIView):
         else:
             return Response({'error': 1}, status=status.HTTP_400_BAD_REQUEST)
 
+# 自分のアカウント情報を取得
+# api/myaccount/
 class MyaccountView(views.APIView):
     permission_classes = [AllowAny,]
     serializer_class = UserSerilaizer
@@ -96,6 +93,8 @@ class MyaccountView(views.APIView):
             serializers.is_valid()
             return Response(serializers.data)
         
+# アカウント情報のアップデート
+# api/myaccount/update
 class MyaccountUpdateView(views.APIView):
     serializer_class = MyaccountUpdateSerializer
     permission_classes = [IsAuthenticated, IsAdmin, ]
@@ -124,3 +123,9 @@ class MyaccountUpdateView(views.APIView):
         else:
             Response({"message": "User updation failed", "cause": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+# 時間割API
+            
+# 課題登録API
+
+# 提出状況登録
+            

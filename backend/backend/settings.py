@@ -98,6 +98,13 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     "TOKEN_OBTAIN_SERIALIZER": "api.tokens.CustomTokenObtainPairSerializer",
 		# ↑これはserializer作ったら
+    "AUTH_COOKIE": "access_token",  # cookie name
+    "AUTH_COOKIE_DOMAIN": None,  # specifies domain for which the cookie will be sent
+    "AUTH_COOKIE_SECURE": False,  # restricts the transmission of the cookie to only occur over secure (HTTPS) connections. 
+    "AUTH_COOKIE_HTTP_ONLY": True,  # prevents client-side js from accessing the cookie
+    "AUTH_COOKIE_PATH": "/",  # URL path where cookie will be sent
+    "AUTH_COOKIE_SAMESITE": "Lax",  # specifies whether the cookie should be sent in cross site requests
+    "AUTH_COOKIE_REFRESH":"refresh_token",
 }
 
 
