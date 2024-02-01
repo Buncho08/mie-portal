@@ -13,7 +13,7 @@ def savePath(model, filename):
     new_name = model.user_id + "_icon"
     # ルートはGomaShop/らしい
     path = f'./icon/user/{new_name}.{ext}'
-    os_path = f'{settings.MEDIA_ROOT}/icon/{new_name}.{ext}'
+    os_path = f'{settings.MEDIA_ROOT}/icon/user/{new_name}.{ext}'
     if os.path.exists(os_path):
         os.remove(os_path)
 
@@ -24,7 +24,7 @@ def saveLikePath(model, filename):
     new_name = model.like_id + "_icon"
     # ルートはGomaShop/らしい
     path = f'./icon/like/{new_name}.{ext}'
-    os_path = f'{settings.MEDIA_ROOT}/icon/{new_name}.{ext}'
+    os_path = f'{settings.MEDIA_ROOT}/icon/like/{new_name}.{ext}'
     if os.path.exists(os_path):
         os.remove(os_path)
 

@@ -162,11 +162,6 @@ export default function LoginForm({ hundleForm, catchErr }) {
                     >
                         アカウントを作成
                     </button>
-
-                    <p className="mt-10 text-sm text-gray-500 sm:mt-6">
-                        すでにアカウントをお持ちですか？
-                        <a href="#" className="text-gray-700 underline  hover:text-tahiti">ログイン</a>.
-                    </p>
                 </div>
                 {/* アカウント作成エリアここまで */}
             </form >

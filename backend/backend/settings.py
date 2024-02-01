@@ -84,14 +84,15 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     # jwtトークン認証
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )  
+        'api.authenticate.CustomAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
 }
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT', ),
     # JWT有効期限
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=60),
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=60),
     # idはuser_idなので教えてあげる(これがないとエラー起きる)
     'USER_ID_FIELD': 'user_id',
     'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',

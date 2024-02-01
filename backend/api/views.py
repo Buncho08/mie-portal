@@ -4,7 +4,6 @@ from rest_framework import status, views
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-
 from .permissions import IsAdmin
 from .models import UserTable
 from .serializers import MyaccountUpdateSerializer, RegisterSerializer, LoginSerializer, UserSerilaizer
@@ -81,17 +80,21 @@ class LoginView(views.APIView):
 # 自分のアカウント情報を取得
 # api/myaccount/
 class MyaccountView(views.APIView):
-    permission_classes = [AllowAny,]
+    permission_classes = [IsAuthenticated,]
     serializer_class = UserSerilaizer
     def get(self, request, *args, **kwargs):
-        if str(request.user) == 'AnonymousUser':
+        if request.user.user_id is None:
             return Response({'error': 1}, status=status.HTTP_400_BAD_REQUEST)
         else:
             user_id = request.user.user_id
             myuser = UserTable.objects.filter(user_id=user_id)
             serializers = UserSerilaizer(data=myuser, many=True)
             serializers.is_valid()
-            return Response(serializers.data)
+            serializers.data[0].pop('password')
+            serializers.data[0].pop('id')
+            serializers.data[0].pop('last_login')
+            print(serializers.data[0])
+            return Response(serializers.data[0])
         
 # アカウント情報のアップデート
 # api/myaccount/update
@@ -122,6 +125,7 @@ class MyaccountUpdateView(views.APIView):
             return Response(response_data, status=status.HTTP_200_OK)
         else:
             Response({"message": "User updation failed", "cause": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 
 # 時間割API
             

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import LoginForm from './components/login-form';
-
+import { Link } from "react-router-dom";
 /*
     新規登録ページの親コンポーネント
     子componentは
@@ -123,6 +123,10 @@ export default function Signin() {
                                 hundleForm={hundleForm}
                                 catchErr={catchErr}
                             />
+                            <p className="mt-10 text-sm text-gray-500 sm:mt-6">
+                                すでにアカウントをお持ちですか？
+                                <Link to={'/login'} className="text-gray-700 underline  hover:text-tahiti">ログイン</Link>
+                            </p>
                         </div>
                     </main>
                 </div>
