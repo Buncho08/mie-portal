@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt import views
-from api.tokens import CustomTokenObtainPairView, CustomTokenRefreshView
+from api.tokens import CustomTokenObtainPairView, CustomTokenRefreshView, RefreshGetView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,4 +26,5 @@ urlpatterns = [
     path('auth/', CustomTokenObtainPairView.as_view()),
     # jwt-tokenを再取得
     path('auth/refresh', CustomTokenRefreshView.as_view()),
+    path('auth/refresh/get', RefreshGetView.as_view())
 ]

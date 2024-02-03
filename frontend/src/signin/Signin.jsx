@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import LoginForm from './components/login-form';
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 /*
     新規登録ページの親コンポーネント
     子componentは
     login-form.jsx
  */
 
+
 export default function Signin() {
     const [catchErr, setErr] = useState({});
+    const [loginStatus, setLoginStatus] = useState(false);
 
     // 新規登録フォームでfetch処理を行う
     const hundleForm = async (e) => {
@@ -51,6 +53,7 @@ export default function Signin() {
                     else {
                         // エラーなしなので、すでにあるエラー文等をリセット
                         setErr({});
+                        setLoginStatus(true);
                     }
                 })
                 .catch((err) => {
@@ -61,6 +64,7 @@ export default function Signin() {
 
             // サインアップできたら
             if (!flg) {
+                console.log('こん');
                 const authData = new FormData();
                 authData.append("user_id", e.target.user_id.value);
                 authData.append("password", e.target.password.value);
@@ -69,6 +73,7 @@ export default function Signin() {
                     "http://localhost:8000/auth/",
                     {
                         method: "POST",
+                        credentials: "include",
                         body: authData
                     }
                 )
@@ -89,6 +94,10 @@ export default function Signin() {
 
     return (
         <>
+            {/* ログインできたらリダイレクト */}
+            {loginStatus && (
+                <Navigate to="/Mypage" replace={true} />
+            )}
             {/* ここから新規登録ページ */}
             <section className="bg-white">
                 <div className="lg:grid lg:min-h-screen lg:grid-cols-12">

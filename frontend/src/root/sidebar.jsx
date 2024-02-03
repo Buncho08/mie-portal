@@ -1,4 +1,10 @@
-export default function SideBar({ user }) {
+import { useContext } from 'react';
+import { UserData } from './root';
+import { Link } from "react-router-dom";
+
+export default function SideBar() {
+    const user = useContext(UserData);
+
     return (
         <aside className="w-52 flex h-screen flex-col justify-between border-e bg-blue text-white">
             <div>
@@ -42,17 +48,18 @@ export default function SideBar({ user }) {
                     <ul className="space-y-1 border-t border-gray-100 pt-4">
                         {/* マイページリンクアイコン */}
                         <li className='grid justify-center'>
-                            <a
-                                href=""
+                            <Link
+                                to={'/mie/Mypage'}
                                 className="group relative flex justify-center rounded px-2 py-1.5 hover:text-side-gray"
                             >
+
                                 <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="214px" height="214px" viewBox="0 0 512 512" className="row-span-1 w-16 h-16 fill-side-gray hover:fill-white" xmlSpace="preserve">
 
                                     <g>
                                         <polygon className="st0" points="442.531,218 344.828,120.297 256,31.469 167.172,120.297 69.438,218.047 0,287.469 39.984,327.453 
-                                                        109.406,258.031 207.156,160.281 256,111.438 304.844,160.281 402.531,257.984 472.016,327.453 512,287.469 	" ></polygon>
+                                        109.406,258.031 207.156,160.281 256,111.438 304.844,160.281 402.531,257.984 472.016,327.453 512,287.469 	" ></polygon>
                                         <polygon className="st0" points="85.719,330.375 85.719,480.531 274.75,480.531 274.75,361.547 343.578,361.547 343.578,480.531 
-                                                        426.281,480.531 426.281,330.328 256.016,160.063"></polygon>
+                                        426.281,480.531 426.281,330.328 256.016,160.063"></polygon>
                                     </g>
                                 </svg>
 
@@ -61,23 +68,23 @@ export default function SideBar({ user }) {
                                 >
                                     マイページ
                                 </span>
-                            </a>
+                            </Link>
                         </li>
                         {/* マイページリンクアイコンここまで */}
 
                         {/* みんなのページ */}
                         <li className='grid justify-center'>
-                            <a
-                                href=""
+                            <Link
+                                to={'/mie/students'}
                                 className="group relative flex justify-center rounded px-2 py-1.5 hover:text-side-gray"
                             >
                                 <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="214px" height="214px" viewBox="0 0 512 512" className="row-span-1 w-16 h-16 fill-side-gray hover:fill-white" xmlSpace="preserve">
 
                                     <g>
                                         <polygon className="st0" points="442.531,218 344.828,120.297 256,31.469 167.172,120.297 69.438,218.047 0,287.469 39.984,327.453 
-                                                        109.406,258.031 207.156,160.281 256,111.438 304.844,160.281 402.531,257.984 472.016,327.453 512,287.469 	" ></polygon>
+                                        109.406,258.031 207.156,160.281 256,111.438 304.844,160.281 402.531,257.984 472.016,327.453 512,287.469 	" ></polygon>
                                         <polygon className="st0" points="85.719,330.375 85.719,480.531 274.75,480.531 274.75,361.547 343.578,361.547 343.578,480.531 
-                                                        426.281,480.531 426.281,330.328 256.016,160.063"></polygon>
+                                        426.281,480.531 426.281,330.328 256.016,160.063"></polygon>
                                     </g>
                                 </svg>
 
@@ -86,14 +93,13 @@ export default function SideBar({ user }) {
                                 >
                                     マイページ
                                 </span>
-                            </a>
+                            </Link>
                         </li>
                         {/* みんなのページここまで */}
 
                         {/* チームページ */}
                         <li className='grid justify-center'>
                             <a
-                                href=""
                                 className="group relative flex justify-center rounded px-2 py-1.5 hover:text-side-gray"
                             >
                                 <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="214px" height="214px" viewBox="0 0 512 512" className="row-span-1 w-16 h-16 fill-side-gray hover:fill-white" xmlSpace="preserve">

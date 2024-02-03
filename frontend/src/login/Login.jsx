@@ -1,20 +1,27 @@
 import { useState } from 'react';
 import LoginForm from './components/LoginForm';
 import Cookies from 'js-cookie';
-import { Link, redirect } from "react-router-dom";
+import { Link, redirect, Navigate } from "react-router-dom";
 /*
     ログインページの親コンポーネント
     子componentは
     loginForm.jsx
  */
 // const grade = Cookies.get('user_grade');
-async function loadLoggedStatus() {
+export async function LoadLoggedStatus() {
+    const status = Cookies.get('user_grade');
     
+    console.log(status);
+    if (status) {
+        return redirect('/mie/Mypage');
+    }
+
+    return null;
 }
 
 export default function Login() {
     const [catchErr, setErr] = useState({});
-
+    const [loginStatus, setLoginStatus] = useState(false);
     // ログインフォームでfetch処理を行う
     const hundleForm = async (e) => {
         e.preventDefault();
@@ -28,7 +35,7 @@ export default function Login() {
         // signinData.append("user_stdNum", e.target.user_stdNum.value);
         signinData.append("password", e.target.password.value);
 
-        const response = await fetch(
+        await fetch(
             "http://localhost:8000/auth/", {
             method: 'POST',
             credentials: "include",
@@ -51,7 +58,8 @@ export default function Login() {
                 }
                 else {
                     // エラーなしなのでマイページに遷移
-                    return redirect('/')
+                    setErr({});
+                    setLoginStatus(true);
                 }
             })
             .catch((err) => {
@@ -59,9 +67,17 @@ export default function Login() {
                 console.log(err);
                 flg = 1;
             });
+
+        console.log('unko');
     }
+
+
     return (
         <>
+            {/* ログインできたらリダイレクト */}
+            {loginStatus && (
+                <Navigate to="/mie/Mypage" replace={true} />
+            )}
             {/* ここからログインページ */}
             <section className="bg-white">
                 <p>

@@ -8,9 +8,11 @@ app_name = 'api'
 urlpatterns = [
     path('userView', views.UserViewSet.as_view(), name='userView'),
     path('signup', views.RegisterView.as_view(), name='signup'),
-    path('login', views.LoginView.as_view(), name='login'),
+    path('logout', views.LogoutView.as_view(), name='logout'),
     path('myaccount', views.MyaccountView.as_view(), name='myaccount'),
     path('myaccount/update', views.MyaccountUpdateView.as_view(), name='update'),
+    path('classes', views.ClassesView.as_view(), name='classes'),
+    path('timetable', views.TimeTableView.as_view(), name='timetable'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

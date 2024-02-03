@@ -144,7 +144,7 @@ class Classes(models.Model):
 
 
 def get_sentinel_classes():
-    return Classes.objects.get_or_create(class_name='blank', class_teacher=UserTable.objects.get(user_id='blankUser'))[0]
+    return Classes.objects.get_or_create(class_name='blank',class_grade=3, class_teacher=UserTable.objects.get(user_id='blankUser'))[0]
 
 class TimeTable(models.Model):
     class Meta:
