@@ -1,7 +1,7 @@
 from dataclasses import field
 from django.core.validators import RegexValidator
 from rest_framework import serializers
-from .models import UserTable, Classes, Notice, TimeTable
+from .models import *
 
 
     
@@ -92,7 +92,40 @@ class MypageDataSerializer(serializers.ModelSerializer):
             'user_grade'
         ]
 
+# お知らせ
 class NoticeSerializer(serializers.ModelSerializer):
+    notice_classes = serializers.StringRelatedField()
     class Meta:
         model = Notice
-        field = '__all__'
+        fields = ['notice_id', 'notice_classes', 'notice_main', 'notice_date']
+
+# 課題提出
+class AssignmentSubmitionSerializer(serializers.ModelSerializer):
+    state_std = UserSerilaizer(read_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(queryset=UserTable.objects.all(), write_only=True)
+    class Meta: 
+        model = AssignmentStatus
+        fields = ['state_id', 'state_std', 'state_flg','user_id']
+
+# 課題
+class AssignmentSerializer(serializers.ModelSerializer):
+    class_id = serializers.PrimaryKeyRelatedField(queryset=Classes.objects.all(), write_only=True)
+    class Meta:
+        model = Assignment
+        fields = ['ast_id', 'class_id' ,'ast_title', 'ast_disc', 'ast_limit',]
+        
+
+    def create(self, validated_data):
+        class_id = validated_data.pop('class_id')
+        validated_data['ast_classes'] = class_id      
+        ast_model = Assignment.objects.create(**validated_data)
+        return ast_model
+
+# クラスページ
+class ClassPageSerializer(serializers.ModelSerializer):
+    class_teacher = UserSerilaizer(read_only=True)
+    notice_classes = NoticeSerializer(many=True, read_only=True)
+    notice_id = serializers.PrimaryKeyRelatedField(queryset=Notice.objects.all(), write_only=True)
+    class Meta:
+        model = Classes
+        fields = ['class_id', 'class_teacher','class_grade', 'class_name', 'notice_classes', 'notice_id']

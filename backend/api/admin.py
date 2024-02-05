@@ -49,7 +49,7 @@ class TimeTableAdmin(admin.ModelAdmin):
 admin.site.register(TimeTable, TimeTableAdmin)
 
 class AssignmentAdmin(admin.ModelAdmin):
-    list_display = ('ast_id', 'ast_classes', 'ast_limit')
+    list_display = ('ast_id', 'ast_classes', 'ast_title', 'ast_disc', 'ast_limit')
 
 admin.site.register(Assignment, AssignmentAdmin)
 

@@ -1,19 +1,14 @@
 from datetime import datetime, timedelta, timezone
-import re
-from urllib import response
-from zoneinfo import ZoneInfo
-from django.shortcuts import render
-from django.contrib.auth import authenticate, login, logout
+
 from rest_framework import status, views
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
+
 from rest_framework.response import Response
 from .permissions import IsAdmin
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import UserTable, Classes, TimeTable
-from .serializers import MyaccountUpdateSerializer, RegisterSerializer, LoginSerializer, UserSerilaizer, ClassesSerializer, MypageDataSerializer, TimeTableSerializer
-
+from .models import *
+from .serializers import *
 
 
 # ユーザー情報一覧
@@ -25,7 +20,7 @@ class UserViewSet(views.APIView):
         queryset = UserTable.objects.all()
         serializer_class = UserSerilaizer(data=queryset, many=True)
         serializer_class.is_valid()
-        return Response(serializer_class.data)
+        return Response(serializer_class.data, status=status.HTTP_200_OK)
     
 # 登録ビュー
 # api/signup/
@@ -51,9 +46,9 @@ class RegisterView(views.APIView):
                 )
                 user.set_password(serializer.validated_data['password'])
                 user.save()
-            except:
+            except Exception as e:
                 # データベースエラー
-                return Response({'error':11}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({'error':e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -72,10 +67,12 @@ class LogoutView(views.APIView):
         response = Response(data=request.data, status=status.HTTP_205_RESET_CONTENT)
         try:
             response.delete_cookie('user_grade')
+            return response
         except Exception as e:
             print(e)
+            return Response({'error':e}, status=status.HTTP_400_BAD_REQUEST)
             
-        return response
+        
 
         
 # 認証しているかどうかをチェック あとで変えたい
@@ -93,6 +90,7 @@ class AuthCheckView(views.APIView):
 class MyaccountView(views.APIView):
     permission_classes = [IsAuthenticated,]
     serializer_class = MypageDataSerializer
+
     def get(self, request, *args, **kwargs):
         user_id = request.user.user_id
         myuser = UserTable.objects.get(user_id=user_id)
@@ -110,18 +108,24 @@ class MyaccountView(views.APIView):
             user_timetable = TimeTable.objects.filter(time_grade=1, time_day=day)
             timetable_serializers = TimeTableSerializer(instance=user_timetable, many=True)
             res.append(timetable_serializers.data)
+            # すべてのお知らせGET
+            notice = Notice.objects.order_by('notice_date').all()[:3]
+            
         else:
             user_timetable = TimeTable.objects.filter(time_grade=myuser.user_grade, time_day=day)
             timetable_serializers = TimeTableSerializer(instance=user_timetable, many=True)
             res = timetable_serializers.data
+            notice = Notice.objects.order_by('notice_date').filter(time_grade=myuser.user_grade)[:3]
+        
+        notice_classes = NoticeSerializer(instance=notice, many=True)
 
         user_serializers = MypageDataSerializer(instance=myuser)
         
         
         response_data = user_serializers.data
         response_data['user_classes'] = res
-
-        return Response(response_data)
+        response_data['user_notice'] = notice_classes.data
+        return Response(response_data,status=status.HTTP_200_OK)
         
 # アカウント情報のアップデート
 # api/myaccount/update
@@ -154,30 +158,67 @@ class MyaccountUpdateView(views.APIView):
             Response({"message": "User updation failed", "cause": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# 授業API
-class ClassesView(views.APIView):
-    serializer_class = ClassesSerializer
+# 授業ぺーじAPI 表示のみ
+class ClassPageView(views.APIView):
+    serializer_class = ClassPageSerializer
     permission_classes = [IsAuthenticated,]
 
-    def get(self, request, *args, **kwargs):
-        user_grade = request.user.user_grade
-        data = Classes.objects.filter(class_grade=user_grade)
-        serializer = ClassesSerializer(data=data, many=True)
-        serializer.is_valid()
+    def get(self, request, pk, *args, **kwargs):
+        class_id = pk
 
-        return Response(serializer.data)
+        class_data = Classes.objects.filter(class_id=class_id)
+        if not class_data.exists() or pk == 6:
+            return Response({"error": "Not found"},status=status.HTTP_400_BAD_REQUEST)
+        else:
+            serializer = ClassPageSerializer(instance=class_data.first())
+            response_data = serializer.data
+            return Response(response_data, status=status.HTTP_200_OK)
+
+# おしらせ更新
+class NoticeUpdateView(views.APIView):
+    serializer_class = NoticeSerializer
+    permission_classes = [IsAdmin, ]
+
+    def get(self, request, pk, *args, **kwargs):
+        class_model = Classes.objects.filter(class_id=pk)
+        if class_model.exists():
+            notice = Notice.objects.filter(notice_classes=class_model.first())
+            serializer = NoticeSerializer(instance=notice.first())
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Not found"}, status=status.HTTP_400_BAD_REQUEST)
     
+    def patch(self, request, pk, *args, **kwargs):
+        class_model = Classes.objects.get(class_id=pk)
+        notice = Notice.objects.filter(notice_classes=class_model)
+        if notice.exists():
+            serializer = NoticeSerializer(instance=notice.first(), data=request.data, partial=True)
+        else:
+            return Response({"error": "Not found"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response({"message" : "情報を更新しました"}, status=status.HTTP_200_OK)
+        else:
+            Response({"error": "Updation failed", "cause": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 # 時間割
 class TimeTableView(views.APIView):
     serializer_class = TimeTableSerializer
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, *args, **kwargs):
-        timetable = TimeTable.objects.all()
-        # print(timetable)
+        user_grade = request.user.user_grade
+        if user_grade == 2:
+            timetable = TimeTable.objects.all()
+        else:
+            timetable = TimeTable.objects.filter(time_grade=user_grade)
+
         serializer = TimeTableSerializer(instance=timetable, many=True)
         # serializer.is_valid()
-        return Response(serializer.data)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
     def patch(self, request, *args, **kwargs):
         print(request.data)
@@ -185,25 +226,86 @@ class TimeTableView(views.APIView):
             timetable = TimeTable.objects.get(time_day=request.data['time_day'], time_grade=request.data['time_grade'], time_section=request.data['time_section'])
             serializer = TimeTableSerializer(data=request.data, partial=True)
         else:
-            return Response({"message": "No time found"}, status=404)
+            return Response({"error": "No time found"}, status=status.HTTP_400_BAD_REQUEST)
         
         if serializer.is_valid():
             print(request.data)
             classes = Classes.objects.get(class_id=request.data['classes_id'])
             timetable.time_classes = classes
             timetable.save()
-            response_data = {
-                "message" : "情報を更新しました",
-            }
-            return Response({"message":"更新"},status=status.HTTP_200_OK)
+            return Response({"message" : "情報を更新しました"},status=status.HTTP_200_OK)
         else:
-            return Response({"message": "User updation failed", "cause": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "User updation failed", "cause": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     
-# 課題登録API
+# 課題API
+class AssignmentView(views.APIView):
+    serializer_class = AssignmentSerializer
+    permission_classes = [IsAdmin, ]
 
-# 提出状況登録
-            
+    def get(self, request, pk, *args, **kwargs):
+        class_model = Classes.objects.filter(class_id=pk)
+        user = UserTable.objects.get(user_id=request.user.user_id)
+        assignment = Assignment.objects.filter(ast_classes=class_model.first())
+        if not class_model.exists() or pk == 6:
+            return Response({"error": "Not found"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            serializer = AssignmentSerializer(instance=assignment, many=True)
+            for i in range(len(serializer.data)):
+                state = assignment[i].state_ast.filter(state_std=user)
+                if state.exists():
+                    serializer.data[i]['user_state'] = True
+                else:
+                    serializer.data[i]['user_state'] = False
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request, pk, *args, **kwargs):
+        serializer = AssignmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def patch(self, request, pk, *args, **kwargs):
+        ast_model = Assignment.objects.filter(ast_id=pk)
+        if ast_model.exists():
+            serializer = AssignmentSerializer(ast_model.first(), data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                print(serializer.errors)
+                return Response({'error':serializer.error}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+
+            return Response({"error": "Not found"}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def delete(self, request, pk, *args, **kwargs):
+        ast_model = Assignment.objects.filter(ast_id=pk)
+        if ast_model.exists():
+            ast_model.first().delete()
+            return Response({"message" : "削除しました"}, status=status.HTTP_202_ACCEPTED)
+        else:
+
+            return Response({'error':'Not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+# 課題提出API
+class AssignmentSubmitionView(views.APIView):
+    serializer_class = AssignmentSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, pk, *args, **kwargs):
+        # pkは課題のpk
+        ast_model = Assignment.objects.get(ast_id=pk)
+        state_model = AssignmentStatus.objects.filter(state_ast=ast_model)
+
+        serializer = AssignmentSubmitionSerializer(instance=state_model, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request, pk, *args, **kwargs):
+        return 0
 
 
   

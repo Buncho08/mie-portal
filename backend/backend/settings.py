@@ -124,7 +124,7 @@ SIMPLE_JWT = {
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = ['http://localhost:3000']
 # csrf対策
-CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://localhost:3000","http://127.0.0.1"]
 
 
 ROOT_URLCONF = 'backend.urls'

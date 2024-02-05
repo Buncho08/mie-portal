@@ -127,7 +127,7 @@ class Classes(models.Model):
         (1, '2年'),
     ]
     class_id = models.AutoField(verbose_name='授業ID', primary_key=True, editable=False, unique=True)
-    class_teacher = models.ForeignKey(verbose_name='教師', to=UserTable, on_delete=models.CASCADE)
+    class_teacher = models.ForeignKey(verbose_name='教師', to=UserTable, on_delete=models.CASCADE, related_name="class_teacher")
     class_grade = models.IntegerField(verbose_name='学年', choices=GRADE_CHOICES, default=0)
     class_name = models.TextField(verbose_name='授業名', unique=True)
 
@@ -138,6 +138,7 @@ class Classes(models.Model):
         # 教員が選択されたかどうかを確認
         is_teacher = self.class_teacher.is_teacher
         if is_teacher:
+            s = Notice.objects.get_or_create(notice_classes=self)
             super().save(*args, **kwargs)
         else:
             raise ValidationError('教員を選択してください')
@@ -175,7 +176,7 @@ class TimeTable(models.Model):
     ]
 
     time_id = models.AutoField(verbose_name='時間割ID', primary_key=True, editable=False, unique=True)
-    time_classes = models.ForeignKey(verbose_name='授業', to=Classes, on_delete=models.SET(get_sentinel_classes))
+    time_classes = models.ForeignKey(verbose_name='授業', to=Classes, on_delete=models.SET(get_sentinel_classes), related_name='time_classes')
     time_grade = models.IntegerField(verbose_name='学年', default=0, choices=GRADE_CHOICES)
     time_section = models.IntegerField(verbose_name='コマ', default=0, choices=TIME_CHOICES)
     time_day = models.IntegerField(verbose_name='曜日', default=0, choices=DAY_CHOICES)
@@ -190,8 +191,11 @@ class Assignment(models.Model):
         verbose_name_plural = _('課題')
 
     ast_id = models.AutoField(verbose_name='課題ID', unique=True, primary_key=True, editable=False)
-    ast_classes = models.ForeignKey(verbose_name='授業', to=Classes, on_delete=models.CASCADE)
+    ast_classes = models.ForeignKey(verbose_name='授業', to=Classes, on_delete=models.CASCADE, related_name='ast_classes')
+    ast_title = models.TextField(verbose_name='課題名', blank=True, null=True)
+    ast_disc = models.TextField(verbose_name='課題説明', blank=True, null=True)
     ast_limit = models.DateField(verbose_name='期限', default=timezone.now)
+
 
 class AssignmentStatus(models.Model):
     class Meta:
@@ -199,8 +203,8 @@ class AssignmentStatus(models.Model):
         verbose_name_plural = _('提出状況')
 
     state_id = models.AutoField(verbose_name='提出状況ID', unique=True, primary_key=True, editable=False)
-    state_ast = models.ForeignKey(verbose_name='課題', to=Assignment, on_delete=models.CASCADE)
-    state_std = models.ForeignKey(verbose_name='ユーザー', to=UserTable, on_delete=models.CASCADE)
+    state_ast = models.ForeignKey(verbose_name='課題', to=Assignment, on_delete=models.CASCADE, related_name='state_ast')
+    state_std = models.ForeignKey(verbose_name='ユーザー', to=UserTable, on_delete=models.CASCADE, related_name='state_std')
     state_flg = models.BooleanField(verbose_name='提出状況', default=False)
 
 class Notice(models.Model):
@@ -209,10 +213,12 @@ class Notice(models.Model):
         verbose_name_plural = _('お知らせ')
 
     notice_id = models.AutoField(verbose_name='お知らせID', unique=True, primary_key=True, editable=False)
-    notice_classes = models.ForeignKey(verbose_name='授業', to=Classes, on_delete=models.CASCADE)
-    notice_user = models.ForeignKey(verbose_name='更新者', to=UserTable, on_delete=models.CASCADE)
+    notice_classes = models.ForeignKey(verbose_name='授業', to=Classes, on_delete=models.CASCADE, related_name='notice_classes')
+    notice_user = models.ForeignKey(verbose_name='更新者', to=UserTable,blank=True, null=True, on_delete=models.CASCADE, related_name='notice_user')
     notice_main = models.TextField(verbose_name='本文', max_length=2048, blank=True, null=True)
     notice_date = models.DateField(verbose_name='更新日時', auto_now=True)
+
+
 
 class LinkClasses(models.Model):
     class Meta:
@@ -220,7 +226,7 @@ class LinkClasses(models.Model):
         verbose_name_plural = _('リンク')
     
     link_id = models.AutoField(verbose_name='リンクID', unique=True, primary_key=True, editable=False)
-    link_classes = models.ForeignKey(verbose_name='授業', to=Classes, on_delete=models.CASCADE)
+    link_classes = models.ForeignKey(verbose_name='授業', to=Classes, on_delete=models.CASCADE, related_name='link_classes')
     link = models.TextField(verbose_name='URL', default='https://yahoo.co.jp', max_length=500)
     link_name = models.TextField(verbose_name='リンク名', default='')
     link_date = models.DateField(verbose_name='作成日時', auto_now_add=True)
@@ -245,8 +251,8 @@ class Message(models.Model):
         verbose_name_plural = _('メッセージ')
 
     message_id = models.AutoField(verbose_name='メッセージID', unique=True, primary_key=True, editable=False)
-    message_team = models.ForeignKey(verbose_name='チーム', to=Team, on_delete=models.CASCADE)
-    message_user = models.ForeignKey(verbose_name='ユーザー', to=UserTable, on_delete=models.CASCADE)
+    message_team = models.ForeignKey(verbose_name='チーム', to=Team, on_delete=models.CASCADE, related_name='message_team')
+    message_user = models.ForeignKey(verbose_name='ユーザー', to=UserTable, on_delete=models.CASCADE, related_name='message_user')
     message = models.TextField(verbose_name='本文')
     message_date = models.DateField(verbose_name='投稿日時', auto_now_add=True)
 
@@ -265,5 +271,5 @@ class LikeUser(models.Model):
         verbose_name_plural = _('好きなもの設定')
     
     conf_id = models.AutoField(verbose_name='好きなもの設定ID', unique=True, primary_key=True, editable=False)
-    conf_like = models.ForeignKey(verbose_name='好きなもの', to=LikeCategory, on_delete=models.CASCADE)
-    conf_user = models.ForeignKey(verbose_name='ユーザー', to=UserTable, on_delete=models.CASCADE)
+    conf_like = models.ForeignKey(verbose_name='好きなもの', to=LikeCategory, on_delete=models.CASCADE, related_name='conf_like')
+    conf_user = models.ForeignKey(verbose_name='ユーザー', to=UserTable, on_delete=models.CASCADE, related_name='conf_user')

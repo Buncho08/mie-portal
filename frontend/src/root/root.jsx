@@ -1,8 +1,6 @@
 import Sidebar from './sidebar';
-import { redirect, Outlet, useNavigate } from "react-router-dom";
-import {
-    useLoaderData,
-} from "react-router-dom";
+import { redirect, Outlet, useLoaderData, useNavigate } from "react-router-dom";
+
 import { createContext } from 'react';
 
 // リフレッシュトークンを使うとめんどくさいので、使いません。ログイン期限は長めに設定しておきます。
@@ -43,16 +41,13 @@ export default function Root() {
     const { userdata } = useLoaderData();
 
     return (
-        <>
-            <UserData.Provider value={userdata}>
-                <div className='flex'>
-                    <Sidebar />
-                    <div key={userdata.user_id} className="bg-side-gray w-full grid-row-3">
-                        <Outlet />
-                    </div>
-
+        <UserData.Provider value={userdata}>
+            <div className='flex'>
+                <Sidebar />
+                <div className="bg-side-gray w-full grid-row-3">
+                    <Outlet />
                 </div>
-            </UserData.Provider>
-        </>
+            </div>
+        </UserData.Provider>
     )
 }

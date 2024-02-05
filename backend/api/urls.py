@@ -11,9 +11,11 @@ urlpatterns = [
     path('logout', views.LogoutView.as_view(), name='logout'),
     path('myaccount', views.MyaccountView.as_view(), name='myaccount'),
     path('myaccount/update', views.MyaccountUpdateView.as_view(), name='update'),
-    path('classes', views.ClassesView.as_view(), name='classes'),
+    path('classes/<int:pk>', views.ClassPageView.as_view(), name='classes'),
     path('timetable', views.TimeTableView.as_view(), name='timetable'),
-    path('check', views.AuthCheckView.as_view(), name='check')
+    path('check', views.AuthCheckView.as_view(), name='check'),
+    path('notice/<int:pk>', views.NoticeUpdateView.as_view(), name='notice'),
+    path('assignment/<int:pk>', views.AssignmentView.as_view(), name="assignment"),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

@@ -11,12 +11,14 @@ from rest_framework_simplejwt import exceptions as jwt_exp
 import jwt
 from .models import UserTable
 from rest_framework_simplejwt.tokens import RefreshToken
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """Customizes JWT default Serializer to add more information about user"""
 
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
+        print(token)
         token['user_id'] = user.user_id
         token['is_teacher'] = user.is_teacher
         token['is_superuser'] = user.is_superuser

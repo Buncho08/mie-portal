@@ -24,7 +24,8 @@ module.exports = {
       'accent':'#E0E62D',
       'light-blue':'#1BD4F1',
       'side-gray':'#DBD3D8',
-      'cover': '#0000008C',    
+      'cover': '#0000008C',   
+      'cover-gray': '#0000004C',
       // デフォルトカラー
       inherit: "inherit",
     current: "currentColor",

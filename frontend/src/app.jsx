@@ -11,9 +11,11 @@ import Login from './login/Login.jsx';
 import MypageTop from './mypage/MypageTop.jsx';
 import Root from './root/root.jsx';
 import Students from './students/stdudents.jsx';
+import Classes from './class/class.jsx';
+
 import { LoadUserData } from './root/root.jsx';
 import { LoadLoggedStatus } from './login/Login.jsx'
-
+import { LoadClassData } from "./class/class.jsx";
 
 export default function App() {
     const router = createBrowserRouter([
@@ -26,15 +28,20 @@ export default function App() {
             children: [
                 {
                     path: 'mypage',
-                    element: <MypageTop key={0} />,
+                    element: <MypageTop />,
                     errorElement: <ErrorPage />
                 },
                 {
                     path: 'students',
                     element: <Students />,
                     errorElement: <ErrorPage />
-
-                }
+                },
+                {
+                    path: "class/:class_id",
+                    element: <Classes />,
+                    errorElement: <ErrorPage />,
+                    loader: LoadClassData
+                },
             ]
         },
         // 登録ページ
