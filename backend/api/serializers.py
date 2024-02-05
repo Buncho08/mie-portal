@@ -44,7 +44,10 @@ class MyaccountUpdateSerializer(serializers.ModelSerializer):
 # 授業のシリアライザ
 class ClassesSerializer(serializers.ModelSerializer):
     # class_teacher = UserSerilaizer()
-    class_teacher = serializers.PrimaryKeyRelatedField(queryset=UserTable.objects.all())
+    # get時は授業担当教師のデータをすべて表示
+    class_teacher = UserSerilaizer(read_only=True)
+    # postは授業担当教師のprimary keyを指定
+    teacher_id = serializers.PrimaryKeyRelatedField(queryset=UserTable.objects.all(), write_only=True)
     class Meta:
         model = Classes
         fields = [
@@ -52,17 +55,29 @@ class ClassesSerializer(serializers.ModelSerializer):
             'class_grade',
             'class_name',
             'class_teacher',
+            'teacher_id'
         ]
 
-# 時間割のシリアライザ
+from rest_framework.exceptions import ErrorDetail
+
+# 時間割シリアライザ
 class TimeTableSerializer(serializers.ModelSerializer):
     # time_classes = ClassesSerializer()
-    time_classes = serializers.PrimaryKeyRelatedField(queryset=TimeTable.objects.all())
+    # get時はネストされたデータを返す
+    time_classes = ClassesSerializer(read_only=True)
+    # patchはprimary keyで授業を指定できる
+    classes_id = serializers.PrimaryKeyRelatedField(queryset=Classes.objects.all(), write_only=True)
     class Meta:
         model = TimeTable
-        fields = '__all__'
-        
-
+        fields = [
+            'time_id',
+            'time_grade',
+            'time_section',
+            'time_day',
+            'classes_id',
+            'time_classes',
+        ]
+    
 
 # マイページシリアライザ
 class MypageDataSerializer(serializers.ModelSerializer):

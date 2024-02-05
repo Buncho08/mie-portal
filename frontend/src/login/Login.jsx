@@ -1,27 +1,40 @@
 import { useState } from 'react';
 import LoginForm from './components/LoginForm';
-import Cookies from 'js-cookie';
-import { Link, redirect, Navigate } from "react-router-dom";
-/*
-    ログインページの親コンポーネント
-    子componentは
-    loginForm.jsx
- */
-// const grade = Cookies.get('user_grade');
-export async function LoadLoggedStatus() {
-    const status = Cookies.get('user_grade');
-    
-    console.log(status);
-    if (status) {
-        return redirect('/mie/Mypage');
-    }
+import {
+    redirect,
+} from "react-router-dom";
 
-    return null;
+import { Link, Navigate } from "react-router-dom";
+
+export async function LoadLoggedStatus() {
+    const status = await fetch('http://localhost:8000/api/check', {
+        method: 'GET',
+        credentials: "include",
+    })
+        .then((res) => {
+            if (res.status == 401) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        })
+
+    if (status) {
+        return redirect('/mie/mypage');
+    }
+    else {
+        return { status };
+    }
 }
 
 export default function Login() {
+    // エラー文を表示
     const [catchErr, setErr] = useState({});
+    // ログインしたらtrueでredirectさせるためのstate
     const [loginStatus, setLoginStatus] = useState(false);
+
+
     // ログインフォームでfetch処理を行う
     const hundleForm = async (e) => {
         e.preventDefault();

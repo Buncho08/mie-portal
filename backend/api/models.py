@@ -180,6 +180,9 @@ class TimeTable(models.Model):
     time_section = models.IntegerField(verbose_name='コマ', default=0, choices=TIME_CHOICES)
     time_day = models.IntegerField(verbose_name='曜日', default=0, choices=DAY_CHOICES)
 
+    def __str__(self):
+        return f'{self.GRADE_CHOICES[self.time_grade][1]} : {self.DAY_CHOICES[self.time_day][1]} {self.TIME_CHOICES[self.time_section][1]} : {self.time_classes.class_name}'
+
 
 class Assignment(models.Model):
     class Meta:

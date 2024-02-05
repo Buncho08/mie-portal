@@ -10,11 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+
 from pathlib import Path
 import os
-from django.utils import timezone
+from datetime import datetime
 from datetime import timedelta
-import datetime
+from zoneinfo import ZoneInfo
 
 from pytz import timezone
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -94,10 +95,13 @@ REST_FRAMEWORK = {
     )
 }
 
+
+jst = ZoneInfo("Asia/Tokyo")
+today = datetime.now(jst)
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT', ),
     # JWT有効期限
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
+    'ACCESS_TOKEN_LIFETIME':timedelta(days=1),
     # idはuser_idなので教えてあげる(これがないとエラー起きる)
     'USER_ID_FIELD': 'user_id',
     'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
@@ -111,7 +115,7 @@ SIMPLE_JWT = {
     "AUTH_COOKIE_PATH": "/",  # URL path where cookie will be sent
     "AUTH_COOKIE_SAMESITE": "Lax",  # specifies whether the cookie should be sent in cross site requests
     "AUTH_COOKIE_REFRESH":"refresh_token",
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=12),
+    "REFRESH_TOKEN_LIFETIME":timedelta(days=2),
 }
 
 

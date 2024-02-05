@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import LoginForm from './components/login-form';
 import { Link, Navigate } from "react-router-dom";
+
 /*
     新規登録ページの親コンポーネント
     子componentは
     login-form.jsx
  */
-
 
 export default function Signin() {
     const [catchErr, setErr] = useState({});
@@ -98,6 +98,7 @@ export default function Signin() {
             {loginStatus && (
                 <Navigate to="/Mypage" replace={true} />
             )}
+
             {/* ここから新規登録ページ */}
             <section className="bg-white">
                 <div className="lg:grid lg:min-h-screen lg:grid-cols-12">

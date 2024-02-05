@@ -1,5 +1,7 @@
+from datetime import datetime, timedelta, timezone
 import re
 from urllib import response
+from zoneinfo import ZoneInfo
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from rest_framework import status, views
@@ -76,23 +78,48 @@ class LogoutView(views.APIView):
         return response
 
         
+# 認証しているかどうかをチェック あとで変えたい
+class AuthCheckView(views.APIView):
+    permission_classes = [IsAuthenticated, ]
+    
+    def get(self, request, *args, **kwargs):
 
-        
+        return Response(status=status.HTTP_200_OK)
+
+
 # 自分のアカウント情報を取得
+# マイページTOPから呼び出される
 # api/myaccount/
 class MyaccountView(views.APIView):
     permission_classes = [IsAuthenticated,]
     serializer_class = MypageDataSerializer
     def get(self, request, *args, **kwargs):
         user_id = request.user.user_id
-        myuser = UserTable.objects.get(user_id=user_id)  
-        user_classes = Classes.objects.filter(class_grade=myuser.user_grade)
+        myuser = UserTable.objects.get(user_id=user_id)
+        # 今日の時間割を取得
+        day = datetime.now().weekday()
+
+        # 教師なら全て
+        if(myuser.is_teacher):
+            res = []
+            # 1年のデータ
+            user_timetable = TimeTable.objects.filter(time_grade=0, time_day=day)
+            timetable_serializers = TimeTableSerializer(instance=user_timetable, many=True)
+            res.append(timetable_serializers.data)
+            # 2年のデータ
+            user_timetable = TimeTable.objects.filter(time_grade=1, time_day=day)
+            timetable_serializers = TimeTableSerializer(instance=user_timetable, many=True)
+            res.append(timetable_serializers.data)
+        else:
+            user_timetable = TimeTable.objects.filter(time_grade=myuser.user_grade, time_day=day)
+            timetable_serializers = TimeTableSerializer(instance=user_timetable, many=True)
+            res = timetable_serializers.data
 
         user_serializers = MypageDataSerializer(instance=myuser)
-        classes_serializers = ClassesSerializer(instance=user_classes, many=True)
+        
         
         response_data = user_serializers.data
-        response_data['user_classes'] = classes_serializers.data
+        response_data['user_classes'] = res
 
         return Response(response_data)
         
@@ -140,40 +167,37 @@ class ClassesView(views.APIView):
 
         return Response(serializer.data)
     
+# 時間割
 class TimeTableView(views.APIView):
     serializer_class = TimeTableSerializer
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, *args, **kwargs):
         timetable = TimeTable.objects.all()
-        print(timetable)
+        # print(timetable)
         serializer = TimeTableSerializer(instance=timetable, many=True)
         # serializer.is_valid()
         return Response(serializer.data)
 
     def patch(self, request, *args, **kwargs):
-        if UserTable.objects.filter(user_id=request.user.user_id).exists():
-            user = UserTable.objects.filter(user_id=request.user.user_id).first()
-            serializer = MyaccountUpdateSerializer(data=request.data, partial=True)
+        print(request.data)
+        if TimeTable.objects.filter(time_day=request.data['time_day'], time_grade=request.data['time_grade'], time_section=request.data['time_section']).exists():
+            timetable = TimeTable.objects.get(time_day=request.data['time_day'], time_grade=request.data['time_grade'], time_section=request.data['time_section'])
+            serializer = TimeTableSerializer(data=request.data, partial=True)
         else:
-            return Response({"message": "No User found"}, status=404)
+            return Response({"message": "No time found"}, status=404)
         
         if serializer.is_valid():
-            user.user_last = serializer.validated_data['user_last']
-            user.user_first = serializer.validated_data['user_first']
-            # user.user_icon = request.data['user_icon']
-            user.save()
+            print(request.data)
+            classes = Classes.objects.get(class_id=request.data['classes_id'])
+            timetable.time_classes = classes
+            timetable.save()
             response_data = {
                 "message" : "情報を更新しました",
-                "user":{
-                    "user_last":user.user_last,
-                    "user_first":user.user_first,
-                    # "user_icon":user.user_icon
-                }
             }
-            return Response(response_data, status=status.HTTP_200_OK)
+            return Response({"message":"更新"},status=status.HTTP_200_OK)
         else:
-            Response({"message": "User updation failed", "cause": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "User updation failed", "cause": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     
 # 課題登録API

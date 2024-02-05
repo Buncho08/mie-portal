@@ -13,6 +13,7 @@ urlpatterns = [
     path('myaccount/update', views.MyaccountUpdateView.as_view(), name='update'),
     path('classes', views.ClassesView.as_view(), name='classes'),
     path('timetable', views.TimeTableView.as_view(), name='timetable'),
+    path('check', views.AuthCheckView.as_view(), name='check')
 ]
 
 urlpatterns += staticfiles_urlpatterns()

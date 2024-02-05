@@ -15,8 +15,6 @@ import { LoadUserData } from './root/root.jsx';
 import { LoadLoggedStatus } from './login/Login.jsx'
 
 
-
-
 export default function App() {
     const router = createBrowserRouter([
         {
@@ -28,7 +26,7 @@ export default function App() {
             children: [
                 {
                     path: 'mypage',
-                    element: <MypageTop />,
+                    element: <MypageTop key={0} />,
                     errorElement: <ErrorPage />
                 },
                 {
