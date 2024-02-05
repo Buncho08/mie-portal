@@ -138,8 +138,8 @@ class Classes(models.Model):
         # 教員が選択されたかどうかを確認
         is_teacher = self.class_teacher.is_teacher
         if is_teacher:
-            s = Notice.objects.get_or_create(notice_classes=self)
             super().save(*args, **kwargs)
+            s = Notice.objects.get_or_create(notice_classes=self)
         else:
             raise ValidationError('教員を選択してください')
 
