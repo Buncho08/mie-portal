@@ -1,4 +1,4 @@
-from dataclasses import field
+
 from django.core.validators import RegexValidator
 from rest_framework import serializers
 from .models import *
@@ -58,15 +58,13 @@ class ClassesSerializer(serializers.ModelSerializer):
             'teacher_id'
         ]
 
-from rest_framework.exceptions import ErrorDetail
-
 # 時間割シリアライザ
 class TimeTableSerializer(serializers.ModelSerializer):
     # time_classes = ClassesSerializer()
     # get時はネストされたデータを返す
     time_classes = ClassesSerializer(read_only=True)
     # patchはprimary keyで授業を指定できる
-    classes_id = serializers.PrimaryKeyRelatedField(queryset=Classes.objects.all(), write_only=True)
+    class_id = serializers.PrimaryKeyRelatedField(queryset=Classes.objects.all(), write_only=True)
     class Meta:
         model = TimeTable
         fields = [
@@ -74,9 +72,15 @@ class TimeTableSerializer(serializers.ModelSerializer):
             'time_grade',
             'time_section',
             'time_day',
-            'classes_id',
+            'class_id',
             'time_classes',
         ]
+    
+    def create(self, validated_data):
+        class_id = validated_data.pop('class_id')
+        validated_data['time_classes'] = class_id      
+        time_model = TimeTable.objects.create(**validated_data)
+        return time_model
     
 
 # マイページシリアライザ
@@ -99,13 +103,7 @@ class NoticeSerializer(serializers.ModelSerializer):
         model = Notice
         fields = ['notice_id', 'notice_classes', 'notice_main', 'notice_date']
 
-# 課題提出
-class AssignmentSubmitionSerializer(serializers.ModelSerializer):
-    state_std = UserSerilaizer(read_only=True)
-    user_id = serializers.PrimaryKeyRelatedField(queryset=UserTable.objects.all(), write_only=True)
-    class Meta: 
-        model = AssignmentStatus
-        fields = ['state_id', 'state_std', 'state_flg','user_id']
+
 
 # 課題
 class AssignmentSerializer(serializers.ModelSerializer):
@@ -121,6 +119,24 @@ class AssignmentSerializer(serializers.ModelSerializer):
         ast_model = Assignment.objects.create(**validated_data)
         return ast_model
 
+# 課題提出
+class AssignmentSubmitionSerializer(serializers.ModelSerializer):
+    state_std = UserSerilaizer(read_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(queryset=UserTable.objects.all(), write_only=True)
+    state_ast = AssignmentSerializer(read_only=True)
+    ast_id = serializers.PrimaryKeyRelatedField(queryset=Assignment.objects.all(), write_only=True)
+    class Meta: 
+        model = AssignmentStatus
+        fields = ['state_id', 'state_std', 'state_ast', 'state_res', 'state_flg','user_id', 'ast_id']
+
+    def create(self, validated_data):
+        user_id = validated_data.pop('user_id')
+        validated_data['state_std'] = user_id
+        ast_id = validated_data.pop('ast_id')
+        validated_data['state_ast'] = ast_id 
+        state_model = AssignmentStatus.objects.create(**validated_data)
+        return state_model
+    
 # クラスページ
 class ClassPageSerializer(serializers.ModelSerializer):
     class_teacher = UserSerilaizer(read_only=True)
@@ -129,3 +145,31 @@ class ClassPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Classes
         fields = ['class_id', 'class_teacher','class_grade', 'class_name', 'notice_classes', 'notice_id']
+
+# チーム
+class TeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = '__all__'
+        
+# チームチャット
+class TeamChatSerializer(serializers.ModelSerializer):
+    message_team = TeamSerializer(read_only=True)
+    team_id = serializers.PrimaryKeyRelatedField(queryset=Team.objects.all(), write_only=True)
+    message_user = UserSerilaizer(read_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(queryset=UserTable.objects.all(), write_only=True)
+
+    class Meta:
+        model = Message
+        fields = ['message_id', 'message_team', 'team_id', 'message_user', 'user_id', 'message', 'message_date']
+
+    def create(self, validated_data):
+        user_id = validated_data.pop('user_id')
+        team_id = validated_data.pop('team_id')
+
+        validated_data['message_user'] = user_id
+        validated_data['message_team'] = team_id
+
+        message_model = Message.objects.create(**validated_data)
+
+        return message_model

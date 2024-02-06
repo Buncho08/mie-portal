@@ -54,7 +54,7 @@ class AssignmentAdmin(admin.ModelAdmin):
 admin.site.register(Assignment, AssignmentAdmin)
 
 class AssignmentStatusAdmin(admin.ModelAdmin):
-    list_display = ('state_id', 'state_ast', 'state_std', 'state_flg')
+    list_display = ('state_id', 'state_ast', 'state_res', 'state_std', 'state_flg')
 
 admin.site.register(AssignmentStatus, AssignmentStatusAdmin)
 

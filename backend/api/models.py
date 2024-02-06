@@ -1,4 +1,5 @@
 from django.utils import timezone
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import MinLengthValidator, MaxLengthValidator,RegexValidator
@@ -77,7 +78,7 @@ class UserTable(AbstractBaseUser, PermissionsMixin):
         (2, '教師')
     ]
     # ユーザーID
-    user_id = models.CharField(verbose_name="ユーザーID", max_length=12, unique=True, validators=[RegexValidator(r'^[a-zA-Z0-9_]*$',)])
+    user_id = models.CharField(primary_key=True, verbose_name="ユーザーID", max_length=12, unique=True, validators=[RegexValidator(r'^[a-zA-Z0-9_]*$',)])
     # ユーザーの姓
     user_last = models.TextField(verbose_name='姓', max_length=255, validators=[MinLengthValidator(1), MaxLengthValidator(255)])
     # ユーザーの名
@@ -176,7 +177,7 @@ class TimeTable(models.Model):
     ]
 
     time_id = models.AutoField(verbose_name='時間割ID', primary_key=True, editable=False, unique=True)
-    time_classes = models.ForeignKey(verbose_name='授業', to=Classes, on_delete=models.SET(get_sentinel_classes), related_name='time_classes')
+    time_classes = models.ForeignKey(verbose_name='授業', to=Classes, on_delete=models.CASCADE, related_name='time_classes')
     time_grade = models.IntegerField(verbose_name='学年', default=0, choices=GRADE_CHOICES)
     time_section = models.IntegerField(verbose_name='コマ', default=0, choices=TIME_CHOICES)
     time_day = models.IntegerField(verbose_name='曜日', default=0, choices=DAY_CHOICES)
@@ -206,6 +207,7 @@ class AssignmentStatus(models.Model):
     state_ast = models.ForeignKey(verbose_name='課題', to=Assignment, on_delete=models.CASCADE, related_name='state_ast')
     state_std = models.ForeignKey(verbose_name='ユーザー', to=UserTable, on_delete=models.CASCADE, related_name='state_std')
     state_flg = models.BooleanField(verbose_name='提出状況', default=False)
+    state_res = models.TextField(verbose_name='提出物', blank=True, null=True)
 
 class Notice(models.Model):
     class Meta:
@@ -243,7 +245,7 @@ class Team(models.Model):
     ]
     team_id = models.AutoField(verbose_name='チームID', unique=True, primary_key=True, editable=False)
     team_grade = models.IntegerField(verbose_name='学年', choices=GRADE_CHOICES, default=0)
-    team_name = models.TextField(verbose_name='チーム名', default=f'{timezone.now}')
+    team_name = models.TextField(verbose_name='チーム名', default=f'{datetime.now().date()}')
 
 class Message(models.Model):
     class Meta:
@@ -254,7 +256,7 @@ class Message(models.Model):
     message_team = models.ForeignKey(verbose_name='チーム', to=Team, on_delete=models.CASCADE, related_name='message_team')
     message_user = models.ForeignKey(verbose_name='ユーザー', to=UserTable, on_delete=models.CASCADE, related_name='message_user')
     message = models.TextField(verbose_name='本文')
-    message_date = models.DateField(verbose_name='投稿日時', auto_now_add=True)
+    message_date = models.DateTimeField(verbose_name='投稿日時', auto_now_add=True)
 
 class LikeCategory(models.Model):
     class Meta:

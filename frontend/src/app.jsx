@@ -12,11 +12,14 @@ import MypageTop from './mypage/MypageTop.jsx';
 import Root from './root/root.jsx';
 import Students from './students/stdudents.jsx';
 import Classes from './class/class.jsx';
+import TeamTop from "./teamtop/TeamTop.jsx";
+import TeamPage from "./teampage/TeamPage.jsx";
 
 import { LoadUserData } from './root/root.jsx';
 import { LoadLoggedStatus } from './login/Login.jsx'
 import { LoadClassData } from "./class/class.jsx";
-
+import { LoadTeamData } from "./teamtop/TeamTop.jsx";
+import { LoadTeamPageData } from "./teampage/TeamPage.jsx";
 export default function App() {
     const router = createBrowserRouter([
         {
@@ -43,6 +46,18 @@ export default function App() {
                     loader: LoadClassData
                 },
             ]
+        },
+        {
+            path: 'team',
+            element: <TeamTop />,
+            errorElement: <ErrorPage />,
+            loader: LoadTeamData
+        },
+        {
+            path: 'team/:team_id',
+            element: <TeamPage />,
+            errorElement: <ErrorPage />,
+            loader: LoadTeamPageData
         },
         // 登録ページ
         {

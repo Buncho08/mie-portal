@@ -18,7 +18,7 @@ export default function MypageTop() {
             <>
                 {userdata.user_grade === 2
                     ? <Classes_day_teacher />
-                    : <Classes_day_students key={0} />
+                    : <Classes_day_students />
                 }
             </>
             <Newdata />

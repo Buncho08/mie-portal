@@ -1,12 +1,46 @@
 import Cookies from 'js-cookie';
-import { useContext, useEffect, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { UserData } from '../../root/root';
 
 
-export default function Assignment_students({ formatDate, assignment }) {
+export default function Assignment_students({ formatDate, assignment, setAssignment }) {
 
+    const fetchSubmittion = async (ast_id, sendData) => {
+        const res = await fetch(`http://localhost:8000/api/assignment/submition/${ast_id}`, {
+            method: 'POST',
+            body: sendData,
+            headers: {
+                'X-CSRFToken': `${Cookies.get('csrftoken')}`,
+            },
+            credentials: "include",
+            mode: "cors",
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.error) {
+                    return false
+                }
+                else {
+                    setAssignment(assignment.map((item) => (
+                        item.ast_id === data.state_ast.ast_id
+                            ? (
+                                {
+                                    "ast_id": item.ast_id,
+                                    "ast_title": item.ast_title,
+                                    "ast_disc": item.ast_disc,
+                                    "ast_limit": item.ast_limit,
+                                    "user_state": true
+                                }
+                            )
+                            : item
+                    )));
+                }
+            })
+            .catch((err) => console.log(err))
+
+    }
     // ドラッグアンドドロップで提出
-    const hundleDropFile = (e) => {
+    const hundleDropFile = async (e, ast_id) => {
         e.preventDefault();
 
         // MdNさんから拝借
@@ -14,15 +48,15 @@ export default function Assignment_students({ formatDate, assignment }) {
             // DataTransferItemList インターフェイスを使用して、ファイルにアクセスする
             [...e.dataTransfer.items].forEach((item, i) => {
                 // ドロップしたものがファイルでない場合は拒否する
+                if (item.name == '') {
+                    return false
+                }
                 if (item.kind === "file") {
                     const file = item.getAsFile();
-                    console.log(`… file[${i}].name = ${file.name}`);
+                    const sendData = new FormData();
+                    sendData.append('assignment_file', file)
+                    const status = fetchSubmittion(ast_id, sendData)
                 }
-            });
-        } else {
-            // DataTransfer インターフェイスを使用してファイルにアクセスする
-            [...e.dataTransfer.files].forEach((file, i) => {
-                console.log(`… file[${i}].name = ${file.name}`);
             });
         }
         return <></>
@@ -38,24 +72,37 @@ export default function Assignment_students({ formatDate, assignment }) {
                     提出物
                 </h3>
             </div>
-
-            <div className="bg-white p-2 grid grid-cols-3 " onDrop={hundleDropFile} onDragOver={hundleDragOver}>
+            <div className="bg-slate-400 p-2">
+                <h3 className="text-base">
+                    未提出
+                </h3>
+            </div>
+            <div className="bg-white p-2 grid grid-cols-3 ">
                 {
                     assignment.length > 0
                         ? (<>
                             {
                                 assignment.map((data) => (
-                                    <div key={data.ast_id} className='col-span-1 border-4 h-40'>
-                                        <p>
-                                            {data.ast_title}
-                                        </p>
-                                        <p>
-                                            {data.ast_disc}
-                                        </p>
-                                        <p>
-                                            期限 : {formatDate(data.ast_limit)}
-                                        </p>
-                                    </div>
+                                    <Fragment key={data.ast_id}>
+                                        {data.user_state
+                                            ? <></>
+                                            : (
+                                                <div className={`col-span-1 border-4 h-40`}
+                                                    onDrop={(e) => hundleDropFile(e, data.ast_id)} onDragOver={hundleDragOver}
+                                                >
+                                                    <p>
+                                                        {data.ast_title}
+                                                    </p>
+                                                    <p>
+                                                        {data.ast_disc}
+                                                    </p>
+                                                    <p>
+                                                        期限 : {formatDate(data.ast_limit)}
+                                                    </p>
+                                                </div>
+                                            )
+                                        }
+                                    </Fragment>
                                 ))
                             }
                         </>
@@ -69,6 +116,55 @@ export default function Assignment_students({ formatDate, assignment }) {
 
 
             </div>
+
+
+            {
+                assignment.length > 0
+                    ? (
+                        <>
+                            <div className="bg-slate-400 p-2">
+                                <h3 className="text-base">
+                                    提出済
+                                </h3>
+                            </div>
+                            <div className="bg-white p-2 grid grid-cols-3 ">
+
+                                {
+                                    assignment.map((data, index) => (
+                                        <Fragment key={data.ast_id}>
+                                            {data.user_state
+                                                ? (
+                                                    <div className={`col-span-1 border-4 h-40 bg-tahiti`}
+                                                    >
+                                                        <p>
+                                                            {data.ast_title}
+                                                        </p>
+                                                        <p>
+                                                            {data.ast_disc}
+                                                        </p>
+                                                        <p>
+                                                            期限 : {formatDate(data.ast_limit)}
+                                                        </p>
+                                                    </div>
+                                                )
+                                                : <Fragment key={index * 1000}></Fragment>
+                                            }
+                                        </Fragment>
+                                    ))
+                                }
+                            </div>
+                        </>
+                    )
+                    : (
+                        <>
+                            <p>
+                                提出済の課題はありません。
+                            </p>
+                        </>
+                    )
+            }
+
+
 
 
         </section>

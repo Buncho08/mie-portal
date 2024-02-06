@@ -74,7 +74,7 @@ export default function Classes() {
                 <Notice class_id={classdata.class_id} notice_main={classdata.notice_classes[0].notice_main} />
                 {userdata.user_grade === 2
                     ? <Assignment_teacher formatDate={formatDate} assignment={assignmentData} setAssignment={setAssignment} class_id={classdata.class_id} />
-                    : <Assignment_students formatDate={formatDate} assignment={assignmentData} class_id={classdata.class_id} />
+                    : <Assignment_students formatDate={formatDate} assignment={assignmentData} setAssignment={setAssignment} class_id={classdata.class_id} />
                 }
 
             </main>
