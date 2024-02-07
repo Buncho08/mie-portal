@@ -1,10 +1,10 @@
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { UserData } from './root';
 import { Link } from "react-router-dom";
 
 export default function SideBar() {
     const user = useContext(UserData);
-
+    const [nowPage, setNowPage] = useState(String(window.location.href).split('/')[4])
     return (
         <aside className="w-52 flex h-screen flex-col justify-between border-e bg-blue text-white">
             <div>
@@ -49,11 +49,18 @@ export default function SideBar() {
                         {/* マイページリンクアイコン */}
                         <li className='grid justify-center'>
                             <Link
-                                to={'/mie/Mypage'}
-                                className="group relative flex justify-center rounded px-2 py-1.5 hover:text-side-gray"
+                                to={'Mypage/'}
+                                className={`
+                                group relative flex justify-center rounded px-2 py-1.5  
+                                ${nowPage == 'Mypage' ? ('') : ('hover:text-side-gray')}
+                                hover:text-side-gray
+                                `}
+                                onClick={() => setNowPage('Mypage')}
                             >
 
-                                <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="214px" height="214px" viewBox="0 0 512 512" className="row-span-1 w-16 h-16 fill-side-gray hover:fill-white" xmlSpace="preserve">
+                                <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
+                                    width="214px" height="214px" viewBox="0 0 512 512"
+                                    className={`row-span-1 w-16 h-16 ${nowPage == 'Mypage' ? ('fill-white') : ('fill-side-gray hover:fill-white')}`} xmlSpace="preserve">
 
                                     <g>
                                         <polygon className="st0" points="442.531,218 344.828,120.297 256,31.469 167.172,120.297 69.438,218.047 0,287.469 39.984,327.453 
@@ -64,7 +71,10 @@ export default function SideBar() {
                                 </svg>
 
                                 <span
-                                    className="absolute start-full w-16 top-1/2 text-center -translate-y-1/2 rounded bg-midnight px-2 py-1.5 text-xs font-medium text-white invisible group-hover:visible"
+                                    className={`absolute start-full w-16 top-1/2 text-center -translate-y-1/2 rounded bg-midnight px-2 py-1.5 text-xs font-medium text-white 
+                                    ${nowPage == 'Mypage' ? ('invisible') : ('invisible group-hover:visible')}
+                                    
+                                    `}
                                 >
                                     マイページ
                                 </span>
@@ -72,38 +82,20 @@ export default function SideBar() {
                         </li>
                         {/* マイページリンクアイコンここまで */}
 
-                        {/* みんなのページ */}
-                        <li className='grid justify-center'>
-                            <Link
-                                to={'/mie/students'}
-                                className="group relative flex justify-center rounded px-2 py-1.5 hover:text-side-gray"
-                            >
-                                <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="214px" height="214px" viewBox="0 0 512 512" className="row-span-1 w-16 h-16 fill-side-gray hover:fill-white" xmlSpace="preserve">
-
-                                    <g>
-                                        <polygon className="st0" points="442.531,218 344.828,120.297 256,31.469 167.172,120.297 69.438,218.047 0,287.469 39.984,327.453 
-                                        109.406,258.031 207.156,160.281 256,111.438 304.844,160.281 402.531,257.984 472.016,327.453 512,287.469 	" ></polygon>
-                                        <polygon className="st0" points="85.719,330.375 85.719,480.531 274.75,480.531 274.75,361.547 343.578,361.547 343.578,480.531 
-                                        426.281,480.531 426.281,330.328 256.016,160.063"></polygon>
-                                    </g>
-                                </svg>
-
-                                <span
-                                    className="absolute start-full w-16 top-1/2 text-center -translate-y-1/2 rounded bg-midnight px-2 py-1.5 text-xs font-medium text-white invisible group-hover:visible"
-                                >
-                                    マイページ
-                                </span>
-                            </Link>
-                        </li>
-                        {/* みんなのページここまで */}
-
                         {/* チームページ */}
                         <li className='grid justify-center'>
-                            <a
-                                className="group relative flex justify-center rounded px-2 py-1.5 hover:text-side-gray"
+                            <Link
+                                to={'team/'}
+                                className={`
+                                group relative flex justify-center rounded px-2 py-1.5  
+                                ${nowPage == 'team' ? ('') : ('hover:text-side-gray')}
+                                hover:text-side-gray
+                                `}
+                                onClick={() => setNowPage('team')}
                             >
-                                <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="214px" height="214px" viewBox="0 0 512 512" className="row-span-1 w-16 h-16 fill-side-gray hover:fill-white" xmlSpace="preserve">
-
+                                <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
+                                    width="214px" height="214px" viewBox="0 0 512 512"
+                                    className={`row-span-1 w-16 h-16 ${nowPage == 'team' ? ('fill-white') : ('fill-side-gray hover:fill-white')}`} xmlSpace="preserve">
 
                                     <g>
                                         <path className="st0" d="M256.495,96.434c26.632,0,48.213-21.597,48.213-48.205C304.708,21.58,283.128,0,256.495,0
@@ -128,13 +120,17 @@ export default function SideBar() {
                                 </svg>
 
                                 <span
-                                    className="absolute start-full w-20 top-1/2 text-center -translate-y-1/2 rounded bg-midnight px-2 py-1.5 text-xs font-medium text-white invisible group-hover:visible"
+                                    className={`absolute start-full w-20 top-1/2 text-center -translate-y-1/2 rounded bg-midnight px-2 py-1.5 text-xs font-medium text-white 
+                                    ${nowPage == 'team' ? ('invisible') : ('invisible group-hover:visible')}
+                                    
+                                    `}
                                 >
                                     チームページ
                                 </span>
-                            </a>
+                            </Link>
                         </li>
                         {/* チームページここまで */}
+                        {/* みんなのページも作る */}
                     </ul>
                     {/* アイコン群ここまで */}
                 </div>

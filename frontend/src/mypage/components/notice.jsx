@@ -11,7 +11,7 @@ export default function Notice() {
                 </h3>
             </div>
             <ul>
-                
+
                 {userdata.user_notice.map((data) => (
 
                     <li key={data.notice_id} className='flex'>

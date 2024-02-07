@@ -89,6 +89,7 @@ class MypageDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserTable
         fields = [
+            'user_id',
             'user_last',
             'user_first',
             'user_icon',
@@ -158,11 +159,14 @@ class TeamChatSerializer(serializers.ModelSerializer):
     team_id = serializers.PrimaryKeyRelatedField(queryset=Team.objects.all(), write_only=True)
     message_user = UserSerilaizer(read_only=True)
     user_id = serializers.PrimaryKeyRelatedField(queryset=UserTable.objects.all(), write_only=True)
-
+    message_date = serializers.SerializerMethodField()
     class Meta:
         model = Message
         fields = ['message_id', 'message_team', 'team_id', 'message_user', 'user_id', 'message', 'message_date']
 
+    def get_message_date(self, instance):
+        return instance.get_date()
+    
     def create(self, validated_data):
         user_id = validated_data.pop('user_id')
         team_id = validated_data.pop('team_id')

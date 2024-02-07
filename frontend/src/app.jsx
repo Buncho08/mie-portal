@@ -45,19 +45,19 @@ export default function App() {
                     errorElement: <ErrorPage />,
                     loader: LoadClassData
                 },
+                {
+                    path: 'team',
+                    element: <TeamTop />,
+                    errorElement: <ErrorPage />,
+                    loader: LoadTeamData
+                },
+                {
+                    path: 'team/:team_id',
+                    element: <TeamPage />,
+                    errorElement: <ErrorPage />,
+                    loader: LoadTeamPageData
+                },
             ]
-        },
-        {
-            path: 'team',
-            element: <TeamTop />,
-            errorElement: <ErrorPage />,
-            loader: LoadTeamData
-        },
-        {
-            path: 'team/:team_id',
-            element: <TeamPage />,
-            errorElement: <ErrorPage />,
-            loader: LoadTeamPageData
         },
         // 登録ページ
         {

@@ -24,7 +24,6 @@ export async function LoadUserData() {
         })
         .catch(err => console.log(err));
 
-    console.log(userdata)
     if (userdata === false) {
         return redirect('/login');
     }

@@ -232,7 +232,7 @@ class LinkClasses(models.Model):
     link = models.TextField(verbose_name='URL', default='https://yahoo.co.jp', max_length=500)
     link_name = models.TextField(verbose_name='リンク名', default='')
     link_date = models.DateField(verbose_name='作成日時', auto_now_add=True)
-
+    
 
 class Team(models.Model):
     class Meta:
@@ -257,6 +257,14 @@ class Message(models.Model):
     message_user = models.ForeignKey(verbose_name='ユーザー', to=UserTable, on_delete=models.CASCADE, related_name='message_user')
     message = models.TextField(verbose_name='本文')
     message_date = models.DateTimeField(verbose_name='投稿日時', auto_now_add=True)
+
+    def get_date(self):
+        date = list(str(self.message_date).split(' '))
+        day = list(date[0].split('-'))
+        time = list(date[1].split('.'))[0].split(':')
+        
+        return f'{day[0]}年{day[1]}月{day[2]}日 {time[0]}時{time[1]}分'
+    
 
 class LikeCategory(models.Model):
     class Meta:

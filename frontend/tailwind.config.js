@@ -311,6 +311,11 @@ module.exports = {
       eng: ['Hammersmith One', 'serif'],
       test:['Sixtyfour', 'sans-serif']
     },
+    extend: {
+        gridTemplateRows: {
+          'chat': '0.1fr 1fr 1fr',
+        },
+      }
   },
   plugins: [],
 }

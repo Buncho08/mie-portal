@@ -409,6 +409,7 @@ class TeamChatView(views.APIView):
             team_model = team_model.first()
             message_model = Message.objects.filter(message_team=team_model)
             serializer = TeamChatSerializer(instance=message_model, many=True)
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
@@ -424,7 +425,18 @@ class TeamChatView(views.APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
-
+    
+    def delete(self, request, pk, *args, **kwargs):
+        message_model = Message.objects.filter(message_id=pk)
+        if message_model.exists():
+            message_model = message_model.first()
+            if (not request.user.is_superuser or not request.user.is_teacher)and(request.user.user_id == message_model.message_user.user_id):
+                message_model.delete()
+                return Response({'message':'削除しました'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error':'権限がありません'}, status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
 # # ログイン、使わないかもしれない
 # # api/login/
 # class LoginView(views.APIView):
