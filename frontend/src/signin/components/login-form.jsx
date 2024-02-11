@@ -81,7 +81,6 @@ export default function LoginForm({ hundleForm, catchErr }) {
                 <fieldset className="mb-3 grid grid-cols-2 gap-3">
                     <legend className="sr-only">学年</legend>
 
-
                     <div className='col-span-1'>
                         <input type="radio" name="user_grade" value="0" id="first" className="peer hidden" defaultChecked />
 

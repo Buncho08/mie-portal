@@ -14,12 +14,17 @@ import Students from './students/stdudents.jsx';
 import Classes from './class/class.jsx';
 import TeamTop from "./teamtop/TeamTop.jsx";
 import TeamPage from "./teampage/TeamPage.jsx";
+import Profile from "./profile/profile.jsx";
+import Settings from "./settings/settings.jsx";
 
 import { LoadUserData } from './root/root.jsx';
 import { LoadLoggedStatus } from './login/Login.jsx'
 import { LoadClassData } from "./class/class.jsx";
 import { LoadTeamData } from "./teamtop/TeamTop.jsx";
 import { LoadTeamPageData } from "./teampage/TeamPage.jsx";
+import { LoadUsersData } from "./profile/profile.jsx";
+
+
 export default function App() {
     const router = createBrowserRouter([
         {
@@ -57,6 +62,17 @@ export default function App() {
                     errorElement: <ErrorPage />,
                     loader: LoadTeamPageData
                 },
+                {
+                    path: 'profile',
+                    element: <Profile />,
+                    errorElement: <ErrorPage />,
+                    loader: LoadUsersData
+                },
+                {
+                    path: 'settings',
+                    element: <Settings />,
+                    errorElement: <ErrorPage />
+                }
             ]
         },
         // 登録ページ

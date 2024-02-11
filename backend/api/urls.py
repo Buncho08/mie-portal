@@ -19,7 +19,11 @@ urlpatterns = [
     path('timetable', views.TimeTableView.as_view(), name='timetable'),
     path('timetable/delete/<int:pk>', views.TimeTableView.as_view(), name='timedelete'),
     path('team', views.TeamView.as_view(), name='team'),
-    path('team/chat/<int:pk>', views.TeamChatView.as_view(), name='teamchat')
+    path('team/chat/<int:pk>', views.TeamChatView.as_view(), name='teamchat'),
+    path('team/file/<int:pk>', views.TeamFileView.as_view(), name='teamfile'),
+    path('team/link/<int:pk>', views.TeamLinkView.as_view(), name='teamlink'),
+    path('myaccount/like', views.LikeUserView.as_view(), name='like'),
+    path('like', views.LikeCategoryView.as_view(), name='likecategory')
 ]
 
 urlpatterns += staticfiles_urlpatterns()

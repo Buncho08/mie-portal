@@ -40,7 +40,7 @@ export default function TeamTop() {
     }
 
     return (
-        <div className="w-full h-full">
+        <div className="w-full h-screen">
             <div className="w-full h-14 bg-blue p-2 flex items-center">
                 <h2 className="text-2xl">
                     チーム
@@ -75,7 +75,6 @@ export default function TeamTop() {
                     <h3 className="text-lg">
                         2年生
                     </h3>
-
                     <AddTeam hundleAddTeam={hundleAddTeam} team_grade={1} />
                 </div>
                 <div>

@@ -1,9 +1,12 @@
 import { useLoaderData } from "react-router-dom";
-import { Fragment, useContext, useState } from "react";
+import { Fragment, useContext, useState, useEffect } from "react";
 import { UserData } from '../root/root';
 import Cookies from 'js-cookie';
-import Message from "./components/message";
-import MyMessage from "./components/mymessage";
+import Chat from "./components/chat";
+import File from "./components/file";
+import TeamLink from "./components/link";
+
+
 export async function LoadTeamPageData({ params }) {
     const teamdata = await fetch(`http://localhost:8000/api/team/chat/${params.team_id}`, {
         method: 'GET',
@@ -12,63 +15,43 @@ export async function LoadTeamPageData({ params }) {
         .then((res) => res.json())
         .then((data) => data)
         .catch((err) => console.log(err))
-    return { teamdata }
+
+    const teamfile = await fetch(`http://localhost:8000/api/team/file/${params.team_id}`, {
+        method: 'GET',
+        credentials: "include",
+    })
+        .then((res) => res.json())
+        .then((data) => data)
+        .catch((err) => console.log(err))
+
+    const teamlink = await fetch(`http://localhost:8000/api/team/link/${params.team_id}`, {
+        method: 'GET',
+        credentials: "include",
+    })
+        .then((res) => res.json())
+        .then((data) => data)
+        .catch((err) => console.log(err))
+    return { teamdata, teamfile, teamlink }
 }
 
 export default function TeamPage() {
-    const { teamdata } = useLoaderData();
-    const userdata = useContext(UserData);
+    const { teamdata, teamfile, teamlink } = useLoaderData();
 
-    const [chatData, setChatData] = useState(teamdata)
-    const hundleDeleteMessage = async (e, message_id) => {
-        const status = await fetch(`http://localhost:8000/api/team/chat/${message_id}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRFToken': `${Cookies.get('csrftoken')}`,
-            },
-            credentials: "include",
-            mode: "cors",
-        })
-            .then((res) => res.json())
-            .then((data) => data)
-            .catch((err) => console.log(err))
-
-        if (status) {
-            setChatData(chatData.filter((data) => data.message_id !== message_id))
-        }
-    }
 
     return (
-        <div className="max-w-4xl">
-            <ul className="grid gap-y-1">
-                {
-                    chatData.map((data) => (
-                        <Fragment key={data.message_id}>
-                            {
-                                data.message_user.user_id === userdata.user_id
-                                    ? <MyMessage data={data} hundleDeleteMessage={hundleDeleteMessage} />
-                                    : <Message data={data} />
-                            }
-                        </Fragment>
-                    ))
-                }
-            </ul>
+        <div className="h-screen">
+            <div className="bg-banner h-[10%] flex items-center px-3 text-xl">
+                <h2>
+                    {teamdata.team_name}  <small>チーム</small>
+                </h2>
+            </div>
+            <div className="flex h-[90%] w-full">
+                <div className="w-[70%] h-full bg-blue">
+                    <File team_id={teamdata.team_id} teamfile={teamfile} />
+                    <TeamLink team_id={teamdata.team_id} teamlink={teamlink} />
+                </div>
+                <Chat teammessage={teamdata.team_message} team_id={teamdata.team_id} />
+            </div>
         </div>
     )
 }
-
-// {
-//     teamdata.length > 0
-//         ? (
-//             teamdata.map((data) => (
-//                 <div key={data.message_id}>
-//                     {data.message}
-//                 </div>
-//             ))
-//         )
-//         : (
-//             <p>
-//                 チャット履歴がありません
-//             </p>
-//         )
-// }

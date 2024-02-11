@@ -15,13 +15,21 @@ from .utils import file
 # ユーザー情報一覧
 # api/userView/
 class UserViewSet(views.APIView):
-    # 認証ユーザーのみ閲覧可能
-    permission_classes = (IsAdmin,)
+    permission_classes = [IsAuthenticated, ]
     def get(self, request, *args, **kwargs):
-        queryset = UserTable.objects.all()
-        serializer_class = UserSerilaizer(data=queryset, many=True)
-        serializer_class.is_valid()
-        return Response(serializer_class.data, status=status.HTTP_200_OK)
+        first = UserTable.objects.filter(user_grade=0)
+        first = UserSerilaizer(instance=first, many=True)
+        second = UserTable.objects.filter(user_grade=1)
+        second = UserSerilaizer(instance=second, many=True)
+        teacher = UserTable.objects.filter(user_grade=2)
+        teacher = UserSerilaizer(instance=teacher, many=True)
+        res = {
+            'first':first.data,
+            'second':second.data,
+            'teacher':teacher.data
+        }
+        # serializer_class = UserSerilaizer(instance=queryset, many=True)
+        return Response(res, status=status.HTTP_200_OK)
     
 # 登録ビュー
 # api/signup/
@@ -126,7 +134,44 @@ class MyaccountView(views.APIView):
         response_data['user_classes'] = res
         response_data['user_notice'] = notice_classes.data
         return Response(response_data,status=status.HTTP_200_OK)
-        
+
+class LikeCategoryView(views.APIView):
+    serializer_class = LikeCategorySerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, *args, **kwargs):
+        like_ctg = LikeCategory.objects.all()
+        serializer = LikeCategorySerializer(instance=like_ctg, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)
+    
+    def post(self, request, *args, **kwargs):
+        serializer = LikeCategorySerializer(data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class LikeUserView(views.APIView):
+    serializer_class = LikeUserSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, *args, **kwargs):
+        user = UserTable.objects.get(user_id=request.user.user_id)
+        conf_model = LikeUser.objects.filter(conf_user=user)
+        serializer = LikeUserSerializer(instance=conf_model, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        serializer = LikeUserSerializer(data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"error": "Not found"},status=status.HTTP_400_BAD_REQUEST)
+
 # アカウント情報のアップデート
 # api/myaccount/update
 class MyaccountUpdateView(views.APIView):
@@ -305,8 +350,11 @@ class AssignmentView(views.APIView):
     def delete(self, request, pk, *args, **kwargs):
         ast_model = Assignment.objects.filter(ast_id=pk)
         if ast_model.exists():
-            ast_model.first().delete()
-            return Response({"message" : "削除しました"}, status=status.HTTP_202_ACCEPTED)
+            if file.deleteDir(dirname=ast_model.first().ast_title, ctg='assignments'):
+                ast_model.first().delete()
+                return Response({"message" : "削除しました"}, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response({'error':'Not found'}, status=status.HTTP_400_BAD_REQUEST)
         else:
 
             return Response({'error':'Not found'}, status=status.HTTP_400_BAD_REQUEST)
@@ -347,7 +395,7 @@ class AssignmentSubmitionView(views.APIView):
                 serializer = AssignmentSubmitionSerializer(data=request.data)
                 if serializer.is_valid():
                     # 課題名_ユーザー学生番号 という形式で自動保存もできるけどどうでしょうか。
-                    if file.mkdirToSavefile(file=request.FILES['assignment_file'], dirname=ast_model.ast_title):
+                    if file.mkdirToSavefile(file=request.FILES['assignment_file'], dirname=ast_model.ast_title, ctg='assignments'):
                         serializer.save()
                         return Response(serializer.data, status=status.HTTP_200_OK)
                     else:
@@ -367,7 +415,7 @@ class AssignmentSubmitionView(views.APIView):
             if state_model.exists():
                 state_model = state_model.first()
 
-                if file.deleteFile(dirname=state_model.state_ast.ast_title, filename=state_model.state_res):
+                if file.deleteFile(dirname=state_model.state_ast.ast_title, filename=state_model.state_res, ctg='assignments'):
                     state_model.delete()
                     return Response({'message':'削除しました'}, status=status.HTTP_202_ACCEPTED)
                 else:
@@ -392,12 +440,18 @@ class TeamView(views.APIView):
             return Response({'error':f'{request.data["team_name"]}チームはすでに存在します'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             serializer = TeamSerializer(data=request.data, partial=True)
+
             if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                if file.mkdir(dirname=serializer.validated_data['team_name'], ctg='team'):
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'error':'すでに存在するチーム名です'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+# メッセージとチームページ情報API切り分けたい
+
 class TeamChatView(views.APIView):
     serializer_class = TeamChatSerializer
     permission_classes = [IsAuthenticated, ]
@@ -409,8 +463,12 @@ class TeamChatView(views.APIView):
             team_model = team_model.first()
             message_model = Message.objects.filter(message_team=team_model)
             serializer = TeamChatSerializer(instance=message_model, many=True)
-            
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            res = {
+                'team_id':team_model.team_id,
+                'team_name':team_model.team_name,
+                'team_message':serializer.data
+            }
+            return Response(res, status=status.HTTP_200_OK)
         else:
             return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
   
@@ -437,6 +495,82 @@ class TeamChatView(views.APIView):
                 return Response({'error':'権限がありません'}, status=status.HTTP_401_UNAUTHORIZED)
         else:
             return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class TeamFileView(views.APIView):
+    serializer_class = TeamFileSerializer
+    permission_classes = [IsAuthenticated,]
+    def get(self, request, pk, *args, **kwargs):
+        team_model = Team.objects.filter(team_id=pk)
+        if team_model.exists():
+            team_model = team_model.first()
+            file_model = TeamFile.objects.filter(file_team=team_model)
+            serializer = TeamFileSerializer(instance=file_model, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def post(self, request, pk, *args, **kwargs):
+        team_model = Team.objects.filter(team_id=pk)
+        if team_model.exists():
+            team_model = team_model.first()
+            file_model = TeamFile.objects.filter(file_team=team_model)
+            serializer = TeamFileSerializer(data=request.data, partial=True)
+            if serializer.is_valid():
+                if file.mkdirToSavefile(dirname=team_model.team_name, file=request.FILES['file_obj'], ctg='team', name=request.data['file_name']):
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'error':'すでに存在するファイル名です'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def delete(self, request, pk, *args, **kwargs):
+        file_model = TeamFile.objects.filter(file_id=pk)
+        if file_model.exists():
+            file_model = file_model.first()
+
+            if file.deleteFile(dirname=file_model.file_team.team_name, filename=file_model.file_name.split('/')[1], ctg='team'):
+                file_model.delete()
+                return Response({'message':'削除しました'}, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response({'error':'存在しないファイルです'}, status=status.HTTP_400_BAD_REQUEST)  
+
+class TeamLinkView(views.APIView):
+    serializer_class = TeamLinkSerializer
+    permission_classes = [IsAuthenticated, ]
+    def get(self, request, pk, *args, **kwargs):
+        team_model = Team.objects.filter(team_id=pk)
+        if team_model.exists():
+            team_model = team_model.first()
+            link_model = TeamLink.objects.filter(link_team=team_model)
+            serializer = TeamLinkSerializer(instance=link_model, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def post(self, request, pk, *args, **kwargs):
+        team_model = Team.objects.filter(team_id=pk)
+        if team_model.exists():
+            serializer = TeamLinkSerializer(data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def delete(self, request, pk, *args, **kwargs):
+        link_model = TeamLink.objects.filter(link_id=pk)
+        if link_model.exists():
+            link_model.first().delete()
+            return Response({'message':'削除しました'}, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 # # ログイン、使わないかもしれない
 # # api/login/
 # class LoginView(views.APIView):

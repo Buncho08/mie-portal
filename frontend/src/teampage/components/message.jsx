@@ -4,15 +4,13 @@ export default function Message({ data }) {
         <li className="max-w-96 min-w-min grid grid-cols-9 grid-rows-fr text-sm">
             <div className="col-span-10 row-span-1 grid grid-cols-10">
                 <div className="flex justify-center items-center">
-                    <img className="h-9 w-9 rounded-full" src={`http://localhost:8000/api${data.message_user.user_icon}`} alt={`${data.message_user.user_id}のアイコン`} />
+                    <img className="w-full rounded-full" src={`http://localhost:8000/api${data.message_user.user_icon}`} alt={`${data.message_user.user_id}のアイコン`} />
                 </div>
                 <div className="col-span-9 h-full flex px-3 justify-between items-center">
                     <p>
                         {data.message_user.user_last} {data.message_user.user_first}
                     </p>
-                    <small>
-                        {data.message_date}
-                    </small>
+
                 </div>
             </div>
 
@@ -21,6 +19,12 @@ export default function Message({ data }) {
                 <p>
                     {data.message}
                 </p>
+
+                <div className="w-full h-1 mt-2 flex justify-end">
+                    <small>
+                        {data.message_date}
+                    </small>
+                </div>
             </div>
         </li>
     )

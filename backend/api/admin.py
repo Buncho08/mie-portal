@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
-from .models import Classes, TimeTable, Assignment, AssignmentStatus, Notice, LinkClasses, Team, Message, LikeCategory, LikeUser
+from .models import *
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (_("重要な情報の編集"), {"fields": ("user_id", "password")}),
@@ -79,7 +79,8 @@ class MessageAdmin(admin.ModelAdmin):
 admin.site.register(Message, MessageAdmin)
 
 class LikeCategoryAdmin(admin.ModelAdmin):
-    list_display = ('like_id', 'like_name')
+    list_display = ('like_id', 'like_category', 'like_name')
+    ordering = ('like_category',)
 
 admin.site.register(LikeCategory, LikeCategoryAdmin)
 
@@ -87,3 +88,13 @@ class LikeUserAdmin(admin.ModelAdmin):
     list_display = ('conf_id', 'conf_like', 'conf_user')
 
 admin.site.register(LikeUser, LikeUserAdmin)
+
+class TeamFileAdmin(admin.ModelAdmin):
+    list_display = ('file_id', 'file_team', 'file_name')
+
+admin.site.register(TeamFile, TeamFileAdmin)
+
+class TeamLinkAdmin(admin.ModelAdmin):
+    list_display = ('link_id', 'link_team', 'link_URL')
+
+admin.site.register(TeamLink, TeamLinkAdmin)

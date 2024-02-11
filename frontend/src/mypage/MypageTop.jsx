@@ -14,6 +14,11 @@ export default function MypageTop() {
     const userdata = useContext(UserData);
     return (
         <>
+            <div className="w-full h-14 bg-blue p-2 flex items-center">
+                <h2 className="text-2xl">
+                    マイページ
+                </h2>
+            </div>
             <Notice />
             <>
                 {userdata.user_grade === 2

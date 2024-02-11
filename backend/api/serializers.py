@@ -1,4 +1,5 @@
 
+from dataclasses import field
 from django.core.validators import RegexValidator
 from rest_framework import serializers
 from .models import *
@@ -18,6 +19,33 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['user_id', 'user_grade', 'user_stdNum', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
+class LikeCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LikeCategory
+        fields = '__all__'
+
+class LikeUserSerializer(serializers.ModelSerializer):
+    like_id = serializers.PrimaryKeyRelatedField(queryset=LikeCategory.objects.all(), write_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(queryset=UserTable.objects.all(), write_only=True)
+    class Meta:
+        model = LikeUser
+        fields = ['conf_id', 'like_id', 'user_id']
+
+    def create(self, validated_data):
+        user_id = validated_data.pop('user_id')
+        like_id = validated_data.pop('like_id')
+
+        validated_data['conf_user'] = user_id
+        validated_data['conf_like'] = like_id
+
+        conf_model = LikeUser.objects.create(**validated_data)
+
+        return conf_model
+    
+        #     class_id = validated_data.pop('class_id')
+        # validated_data['time_classes'] = class_id      
+        # time_model = TimeTable.objects.create(**validated_data)
+        # return time_model
 # ログインシリアライザー
 class LoginSerializer(serializers.ModelSerializer):
     user_id = serializers.CharField(
@@ -155,7 +183,7 @@ class TeamSerializer(serializers.ModelSerializer):
         
 # チームチャット
 class TeamChatSerializer(serializers.ModelSerializer):
-    message_team = TeamSerializer(read_only=True)
+    message_team = TeamSerializer(write_only=True)
     team_id = serializers.PrimaryKeyRelatedField(queryset=Team.objects.all(), write_only=True)
     message_user = UserSerilaizer(read_only=True)
     user_id = serializers.PrimaryKeyRelatedField(queryset=UserTable.objects.all(), write_only=True)
@@ -177,3 +205,35 @@ class TeamChatSerializer(serializers.ModelSerializer):
         message_model = Message.objects.create(**validated_data)
 
         return message_model
+    
+class TeamFileSerializer(serializers.ModelSerializer):
+    team_id = serializers.PrimaryKeyRelatedField(queryset=Team.objects.all(), write_only=True)
+    file_team = TeamSerializer(write_only=True)
+    class Meta:
+        model = TeamFile
+        fields = ['file_id', 'file_team', 'team_id', 'file_name']
+
+    def create(self, validated_data):
+        team_id = validated_data.pop('team_id')
+
+        validated_data['file_team'] = team_id
+        validated_data['file_name'] = f"{validated_data['file_team'].team_name}/{validated_data['file_name']}"
+        file_model = TeamFile.objects.create(**validated_data)
+
+        return file_model   
+    
+class TeamLinkSerializer(serializers.ModelSerializer):
+    team_id = serializers.PrimaryKeyRelatedField(queryset=Team.objects.all(), write_only=True)
+    link_team = TeamSerializer(write_only=True)
+    class Meta:
+        model = TeamLink
+        fields = ['link_id', 'link_team', 'team_id', 'link_URL']
+    
+    def create(self, validated_data):
+        team_id = validated_data.pop('team_id')
+
+        validated_data['link_team'] = team_id
+        
+        link_model = TeamLink.objects.create(**validated_data)
+
+        return link_model   

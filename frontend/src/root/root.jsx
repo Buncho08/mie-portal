@@ -23,7 +23,6 @@ export async function LoadUserData() {
             return data;
         })
         .catch(err => console.log(err));
-
     if (userdata === false) {
         return redirect('/login');
     }
@@ -44,7 +43,7 @@ export default function Root() {
         <UserData.Provider value={userdata}>
             <div className='flex'>
                 <Sidebar />
-                <div className="bg-side-gray w-full grid-row-3">
+                <div className="w-full">
                     <Outlet />
                 </div>
             </div>

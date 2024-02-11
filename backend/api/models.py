@@ -1,3 +1,4 @@
+from tabnanny import verbose
 from django.utils import timezone
 from datetime import datetime
 from django.db import models
@@ -22,7 +23,7 @@ def savePath(model, filename):
 
 def saveLikePath(model, filename):
     ext = filename.split('.')[-1]
-    new_name = model.like_id + "_icon"
+    new_name = str(model.like_name) + "_icon"
     # ルートはGomaShop/らしい
     path = f'./icon/like/{new_name}.{ext}'
     os_path = f'{settings.MEDIA_ROOT}/icon/like/{new_name}.{ext}'
@@ -265,15 +266,41 @@ class Message(models.Model):
         
         return f'{day[0]}年{day[1]}月{day[2]}日 {time[0]}時{time[1]}分'
     
+class TeamFile(models.Model):
+    class Meta:
+        verbose_name = _('チームファイル')
+        verbose_name_plural = _('チームファイル')
+    
+    file_id = models.AutoField(verbose_name='チームファイルID', unique=True, primary_key=True, editable=False)
+    file_team = models.ForeignKey(verbose_name='チーム', to=Team, on_delete=models.CASCADE, related_name='file_team')
+    file_name = models.TextField(verbose_name='ファイル名')
+
+class TeamLink(models.Model):
+    class Meta:
+        verbose_name = _('チームリンク')
+        verbose_name_plural = _('チームリンク')
+
+    link_id = models.AutoField(verbose_name='チームリンクID', unique=True, primary_key=True, editable=False)
+    link_team = models.ForeignKey(verbose_name='チーム', to=Team, on_delete=models.CASCADE, related_name='link_team')
+    link_URL = models.TextField(verbose_name='リンク')
 
 class LikeCategory(models.Model):
     class Meta:
         verbose_name = _('好きなものカテゴリ')
         verbose_name_plural = _('好きなものカテゴリ')
+
+    CATEGORY_CHOICES = [
+        (0, 'ざっくり'),
+        (1, 'ゲーム'),
+        (2, '趣味'),
+        (3, 'プログラミング'),
+        (4, 'いきもの')
+    ]
     
     like_id = models.AutoField(verbose_name='好きなものID', unique=True, primary_key=True, editable=False)
     like_name = models.TextField(verbose_name='好きなもの名')
-    like_icon = models.ImageField(verbose_name="アイコン", default='icon/like/default_icon.png', upload_to=savePath, null=True, blank=True)
+    like_category = models.IntegerField(verbose_name='好きなものカテゴリ', choices=CATEGORY_CHOICES, default=0)
+    like_icon = models.ImageField(verbose_name="アイコン", default='icon/like/default_icon.png', upload_to=saveLikePath, null=True, blank=True)
 
 class LikeUser(models.Model):
     class Meta:
