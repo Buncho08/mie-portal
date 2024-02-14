@@ -7,6 +7,7 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator,RegexV
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+from django_resized import ResizedImageField
 import os
 
 
@@ -85,7 +86,7 @@ class UserTable(AbstractBaseUser, PermissionsMixin):
     # ユーザーの名
     user_first = models.TextField(verbose_name='名', max_length=255, validators=[MinLengthValidator(1), MaxLengthValidator(255)])
     # アイコン
-    user_icon = models.ImageField(verbose_name="アイコン", default='icon/user/default_icon.png', upload_to=savePath, null=True, blank=True)
+    user_icon = ResizedImageField(force_format="WEBP", quality=75, verbose_name="アイコン", default='icon/user/default_icon.png', upload_to=savePath, null=True, blank=True)
     # 学生番号
     user_stdNum = models.TextField(verbose_name='学生番号', null=True, blank=True, unique=True, validators=[MinLengthValidator(9), MaxLengthValidator(9), RegexValidator(r'^[0-9]*$')])
     # 学年

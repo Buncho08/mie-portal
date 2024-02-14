@@ -315,6 +315,11 @@ module.exports = {
         gridTemplateRows: {
           'chat': '0.1fr 1fr 1fr',
         },
+        spacing: {
+            'side':'1.5rem',
+            'yspace':'0.75rem',
+            'side-side':'2rem'
+        }
       }
   },
   plugins: [],

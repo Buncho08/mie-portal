@@ -6,7 +6,7 @@ import Assignment_teacher from "./components/assignment_teacher";
 import Assignment_students from "./components/assignment_students";
 import NotsubmissionStds from "./components/NotsubmissionStds";
 import Assignments from "./components/Assignments";
-import { formatDate } from '../utils/utils';
+import { formatDate } from '../public-components/utils/utils';
 
 export async function LoadClassData({ params }) {
 

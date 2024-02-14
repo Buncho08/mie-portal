@@ -1,16 +1,14 @@
 import { UserData } from '../../root/root';
 import { useContext } from "react";
 import { Link } from 'react-router-dom';
+import SubTitleBar from '../../public-components/SubTitleBar';
+
 export default function Notice({ user_notice }) {
 
     return (
         <section>
-            <div className="bg-slate-400 p-2">
-                <h3 className="text-lg">
-                    おしらせ
-                </h3>
-            </div>
-            <ul>
+            <SubTitleBar title={'おしらせ'} />
+            <ul className='px-side'>
                 {user_notice.length > 0
                     ? (
                         <>
@@ -28,9 +26,9 @@ export default function Notice({ user_notice }) {
                         </>
                     )
                     : (
-                        <p>
+                        <li>
                             現在新着のお知らせはありません。
-                        </p>
+                        </li>
                     )
                 }
 

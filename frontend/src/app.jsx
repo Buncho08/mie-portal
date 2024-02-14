@@ -4,7 +4,7 @@ import {
 } from "react-router-dom";
 
 import './index.css'
-import ErrorPage from "./error-page";
+import ErrorPage from "./public-components/error-page.jsx";
 import Signin from './signin/Signin.jsx';
 
 import Login from './login/Login.jsx';

@@ -213,7 +213,62 @@ export default function SideBar() {
                                 </span>
                             </Link>
                         </li>
-                        {/* みんなのプロフィールここまで */}
+                        {/* マイプロフィール設定ここまで */}
+
+                        {/* 教師のみ */}
+                        {/* 時間割や授業の設定ここから */}
+                        {
+                            user.user_grade === 2 && (
+                                <li>
+                                    <Link
+                                        to={'timetable/'}
+                                        className={`
+                                    group relative flex justify-center rounded px-2 py-1.5  
+                                    ${nowPage == 'timetable' ? ('') : ('hover:text-side-gray')}
+                                    hover:text-side-gray
+                                    `}
+                                        onClick={() => setNowPage('timetable')}
+                                    >
+                                        <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
+                                            width="214px" height="214px" viewBox="0 0 512 512"
+                                            className={`row-span-1 w-16 h-16 ${nowPage == 'timetable' ? ('fill-white') : ('fill-side-gray hover:fill-white')}`} xmlSpace="preserve">
+
+                                            <g>
+                                                <path className="st0" d="M164.893,89.791c13.875,0,25.126-11.243,25.126-25.134V25.118C190.019,11.252,178.768,0,164.893,0
+		                                            s-25.135,11.252-25.135,25.118v39.538C139.758,78.548,151.018,89.791,164.893,89.791z"></path>
+                                                <path className="st0" d="M350.184,89.791c13.867,0,25.126-11.243,25.126-25.134V25.118C375.31,11.252,364.05,0,350.184,0
+		                                            c-13.875,0-25.135,11.252-25.135,25.118v39.538C325.048,78.548,336.309,89.791,350.184,89.791z"></path>
+                                                <path className="st0" d="M437.25,35.807h-39.865v28.849c0,26.04-21.169,47.218-47.201,47.218c-26.032,0-47.209-21.178-47.209-47.218
+		                                            V35.807h-90.881v28.849c0,26.04-21.178,47.218-47.2,47.218c-26.032,0-47.21-21.178-47.21-47.218V35.807H74.75
+		                                            c-38.977,0-70.575,31.599-70.575,70.575v335.043C4.175,480.401,35.773,512,74.75,512H437.25c38.976,0,70.575-31.599,70.575-70.575
+		                                            V106.382C507.825,67.406,476.226,35.807,437.25,35.807z M473.484,441.425c0,19.978-16.256,36.235-36.235,36.235H74.75
+		                                            c-19.979,0-36.235-16.257-36.235-36.235V150.984h434.969V441.425z"></path>
+                                                <rect x="174.928" y="382.512" className="st0" width="63.591" height="63.591"></rect>
+                                                <rect x="174.928" y="283.96" className="st0" width="63.591" height="63.591"></rect>
+                                                <rect x="76.385" y="382.512" className="st0" width="63.582" height="63.591"></rect>
+                                                <rect x="76.385" y="283.96" className="st0" width="63.582" height="63.591"></rect>
+                                                <rect x="372.032" y="185.417" className="st0" width="63.583" height="63.582"></rect>
+                                                <rect x="273.48" y="185.417" className="st0" width="63.591" height="63.582"></rect>
+                                                <polygon className="st0" points="350.041,293.216 331.127,278.51 296.686,322.811 276.238,306.454 261.273,325.142 300.677,356.673 	
+		                                            "></polygon>
+                                                <rect x="372.032" y="283.96" className="st0" width="63.583" height="63.591"></rect>
+                                                <rect x="273.48" y="382.512" className="st0" width="63.591" height="63.591"></rect>
+                                                <rect x="174.928" y="185.417" className="st0" width="63.591" height="63.582"></rect>
+                                            </g>
+                                        </svg>
+                                                                                                                                                                                                                                                                                                                                                
+                                        <span
+                                            className={`absolute start-full w-20 z-50 top-1/2 text-center -translate-y-1/2 rounded bg-midnight px-2 py-1.5 text-xs font-medium text-white 
+                                        ${nowPage == 'timetable' ? ('invisible') : ('invisible group-hover:visible')}
+                                        
+                                        `}
+                                        >
+                                            授業設定
+                                        </span>
+                                    </Link>
+                                </li>
+                            )
+                        }
                     </ul>
                     {/* アイコン群ここまで */}
 

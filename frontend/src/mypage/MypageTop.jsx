@@ -3,6 +3,8 @@ import Classes_day_students from "./components/classes_day_students";
 import Classes_day_teacher from './components/classes_day_teacher';
 import NotSubmissions from "./components/NotSubmissions";
 import MyClasses from "./components/MyClasses";
+import TitleBar from "../public-components/TitleBar";
+
 import { UserData } from '../root/root';
 import { useContext } from "react";
 import { useLoaderData, Link } from "react-router-dom";
@@ -23,12 +25,8 @@ export default function MypageTop() {
     const userdata = useContext(UserData);
     const { mypagedata } = useLoaderData()
     return (
-        <>
-            <div className="w-full h-14 bg-blue p-2 flex items-center">
-                <h2 className="text-2xl">
-                    マイページ
-                </h2>
-            </div>
+        <div className="h-screen">
+            <TitleBar title={'マイページ'} />
             <>
                 {
                     userdata.user_grade !== 2 && <NotSubmissions user_notsubmissions={mypagedata.user_notsubmissions} />
@@ -60,6 +58,6 @@ export default function MypageTop() {
                     )
                 }
             </>
-        </>
+        </div>
     )
 }
