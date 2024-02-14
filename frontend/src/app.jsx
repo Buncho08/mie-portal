@@ -16,6 +16,9 @@ import TeamTop from "./teamtop/TeamTop.jsx";
 import TeamPage from "./teampage/TeamPage.jsx";
 import Profile from "./profile/profile.jsx";
 import Settings from "./settings/settings.jsx";
+import SetTimeTable from "./settimetable/SetTimeTable.jsx";
+import Assignments from "./class/components/Assignments.jsx";
+import ClassesAll from "./classes/ClassesAll.jsx";
 
 import { LoadUserData } from './root/root.jsx';
 import { LoadLoggedStatus } from './login/Login.jsx'
@@ -23,6 +26,11 @@ import { LoadClassData } from "./class/class.jsx";
 import { LoadTeamData } from "./teamtop/TeamTop.jsx";
 import { LoadTeamPageData } from "./teampage/TeamPage.jsx";
 import { LoadUsersData } from "./profile/profile.jsx";
+import { LoadUserSettingData } from "./settings/settings.jsx";
+import { LoadMypageData } from "./mypage/MypageTop.jsx";
+import { LoadTimeTableData } from "./settimetable/SetTimeTable.jsx";
+import { LoadAssignmentsData } from "./class/components/Assignments.jsx";
+import { LoadClassesData } from "./classes/ClassesAll.jsx";
 
 
 export default function App() {
@@ -37,7 +45,8 @@ export default function App() {
                 {
                     path: 'mypage',
                     element: <MypageTop />,
-                    errorElement: <ErrorPage />
+                    errorElement: <ErrorPage />,
+                    loader: LoadMypageData
                 },
                 {
                     path: 'students',
@@ -71,7 +80,27 @@ export default function App() {
                 {
                     path: 'settings',
                     element: <Settings />,
-                    errorElement: <ErrorPage />
+                    errorElement: <ErrorPage />,
+                    loader: LoadUserSettingData,
+                },
+                {
+                    path: 'timetable',
+                    element: <SetTimeTable />,
+                    errorElement: <ErrorPage />,
+                    loader: LoadTimeTableData
+
+                },
+                {
+                    path: 'assignments/:ast_id',
+                    element: <Assignments />,
+                    errorElement: <ErrorPage />,
+                    loader: LoadAssignmentsData
+                },
+                {
+                    path: 'classes',
+                    element: <ClassesAll />,
+                    errorElement: <ErrorPage />,
+                    loader: LoadClassesData
                 }
             ]
         },

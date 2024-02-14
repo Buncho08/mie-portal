@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie';
-import { redirect, Navigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { UserData } from '../../root/root';
+import { Link } from 'react-router-dom';
 
 
 export default function Assignment_teacher({ assignment, class_id, setAssignment }) {
@@ -96,17 +96,22 @@ export default function Assignment_teacher({ assignment, class_id, setAssignment
                     assignment.length === 0 && <p>課題はありません。</p>
                 }
                 {assignment.map((data) => (
-                    <form key={data.ast_id} onSubmit={(e) => hundleUpdateAssignment(e, data.ast_id)} className='col-span-1 border-4 h-40'>
-                        <input type="text" name="update_title" defaultValue={data.ast_title} />
-                        <input type="text" name="update_disc" defaultValue={data.ast_disc} />
-                        <input type="date" name="update_limit" defaultValue={data.ast_limit} />
-                        <button type='submit' className='hidden'>
-                            更新
-                        </button>
-                        <button onClick={(e) => hundleDeleteAssignment(e, data.ast_id)}>
-                            🗑️
-                        </button>
-                    </form>
+                    <div className='col-span-1 border-4 h-40'>
+                        <form key={data.ast_id} onSubmit={(e) => hundleUpdateAssignment(e, data.ast_id)}>
+                            <input type="text" name="update_title" defaultValue={data.ast_title} />
+                            <input type="text" name="update_disc" defaultValue={data.ast_disc} />
+                            <input type="date" name="update_limit" defaultValue={data.ast_limit} />
+                            <button type='submit' className='hidden'>
+                                更新
+                            </button>
+                            <button onClick={(e) => hundleDeleteAssignment(e, data.ast_id)}>
+                                🗑️
+                            </button>
+                        </form>
+                        <Link to={`/mie/assignments/${data.ast_id}`}>
+                            課題ページへ
+                        </Link>
+                    </div>
                 ))}
 
                 <div className='col-span-1'>

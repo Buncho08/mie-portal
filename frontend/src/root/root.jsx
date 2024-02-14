@@ -1,7 +1,7 @@
 import Sidebar from './sidebar';
 import { redirect, Outlet, useLoaderData, useNavigate } from "react-router-dom";
 
-import { createContext } from 'react';
+import { createContext, useState } from 'react';
 
 // リフレッシュトークンを使うとめんどくさいので、使いません。ログイン期限は長めに設定しておきます。
 export async function LoadUserData() {
@@ -43,7 +43,7 @@ export default function Root() {
         <UserData.Provider value={userdata}>
             <div className='flex'>
                 <Sidebar />
-                <div className="w-full">
+                <div className="w-full overflow-y-auto">
                     <Outlet />
                 </div>
             </div>

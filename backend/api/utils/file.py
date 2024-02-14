@@ -46,10 +46,8 @@ def mkdir(dirname, ctg) -> bool:
     PAGES_PATH = f'{ROOT_PATH}{dirname}/'
     if not checkDirName(dirname, ROOT_PATH):
         os.mkdir(PAGES_PATH)
-
         return True
     else:
-
         return False
 
 def mkdirToSavefile(dirname, file,  ctg, name=None) -> bool:

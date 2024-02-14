@@ -1,8 +1,8 @@
 import { UserData } from '../../root/root';
 import { useContext } from "react";
+import { Link } from 'react-router-dom';
+export default function Notice({ user_notice }) {
 
-export default function Notice() {
-    const userdata = useContext(UserData);
     return (
         <section>
             <div className="bg-slate-400 p-2">
@@ -11,17 +11,30 @@ export default function Notice() {
                 </h3>
             </div>
             <ul>
+                {user_notice.length > 0
+                    ? (
+                        <>
+                            {user_notice.map((data) => (
+                                <Link key={data.notice_id} to={`http://localhost:3000/mie/class/${data.notice_classes.class_id}`}>
+                                    <li className='flex'>
 
-                {userdata.user_notice.map((data) => (
+                                        <p>{data.notice_date}</p>
+                                        <p>{String(data.notice_main).length > 20 ? (`${String(data.notice_main).slice(0, 20)}....`) : (data.notice_main)}</p>
+                                        <p>{data.notice_classes.class_name}</p>
 
-                    <li key={data.notice_id} className='flex'>
-                        <p>{data.notice_date}</p>
-                        <p>{data.notice_main}</p>
-                        <p>{data.notice_classes}</p>
-                    </li>
+                                    </li>
+                                </Link>
+                            ))}
+                        </>
+                    )
+                    : (
+                        <p>
+                            現在新着のお知らせはありません。
+                        </p>
+                    )
+                }
 
-                ))}
             </ul>
-        </section>
+        </section >
     )
 }

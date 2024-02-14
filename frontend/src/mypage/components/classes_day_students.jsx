@@ -3,7 +3,7 @@ import { useContext, Fragment } from "react";
 import { UserData } from '../../root/root';
 import { Link } from "react-router-dom";
 
-export default function Classes_day_students() {
+export default function Classes_day_students({ user_classes }) {
     const user = useContext(UserData);
 
     const today = new Date();
@@ -24,7 +24,7 @@ export default function Classes_day_students() {
 
             <section className="grid grid-cols-6 gap-1 p-2">
                 {
-                    user.user_classes.map((data, index) => (
+                    user_classes.map((data, index) => (
                         <Fragment key={data.time_id}>
                             {data.time_classes.class_name == 'blank'
                                 ? (<></>)

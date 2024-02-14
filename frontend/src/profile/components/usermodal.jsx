@@ -1,5 +1,34 @@
+import { useEffect, useState, Fragment } from "react"
+
+
 export default function UserModal({ userdata, setViewUser }) {
-    const usergrade = ['情報システム学科1年生', '情報システム学科2年生', '教師']
+    const usergrade = ['情報システム学科1年生', '情報システム学科2年生', '教師'];
+    const [showLikeCategory, setShowLikeCategory] = useState([]);
+    const fetchLikeCategory = async () => {
+        const data = await fetch(`http://localhost:8000/api/settings/like/set?user=${userdata.user_id}`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then((res) => res.json())
+            .then((data) => data)
+            .catch((err) => console.log(err))
+
+        return data
+    }
+
+
+    useEffect(() => {
+        let ignore = false;
+        fetchLikeCategory().then(res => {
+            if (!ignore) {
+                setShowLikeCategory(res);
+            }
+        })
+
+        return () => {
+            ignore = true
+        }
+    }, [])
     return (
         <div className="absolute w-[80%] bg-white h-[80%] m-auto top-0 left-0 right-0 bottom-0">
             <div className="bg-blue w-full h-14 flex justify-between items-center p-4">
@@ -35,6 +64,32 @@ export default function UserModal({ userdata, setViewUser }) {
             <div className="mx-10 mt-4">
                 <div className="w-full h-10 bg-blue">
                     これすき！
+                </div>
+                < div className="grid grid-cols-6 gap-3">
+                    {
+                        showLikeCategory.length > 0
+                            ? (<>
+                                {showLikeCategory.map((data, index) => (
+                                    <Fragment key={index}>
+                                        {
+                                            <div className="grid justify-center items-center">
+                                                <img
+                                                    src={`http://localhost:8000/api${data.conf_like.like_icon}`}
+                                                    alt=""
+                                                    width={100} height={100} />
+                                            </div>
+
+                                        }
+                                    </Fragment>
+                                ))}
+                            </>)
+                            : (
+                                <p>
+                                    設定されていません
+                                </p>
+                            )
+                    }
+
                 </div>
             </div>
         </div >

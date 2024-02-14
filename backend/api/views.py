@@ -6,7 +6,7 @@ from django.conf import settings
 from rest_framework.response import Response
 from .permissions import IsAdmin
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from django.db.models import Q
 from .models import *
 from .serializers import *
 
@@ -92,11 +92,18 @@ class AuthCheckView(views.APIView):
 
         return Response(status=status.HTTP_200_OK)
 
-
+class MyaccountView(views.APIView):
+    serializer_class = UserSerilaizer
+    permission_classes = [IsAuthenticated, ]
+    def get(self, request, *args, **kwargs):
+        user = UserTable.objects.get(user_id=request.user.user_id)
+        serializer = UserSerilaizer(instance=user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 # 自分のアカウント情報を取得
 # マイページTOPから呼び出される
 # api/myaccount/
-class MyaccountView(views.APIView):
+class MyPageView(views.APIView):
     permission_classes = [IsAuthenticated,]
     serializer_class = MypageDataSerializer
 
@@ -105,8 +112,8 @@ class MyaccountView(views.APIView):
         myuser = UserTable.objects.get(user_id=user_id)
         # 今日の時間割を取得
         day = datetime.now().weekday()
-
-        # 教師なら全て
+        response_data = {}
+        # 教師なら1, 2年のデータを取得
         if(myuser.is_teacher):
             res = []
             # 1年のデータ
@@ -117,48 +124,61 @@ class MyaccountView(views.APIView):
             user_timetable = TimeTable.objects.filter(time_grade=1, time_day=day)
             timetable_serializers = TimeTableSerializer(instance=user_timetable, many=True)
             res.append(timetable_serializers.data)
-
-            
+            notsubmissions = []
         else:
             user_timetable = TimeTable.objects.filter(time_grade=myuser.user_grade, time_day=day)
             timetable_serializers = TimeTableSerializer(instance=user_timetable, many=True)
             res = timetable_serializers.data
-        
-        notice = Notice.objects.order_by('notice_date').all()[:3]
+            notsubmissions = NotSubmissionsView.get(self, request).data
+
+
+        notice = Notice.objects.order_by('notice_date').filter(~Q(notice_main=None))[:3]
         notice_classes = NoticeSerializer(instance=notice, many=True)
 
-        user_serializers = MypageDataSerializer(instance=myuser)
-        
-        
-        response_data = user_serializers.data
         response_data['user_classes'] = res
         response_data['user_notice'] = notice_classes.data
-        return Response(response_data,status=status.HTTP_200_OK)
+        response_data['user_notsubmissions'] = notsubmissions
 
+        return Response(response_data,status=status.HTTP_200_OK)
+    
+# すきなものカテゴリビュー
 class LikeCategoryView(views.APIView):
     serializer_class = LikeCategorySerializer
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, *args, **kwargs):
-        like_ctg = LikeCategory.objects.all()
-        serializer = LikeCategorySerializer(instance=like_ctg, many=True)
-        return Response(serializer.data, status.HTTP_200_OK)
-    
-    def post(self, request, *args, **kwargs):
-        serializer = LikeCategorySerializer(data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+        likecategory = LikeCategory.objects.all()
+        serializer = LikeCategorySerializer(instance=likecategory, many=True)
 
+        return Response(serializer.data)
+
+# マイページすきなもの設定ビュー
+class MypageSettingView(views.APIView):
+    serializer_class = MypageSettingSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, *args, **kwargs):
+        like_ctg = LikeCategory.objects.all()
+        # if 'user' in request.GET:
+        #     user = UserTable.objects.get(user_id=request.GET['user'])
+        #     serializer = MypageSettingSerializer(instance=like_ctg, many=True, user=user)
+        # else:
+        user = UserTable.objects.get(user_id=request.user.user_id)
+        serializer = MypageSettingSerializer(instance=like_ctg, many=True, user=user)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+
+# ユーザーのすきなもの表示
 class LikeUserView(views.APIView):
     serializer_class = LikeUserSerializer
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, *args, **kwargs):
-        user = UserTable.objects.get(user_id=request.user.user_id)
+        if 'user' in request.GET:
+            user = UserTable.objects.get(user_id=request.GET['user'])
+        else:
+            user = UserTable.objects.get(user_id=request.user.user_id)
+
         conf_model = LikeUser.objects.filter(conf_user=user)
         serializer = LikeUserSerializer(instance=conf_model, many=True)
 
@@ -172,11 +192,20 @@ class LikeUserView(views.APIView):
         else:
             return Response({"error": "Not found"},status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, pk, *args, **kwargs):
+        data = LikeUser.objects.filter(conf_id=pk)
+        if data.exists():
+            data.first().delete()
+            return Response({'message':'削除しました。'}, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({"error": "Not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+
 # アカウント情報のアップデート
 # api/myaccount/update
 class MyaccountUpdateView(views.APIView):
     serializer_class = MyaccountUpdateSerializer
-    permission_classes = [IsAuthenticated, IsAdmin, ]
+    permission_classes = [IsAuthenticated, ]
 
     def patch(self, request, *args, **kwargs):
         if UserTable.objects.filter(user_id=request.user.user_id).exists():
@@ -186,21 +215,25 @@ class MyaccountUpdateView(views.APIView):
             return Response({"message": "No User found"}, status=404)
         
         if serializer.is_valid():
+            if 'user_icon' in request.FILES:
+                user.user_icon = request.FILES['user_icon']
+            else:
+                user.user_icon = 'icon/user/default_icon.png'
+            
             user.user_last = serializer.validated_data['user_last']
             user.user_first = serializer.validated_data['user_first']
-            # user.user_icon = request.data['user_icon']
             user.save()
             response_data = {
-                "message" : "情報を更新しました",
                 "user":{
                     "user_last":user.user_last,
                     "user_first":user.user_first,
-                    # "user_icon":user.user_icon
+                    "user_icon":user.user_icon.name
                 }
             }
             return Response(response_data, status=status.HTTP_200_OK)
         else:
-            Response({"message": "User updation failed", "cause": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            print(serializer.errors)
+            return Response({"message": "User updation failed", "cause": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # 授業ぺーじAPI 表示のみ
@@ -249,6 +282,34 @@ class NoticeUpdateView(views.APIView):
         else:
             Response({"error": "Updation failed", "cause": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+# 今日の時間割
+class TodayTimeTableView(views.APIView):
+    def get(self, request, *args, **kwargs):
+        user_id = request.user.user_id
+        myuser = UserTable.objects.get(user_id=user_id)
+        # 今日の時間割を取得
+        day = datetime.now().weekday()
+
+        # 教師なら全て
+        if(myuser.is_teacher):
+            res = []
+            # 1年のデータ
+            user_timetable = TimeTable.objects.filter(time_grade=0, time_day=day)
+            timetable_serializers = TimeTableSerializer(instance=user_timetable, many=True)
+            res.append(timetable_serializers.data)
+            # 2年のデータ
+            user_timetable = TimeTable.objects.filter(time_grade=1, time_day=day)
+            timetable_serializers = TimeTableSerializer(instance=user_timetable, many=True)
+            res.append(timetable_serializers.data)
+        else:
+            user_timetable = TimeTable.objects.filter(time_grade=myuser.user_grade, time_day=day)
+            timetable_serializers = TimeTableSerializer(instance=user_timetable, many=True)
+            res = timetable_serializers.data
+
+
+        return Response(res,status=status.HTTP_200_OK)
+    
+
 # 時間割
 class TimeTableView(views.APIView):
     serializer_class = TimeTableSerializer
@@ -256,14 +317,75 @@ class TimeTableView(views.APIView):
 
     def get(self, request, *args, **kwargs):
         user_grade = request.user.user_grade
+        daydate = ['月', '火', '水', '木', '金']
+        table = [
+            ['', '', '', '', ''],
+            ['', '', '', '', ''],
+            ['', '', '', '', ''],
+            ['', '', '', '', ''],
+            ['', '', '', '', ''],
+            ['', '', '', '', ''],
+        ]
+        grade = ['first', 'second']
+        res = {}
         if user_grade == 2:
-            timetable = TimeTable.objects.all()
-        else:
-            timetable = TimeTable.objects.filter(time_grade=user_grade)
+            for i in range(2):
+                obj = list(TimeTable.objects.order_by('time_day', 'time_section').filter(time_grade=i).values())
+                j = 0
+                day = 0
+                time = 0
+                table = [
+                    ['', '', '', '', ''],
+                    ['', '', '', '', ''],
+                    ['', '', '', '', ''],
+                    ['', '', '', '', ''],
+                    ['', '', '', '', ''],
+                    ['', '', '', '', ''],
+                ]
+                while j < len(obj):
+                    
+                    if day > 4:
+                        day = 0
+                        time += 1
 
-        serializer = TimeTableSerializer(instance=timetable, many=True)
-        # serializer.is_valid()
-        return Response(serializer.data,status=status.HTTP_200_OK)
+                    if time > 5:
+                        time = 0
+                
+
+                    if obj[j]['time_day'] == day and obj[j]['time_section'] == time:
+                        obj[j]['time_classes_id'] = Classes.objects.values().get(class_id=obj[j]['time_classes_id'])
+                        table[time][day] = obj[j]
+                        j += 1
+                        
+
+                    day += 1
+                res[grade[i]] = table
+
+            timetable = res
+        else:
+            obj = list(TimeTable.objects.order_by('time_day', 'time_section').filter(time_grade=request.user.user_grade).values())
+            j = 0
+            day = 0
+            time = 0
+            while j != len(obj):
+                if day > 4:
+                    day = 0
+                    time += 1
+
+                if time > 5:
+                    time = 0
+
+                if obj[j]['time_day'] == day and obj[j]['time_section'] == time:
+                    obj[j]['time_classes_id'] = Classes.objects.values().get(class_id=obj[j]['time_classes_id'])
+                    table[time][day] = obj[j]
+                    j += 1
+                
+                day += 1
+                
+            res[grade[request.user.user_grade]] = table
+            timetable = res
+
+        return Response(timetable, status=status.HTTP_200_OK)
     
     # 時間割を登録
     # 教師、管理者のみ操作可能
@@ -274,7 +396,7 @@ class TimeTableView(views.APIView):
             serializer = TimeTableSerializer(data=request.data, partial=True)
             if serializer.is_valid():
                 if time_model.exists():
-                    if int(request.data['time_grade']) < 1 and int(request.data['time_day']) < 5 and int(request.data['time_section']) < 6:
+                    if int(request.data['time_grade']) < 2 and int(request.data['time_day']) < 5 and int(request.data['time_section']) < 6:
                         time_model = time_model.first()
                         class_model = Classes.objects.get(class_id=request.data['class_id'])
                         time_model.time_classes = class_model
@@ -291,15 +413,92 @@ class TimeTableView(views.APIView):
         else:
             return Response({'error':'権限がありません。'}, status=status.HTTP_401_UNAUTHORIZED)
     
-    def delete(self, request, pk, *args, **kwargs):
-        delete_obj = TimeTable.objects.filter(time_id=pk)
+    def delete(self, request, *args, **kwargs):
+        delete_obj = TimeTable.objects.filter(time_grade=request.data['time_grade'], time_day=request.data['time_day'], time_section=request.data['time_section'])
         if delete_obj.exists():
             delete_obj.first().delete()
             return Response({'message':'削除しました。'}, status=status.HTTP_202_ACCEPTED)
         else:
             
             return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+# 授業編集ぺーじ用の全授業いちらん
+class ClassesView(views.APIView):
+    serializer_class = ClassesSerializer
+    permission_classes = [IsAdmin, ]
+    def get(self, request, *args, **kwargs):
+        first = Classes.objects.filter(class_grade=0)
+        first_serializer = ClassesSerializer(instance=first, many=True)
+        second = Classes.objects.filter(class_grade=1)
+        second_serializer = ClassesSerializer(instance=second, many=True)
+        res = {}
+        res['first'] = first_serializer.data
+        res['second'] = second_serializer.data
+        return Response(res, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        serializer = ClassesSerializer(data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    def patch(self, request, pk, *args, **kwargs):
+        class_model = Classes.objects.filter(class_id=pk)
+        if class_model.exists():
+            serializer = AssignmentSerializer(class_model.first(), data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                print(serializer.errors)
+                return Response({'error':serializer.error}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"error": "Not found"}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def delete(self, request, pk, *args, **kwargs):
+        class_model = Classes.objects.filter(class_id=pk)
+        if class_model.exists():
+            file.deleteDir(dirname=class_model.first().class_name, ctg='assignments')
+            class_model.first().delete()
+            return Response({"message" : "削除しました"}, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({"error": "Not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# 先生のみ、自分の授業いちらん
+class GetMyClassesView(views.APIView):
+    serializer_class = ClassesSerializer
+    permission_classes = [IsAdmin, ]
+    def get(self, request, *args, **kwargs):
+        user = UserTable.objects.get(user_id=request.user.user_id)
+        classes = Classes.objects.filter(class_teacher=user)
+        serializer = ClassesSerializer(instance=classes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
+# 先生のみ、提出済の課題一覧
+class GetAssignmentsView(views.APIView):
+    permission_classes = [IsAdmin, ]
+    def get(self, request, pk, *args, **kwargs):
+        # pkは課題id
+        assignments = Assignment.objects.filter(ast_id=pk)
+        if assignments.exists():
+            assignments = assignments.first()
+            state = AssignmentStatus.objects.filter(state_ast=assignments)
+            return Response(list(state.values()), status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Not found"}, status=status.HTTP_400_BAD_REQUEST)
+    
+# 先生一覧、授業設定時に使える
+class GetTeacherView(views.APIView):
+    permission_classes = [IsAdmin, ]
+    serializer_class = UserSerilaizer
+    def get(self, request, *args, **kwargs):
+        teacher = UserTable.objects.filter(user_grade=2)
+        serializer = UserSerilaizer(instance=teacher, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 # 課題API
 class AssignmentView(views.APIView):
     serializer_class = AssignmentSerializer
@@ -326,6 +525,8 @@ class AssignmentView(views.APIView):
         if request.user.is_superuser or request.user.is_teacher:
             serializer = AssignmentSerializer(data=request.data)
             if serializer.is_valid():
+                file.mkdir(dirname=serializer.validated_data['ast_title'], ctg='assignments')
+                
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
@@ -420,7 +621,23 @@ class AssignmentSubmitionView(views.APIView):
                     return Response({'message':'削除しました'}, status=status.HTTP_202_ACCEPTED)
                 else:
                     return Response({'error':'存在しないファイルです'}, status=status.HTTP_400_BAD_REQUEST)
-            
+
+# 未提出の課題を返す
+class NotSubmissionsView(views.APIView):
+    serializer_class = AssignmentSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, *args, **kwargs):
+        user = UserTable.objects.get(user_id=request.user.user_id)
+        assignment = Assignment.objects.all()
+        serializer = AssignmentSerializer(instance=assignment, many=True)
+        res = []
+        for i in range(len(serializer.data)):
+            state = assignment[i].state_ast.filter(state_std=user)
+            if not state.exists():
+                res.append(serializer.data[i])
+
+        return Response(res, status=status.HTTP_200_OK)
 
 class TeamView(views.APIView):
     serializer_class = TeamSerializer

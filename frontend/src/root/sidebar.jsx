@@ -170,23 +170,23 @@ export default function SideBar() {
                         </li>
                         {/* みんなのプロフィールここまで */}
 
-                        {/* みんなのページここまで */}
+                        {/* マイプロフィール設定ここから */}
                         <li>
                             <Link
                                 to={'settings/'}
                                 className={`
                                 group relative flex justify-center rounded px-2 py-1.5  
-                                ${nowPage == 'setting' ? ('') : ('hover:text-side-gray')}
+                                ${nowPage == 'settings' ? ('') : ('hover:text-side-gray')}
                                 hover:text-side-gray
                                 `}
-                                onClick={() => setNowPage('setting')}
+                                onClick={() => setNowPage('settings')}
                             >
                                 <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
                                     width="214px" height="214px" viewBox="0 0 512 512"
-                                    className={`row-span-1 w-16 h-16 ${nowPage == 'setting' ? ('fill-white') : ('fill-side-gray hover:fill-white')}`} xmlSpace="preserve">
+                                    className={`row-span-1 w-16 h-16 ${nowPage == 'settings' ? ('fill-white') : ('fill-side-gray hover:fill-white')}`} xmlSpace="preserve">
 
                                     <g>
-                                        <path class="st0" d="M472.656,203.996l-28.535-1.742c-4.14-14.519-9.894-28.347-17.09-41.277l18.938-21.402
+                                        <path className="st0" d="M472.656,203.996l-28.535-1.742c-4.14-14.519-9.894-28.347-17.09-41.277l18.938-21.402
 		                                    c14.68-16.586,13.91-41.73-1.75-57.391l-14.402-14.402c-15.661-15.665-40.805-16.43-57.391-1.754l-21.402,18.942
 		                                    c-12.93-7.199-26.762-12.95-41.277-17.09l-1.742-28.535C306.652,17.238,288.332,0,266.183,0h-20.366
 		                                    c-22.149,0-40.473,17.238-41.821,39.344l-1.742,28.535c-14.519,4.14-28.351,9.89-41.277,17.09l-21.402-18.942
@@ -205,7 +205,7 @@ export default function SideBar() {
 
                                 <span
                                     className={`absolute start-full w-28 z-50 top-1/2 text-center -translate-y-1/2 rounded bg-midnight px-2 py-1.5 text-xs font-medium text-white 
-                                    ${nowPage == 'setting' ? ('invisible') : ('invisible group-hover:visible')}
+                                    ${nowPage == 'settings' ? ('invisible') : ('invisible group-hover:visible')}
                                     
                                     `}
                                 >

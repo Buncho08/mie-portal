@@ -1,10 +1,11 @@
 import { redirect, useLoaderData } from "react-router-dom";
 import { UserData } from '../root/root';
 import { useContext, useEffect, useState } from "react";
-import { fetchAssignment } from "./utils/assignment";
 import Notice from './components/notice';
 import Assignment_teacher from "./components/assignment_teacher";
 import Assignment_students from "./components/assignment_students";
+import NotsubmissionStds from "./components/NotsubmissionStds";
+import Assignments from "./components/Assignments";
 import { formatDate } from '../utils/utils';
 
 export async function LoadClassData({ params }) {
@@ -13,24 +14,11 @@ export async function LoadClassData({ params }) {
         method: 'GET',
         credentials: 'include'
     })
-        .then((res) => {
-            if (res.status >= 400) {
-                return res.status;
-            }
-            return res.json();
-        })
+        .then((res) => res.json())
 
-        .then((data) => {
-            return data;
-        });
+        .then((data) => data)
+        .catch((err) => console.log(err))
 
-
-    if (classdata === 401) {
-        return redirect('/login');
-    }
-    if (classdata == 400) {
-        return redirect('/mie/mypage');
-    }
     return { classdata };
 }
 
@@ -38,6 +26,19 @@ export default function Classes() {
     const { classdata } = useLoaderData();
     const userdata = useContext(UserData);
     const [assignmentData, setAssignment] = useState([])
+
+
+    async function fetchAssignment(class_id) {
+        const data = await fetch(`http://localhost:8000/api/assignment/${class_id}`, {
+            method: 'GET',
+            credentials: "include",
+        })
+            .then((res) => res.json())
+            .then((data) => data)
+            .catch((err) => console.log(err))
+
+        return data
+    }
 
     useEffect(() => {
         let ignore = false;
@@ -73,10 +74,9 @@ export default function Classes() {
             <main>
                 <Notice class_id={classdata.class_id} notice_main={classdata.notice_classes[0].notice_main} />
                 {userdata.user_grade === 2
-                    ? <Assignment_teacher formatDate={formatDate} assignment={assignmentData} setAssignment={setAssignment} class_id={classdata.class_id} />
+                    ? (<Assignment_teacher formatDate={formatDate} assignment={assignmentData} setAssignment={setAssignment} class_id={classdata.class_id} />)
                     : <Assignment_students formatDate={formatDate} assignment={assignmentData} setAssignment={setAssignment} class_id={classdata.class_id} />
                 }
-
             </main>
         </>
     )

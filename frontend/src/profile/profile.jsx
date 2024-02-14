@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import User from "./components/user";
 import UserModal from "./components/usermodal";
 
@@ -19,8 +19,9 @@ export async function LoadUsersData() {
 export default function Profile() {
     const { usersdata } = useLoaderData();
     const [viewUser, setViewUser] = useState({});
+
     return (
-        <div className={`h-screen ${Object.keys(viewUser).length > 0 ? 'relative' : ''}`}>
+        <div className={`h-screen ${Object.keys(viewUser).length > 0 && 'relative'}`}>
             {
                 Object.keys(viewUser).length > 0 && (
                     <div className="bg-cover-gray absolute h-full w-full top-0 left-0">

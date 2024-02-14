@@ -19,18 +19,21 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['user_id', 'user_grade', 'user_stdNum', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
+from rest_framework.fields import empty
 class LikeCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = LikeCategory
-        fields = '__all__'
-
+        fields = ['like_id', 'like_name', 'like_icon', 'like_category']
+        
+# すきなもの設定シリアライザ
 class LikeUserSerializer(serializers.ModelSerializer):
     like_id = serializers.PrimaryKeyRelatedField(queryset=LikeCategory.objects.all(), write_only=True)
+    conf_like = LikeCategorySerializer(LikeCategory.objects.all())
     user_id = serializers.PrimaryKeyRelatedField(queryset=UserTable.objects.all(), write_only=True)
     class Meta:
         model = LikeUser
-        fields = ['conf_id', 'like_id', 'user_id']
-
+        fields = ['conf_id','conf_like', 'like_id', 'user_id']
+    
     def create(self, validated_data):
         user_id = validated_data.pop('user_id')
         like_id = validated_data.pop('like_id')
@@ -40,12 +43,31 @@ class LikeUserSerializer(serializers.ModelSerializer):
 
         conf_model = LikeUser.objects.create(**validated_data)
 
-        return conf_model
+        return conf_model        
+
+# マイページすきなもの表示シリアライザ
+from rest_framework.fields import empty
+class MypageSettingSerializer(serializers.ModelSerializer):
+    conf_like = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = LikeCategory
+        fields = ['like_id', 'like_name', 'like_icon', 'like_category', 'conf_like']
+
+    def __init__(self, instance=None, data=empty, user=None, **kwargs):
+        super().__init__(instance, data, **kwargs)
+        self.user = user
     
-        #     class_id = validated_data.pop('class_id')
-        # validated_data['time_classes'] = class_id      
-        # time_model = TimeTable.objects.create(**validated_data)
-        # return time_model
+    # 単一のシリアライザで逆参照！
+    def get_conf_like(self, instance):
+        try:
+            conf_like_abstruct_contents = LikeUserSerializer(LikeUser.objects.get(conf_user=self.user.user_id, conf_like=instance)).data
+            return conf_like_abstruct_contents
+        except Exception as e:
+            conf_like_abstruct_contents = None
+            return conf_like_abstruct_contents
+        
+    
 # ログインシリアライザー
 class LoginSerializer(serializers.ModelSerializer):
     user_id = serializers.CharField(
@@ -75,7 +97,7 @@ class ClassesSerializer(serializers.ModelSerializer):
     # get時は授業担当教師のデータをすべて表示
     class_teacher = UserSerilaizer(read_only=True)
     # postは授業担当教師のprimary keyを指定
-    teacher_id = serializers.PrimaryKeyRelatedField(queryset=UserTable.objects.all(), write_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(queryset=UserTable.objects.all(), write_only=True)
     class Meta:
         model = Classes
         fields = [
@@ -83,8 +105,15 @@ class ClassesSerializer(serializers.ModelSerializer):
             'class_grade',
             'class_name',
             'class_teacher',
-            'teacher_id'
+            'user_id'
         ]
+    
+    def create(self, validated_data):
+        teacher_id = validated_data.pop('user_id')
+        validated_data['class_teacher'] = teacher_id
+        classes_model = Classes.objects.create(**validated_data)
+        return classes_model
+
 
 # 時間割シリアライザ
 class TimeTableSerializer(serializers.ModelSerializer):
@@ -127,19 +156,24 @@ class MypageDataSerializer(serializers.ModelSerializer):
 
 # お知らせ
 class NoticeSerializer(serializers.ModelSerializer):
-    notice_classes = serializers.StringRelatedField()
+    notice_classes = serializers.SerializerMethodField()
     class Meta:
         model = Notice
         fields = ['notice_id', 'notice_classes', 'notice_main', 'notice_date']
 
-
-
+    def get_notice_classes(self, instance):
+        ret = {
+            'class_id':instance.notice_classes.class_id,
+            'class_name':instance.notice_classes.get_name()
+        }
+        return ret
 # 課題
 class AssignmentSerializer(serializers.ModelSerializer):
     class_id = serializers.PrimaryKeyRelatedField(queryset=Classes.objects.all(), write_only=True)
+    ast_classes = serializers.SerializerMethodField()
     class Meta:
         model = Assignment
-        fields = ['ast_id', 'class_id' ,'ast_title', 'ast_disc', 'ast_limit',]
+        fields = ['ast_id', 'class_id' ,'ast_classes', 'ast_title', 'ast_disc', 'ast_limit',]
         
 
     def create(self, validated_data):
@@ -147,6 +181,13 @@ class AssignmentSerializer(serializers.ModelSerializer):
         validated_data['ast_classes'] = class_id      
         ast_model = Assignment.objects.create(**validated_data)
         return ast_model
+    
+    def get_ast_classes(self, instance):
+        res = {
+            'class_id':instance.ast_classes.class_id,
+            'class_name':instance.ast_classes.class_name
+        }
+        return res
 
 # 課題提出
 class AssignmentSubmitionSerializer(serializers.ModelSerializer):

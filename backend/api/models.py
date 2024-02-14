@@ -136,6 +136,9 @@ class Classes(models.Model):
     def __str__(self):
         return f'{self.class_name} : 教員:{self.class_teacher.get_full_name()}'
     
+    def get_name(self):
+        return self.class_name
+    
     def save(self, *args, **kwargs):
         # 教員が選択されたかどうかを確認
         is_teacher = self.class_teacher.is_teacher
@@ -197,7 +200,6 @@ class Assignment(models.Model):
     ast_title = models.TextField(verbose_name='課題名', blank=True, null=True)
     ast_disc = models.TextField(verbose_name='課題説明', blank=True, null=True)
     ast_limit = models.DateField(verbose_name='期限', default=timezone.now)
-
 
 class AssignmentStatus(models.Model):
     class Meta:
@@ -290,11 +292,10 @@ class LikeCategory(models.Model):
         verbose_name_plural = _('好きなものカテゴリ')
 
     CATEGORY_CHOICES = [
-        (0, 'ざっくり'),
-        (1, 'ゲーム'),
-        (2, '趣味'),
-        (3, 'プログラミング'),
-        (4, 'いきもの')
+        (0, 'ゲーム'),
+        (1, '趣味'),
+        (2, 'プログラミング'),
+        (3, 'いきもの')
     ]
     
     like_id = models.AutoField(verbose_name='好きなものID', unique=True, primary_key=True, editable=False)

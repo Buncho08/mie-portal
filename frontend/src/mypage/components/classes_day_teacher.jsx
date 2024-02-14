@@ -3,7 +3,7 @@ import { useContext, Fragment } from "react";
 import { UserData } from '../../root/root';
 import { Link } from "react-router-dom";
 
-export default function Classes_day_teacher() {
+export default function Classes_day_teacher({ user_classes }) {
     const user = useContext(UserData);
     // 年・月・日・曜日を取得
     const today = new Date();
@@ -22,7 +22,7 @@ export default function Classes_day_teacher() {
             </div>
             {/* 1年生 */}
             {
-                user.user_classes.map((data, index) => (
+                user_classes.map((data, index) => (
                     // ユニークなキーがなかったorz
                     <Fragment key={index * 100}>
                         {/* 1年生 */}
