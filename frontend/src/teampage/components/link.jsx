@@ -1,14 +1,17 @@
 import { useState } from "react"
 import Cookies from 'js-cookie';
 import { Link } from "react-router-dom";
-
+import SubTitleBar from "../../public-components/SubTitleBar";
+import LinkModal from "./LinkModal";
 export default function TeamLink({ team_id, teamlink }) {
     const [teamLink, setTeamLink] = useState(teamlink);
+    const [viewFlg, setViewFlg] = useState(false);
 
     const hundleSubmit = async (e) => {
         e.preventDefault();
         const sendData = new FormData();
         sendData.append('team_id', team_id);
+        sendData.append('link_title', e.target.link_title.value)
         sendData.append('link_URL', e.target.link_URL.value)
         const status = await fetch(`http://localhost:8000/api/team/link/${team_id}`, {
             method: 'POST',
@@ -43,36 +46,42 @@ export default function TeamLink({ team_id, teamlink }) {
         setTeamLink(teamLink.filter((data) => data.link_id !== link_id))
     }
     return (
-        <>
-            <div className="bg-slate-400 flex items-center p-2 h-[8%]">
-                <h3 className="text-lg">
-                    リンクを追加する
-                </h3>
-            </div>
-            <div className="bg-white p-2">
-                <form onSubmit={(e) => hundleSubmit(e)}>
-                    <input type="text" name="link_URL" id="link_URL" />
-                    <button type="submit">
-                        送信
-                    </button>
-                </form>
-            </div>
-            <div className="bg-slate-400 flex items-center p-2 h-[8%]">
-                <h3 className="text-lg">
+        <div className="w-full">
+            <>
+                {
+                    viewFlg > 0 && (
+                        <div className="bg-cover-gray absolute h-full w-full top-0 left-0">
+                            <LinkModal hundleSubmit={hundleSubmit} setViewFlg={setViewFlg} viewFlg={viewFlg} />
+                        </div>
+                    )
+                }
+            </>
+            <div className="grid grid-cols-8 px-side py-yspace">
+                <h2 className="grid items-center px-1 text-2xl font-bold col-start-1 col-span-2 row-span-1 row-start-1">
                     共有されたリンク
-                </h3>
+                </h2>
+                <button className="col-start-6 col-span-2 row-span-1 row-start-1
+                    bg-sky-200 rounded-lg my-1 h-10 hover:bg-banner hover:text-white
+                    "
+                    onClick={() => setViewFlg(true)}
+                >
+                    ＋リンクを共有
+                </button>
+                <div className="h-[0.1px] bg-midnight col-span-7 row-start-2">
+
+                </div>
             </div>
             <div className="bg-white p-2">
                 {/* {console.log(teamLink.length)} */}
                 {
                     teamLink.length > 0
                         ? (
-                            <ul>
+                            <ul className="px-side-side text-base">
                                 {
                                     teamLink.map((data) => (
-                                        <li key={data.link_id}>
-                                            <Link to={data.link_URL}>
-                                                {data.link_URL}
+                                        <li key={data.link_id} className="my-2">
+                                            <Link to={data.link_URL} className="hover:text-banner">
+                                                {data.link_title ? (data.link_title) : (data.link_URL)}
                                             </Link>
                                             <button onClick={(e) => hundleDeleteLink(e, data.link_id)}>
                                                 🗑️
@@ -83,12 +92,14 @@ export default function TeamLink({ team_id, teamlink }) {
                             </ul>
                         )
                         : (
-                            <p>
-                                共有されたリンクはありません
-                            </p>
+                            <ul className="px-side-side text-base">
+                                <li className="my-2">
+                                    共有されたリンクはありません
+                                </li>
+                            </ul>
                         )
                 }
             </div>
-        </>
+        </div>
     )
 }

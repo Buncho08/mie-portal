@@ -26,7 +26,13 @@ export default function MypageTop() {
     const { mypagedata } = useLoaderData()
     return (
         <div className="h-screen">
-            <TitleBar title={'マイページ'} />
+            <header
+                className="
+            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around
+            ">
+                <TitleBar title={'マイページ'} />
+
+            </header>
             <>
                 {
                     userdata.user_grade !== 2 && <NotSubmissions user_notsubmissions={mypagedata.user_notsubmissions} />

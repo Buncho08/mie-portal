@@ -54,7 +54,7 @@ class AssignmentAdmin(admin.ModelAdmin):
 admin.site.register(Assignment, AssignmentAdmin)
 
 class AssignmentStatusAdmin(admin.ModelAdmin):
-    list_display = ('state_id', 'state_ast', 'state_res', 'state_std', 'state_flg')
+    list_display = ('state_id', 'state_ast', 'state_date', 'state_res', 'state_std', 'state_flg')
 
 admin.site.register(AssignmentStatus, AssignmentStatusAdmin)
 
@@ -69,7 +69,7 @@ class LinkClassesAdmin(admin.ModelAdmin):
 admin.site.register(LinkClasses, LinkClassesAdmin)
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('team_id', 'team_grade', 'team_name')
+    list_display = ('team_id', 'team_grade', 'team_name', 'team_admin')
 
 admin.site.register(Team, TeamAdmin)
 
@@ -95,6 +95,6 @@ class TeamFileAdmin(admin.ModelAdmin):
 admin.site.register(TeamFile, TeamFileAdmin)
 
 class TeamLinkAdmin(admin.ModelAdmin):
-    list_display = ('link_id', 'link_team', 'link_URL')
+    list_display = ('link_id', 'link_team', 'link_URL', 'link_title')
 
 admin.site.register(TeamLink, TeamLinkAdmin)

@@ -87,8 +87,8 @@ export default function Chat({ teammessage, team_id }) {
         setChatData(message.team_message);
     }
     return (
-        <div className="w-[30%] bg-blue h-full">
-            <div className="bg-slate-300 flex p-2 h-[8%] justify-between items-center">
+        <div className="w-[40%] h-full">
+            <div className="bg-white border-b border-black flex p-2 h-[9.1%] justify-between items-center">
                 <h3 className="text-lg">
                     チャット
                 </h3>
@@ -96,8 +96,8 @@ export default function Chat({ teammessage, team_id }) {
                     🔁
                 </button>
             </div>
-            <div></div>
-            <ul className="max-h-[80%] overflow-y-scroll">
+
+            <ul className="max-h-[80%] h-[80%] overflow-y-scroll">
                 {
                     chatData.length > 0
                         ? (
@@ -112,11 +112,13 @@ export default function Chat({ teammessage, team_id }) {
                             ))
                         )
                         : (
-                            <>
-                                <p>
-                                    メッセージを送ってみましょう！
-                                </p>
-                            </>
+                            <div className="h-full grid items-center justify-center">
+                                <div className="bg-white h-24 grid items-center justify-center w-52">
+                                    <p>
+                                        メッセージを送ってみましょう！
+                                    </p>
+                                </div>
+                            </div>
                         )
                 }
             </ul>

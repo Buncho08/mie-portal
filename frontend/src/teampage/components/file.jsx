@@ -2,10 +2,13 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 import Cookies from 'js-cookie';
 import { saveAs } from 'file-saver';
+import SubTitleBar from '../../public-components/SubTitleBar'
+import FileModal from "./FileModal";
 
 export default function File({ team_id, teamfile }) {
-    const [file, setFile] = useState(teamfile)
-    const [filename, setFilename] = useState('')
+    const [file, setFile] = useState(teamfile);
+    const [filename, setFilename] = useState('');
+    const [viewFlg, setViewFlg] = useState(false);
 
     const hundleUploadFile = async (e) => {
         e.preventDefault();
@@ -59,38 +62,44 @@ export default function File({ team_id, teamfile }) {
     }
 
     return (
-        <>
-            <div className="bg-slate-400 flex items-center p-2 h-[8%]">
-                <h3 className="text-lg">
-                    ファイルをおくる
-                </h3>
-            </div>
-            <div className="bg-white p-2">
-                <form onSubmit={hundleUploadFile}>
-                    <input type="text" name="file_name" id="file_name" defaultValue={filename ? (filename.split('.').slice(0, -1)) : ('')} className="border border-gray-800 mx-2" />
-                    <input type="text" name="file_name_ex" id="file_name_ex" readOnly defaultValue={filename ? (`.${filename.split('.')[filename.split('.').length - 1]}`) : ('')} />
-                    <input type="file" name="file_obj" id="file_obj" onInput={(e) => { setFilename(e.target.files[0].name) }} />
-                    <button type="submit" className="border border-gray-900">
-                        送信
-                    </button>
-                </form>
-            </div>
-            <div className="bg-slate-400 flex items-center p-2 h-[8%]">
-                <h3 className="text-lg">
+        <div className="w-full">
+            <>
+                {
+                    viewFlg && (
+                        <div className="bg-cover-gray absolute h-full w-full top-0 left-0">
+                            <FileModal hundleUploadFile={hundleUploadFile} setFilename={setFilename} filename={filename} setViewFlg={setViewFlg} viewFlg={viewFlg} />
+                        </div>
+                    )
+                }
+            </>
+            <div className="w-full grid grid-cols-8 px-side py-yspace">
+                <h2 className="grid items-center px-1 text-2xl font-bold col-start-1 col-span-2 row-span-1 row-start-1">
                     共有されたファイル
-                </h3>
+                </h2>
+                <button className="col-start-6 col-span-2 row-span-1 row-start-1
+                    bg-sky-200 rounded-lg my-1 h-10 hover:bg-banner hover:text-white
+                    "
+                    onClick={() => setViewFlg(true)}
+                >
+                    ＋ファイルを共有
+                </button>
+                <div className="h-[0.1px] bg-midnight col-span-7 row-start-2">
+
+                </div>
             </div>
-            <div className="bg-white p-2">
+            <div className="p-2">
 
                 {
                     file.length > 0
                         ? (
-                            <ul>
+                            <ul className="px-side-side text-base">
                                 {
                                     file.map((data) => (
-                                        <li key={data.file_id}>
-                                            <Link onClick={(e) => downloadFile(e, `http://localhost:8000/api/file/team/${data.file_name}`, data.file_name.split('/')[1])}>
-                                                {data.file_name.split('/')[1]}
+                                        <li key={data.file_id} className="my-2">
+                                            <Link
+                                                className="hover:text-banner"
+                                                onClick={(e) => downloadFile(e, `http://localhost:8000/api/file/team/${data.file_name}`, data.file_name.split('/')[1])}>
+                                                ・ {data.file_name.split('/')[1]}
                                             </Link>
                                             <button onClick={(e) => hundleDeleteFile(e, data.file_id)}>
                                                 🗑️
@@ -101,12 +110,14 @@ export default function File({ team_id, teamfile }) {
                             </ul>
                         )
                         : (
-                            <p>
-                                共有されたファイルはありません
-                            </p>
+                            <ul className="px-side-side text-base">
+                                <li className="my-2">
+                                    共有されたファイルはありません
+                                </li>
+                            </ul>
                         )
                 }
             </div>
-        </>
+        </div>
     )
 }

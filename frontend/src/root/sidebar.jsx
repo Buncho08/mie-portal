@@ -221,7 +221,7 @@ export default function SideBar() {
                             user.user_grade === 2 && (
                                 <li>
                                     <Link
-                                        to={'timetable/'}
+                                        to={'classes/'}
                                         className={`
                                     group relative flex justify-center rounded px-2 py-1.5  
                                     ${nowPage == 'timetable' ? ('') : ('hover:text-side-gray')}
@@ -256,7 +256,7 @@ export default function SideBar() {
                                                 <rect x="174.928" y="185.417" className="st0" width="63.591" height="63.582"></rect>
                                             </g>
                                         </svg>
-                                                                                                                                                                                                                                                                                                                                                
+
                                         <span
                                             className={`absolute start-full w-20 z-50 top-1/2 text-center -translate-y-1/2 rounded bg-midnight px-2 py-1.5 text-xs font-medium text-white 
                                         ${nowPage == 'timetable' ? ('invisible') : ('invisible group-hover:visible')}

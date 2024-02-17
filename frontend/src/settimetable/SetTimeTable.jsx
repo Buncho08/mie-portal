@@ -1,8 +1,9 @@
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData, Link } from "react-router-dom"
 import { useState } from "react"
 import TimeTable from "./components/timetable"
-import CreateClasses from "./components/CreateClasses"
 import Cookies from 'js-cookie';
+import TitleBar from "../public-components/TitleBar";
+import SubTitleBar from "../public-components/SubTitleBar";
 
 export async function LoadTimeTableData(params) {
     const timetable = await fetch('http://localhost:8000/api/timetable', {
@@ -21,21 +22,11 @@ export async function LoadTimeTableData(params) {
         .then((data) => data)
         .catch((err) => console.log(err))
 
-
-    const teachers = await fetch('http://localhost:8000/api/userView/teacher', {
-        method: 'GET',
-        credentials: 'include'
-    })
-        .then((res) => res.json())
-        .then((data) => data)
-        .catch((err) => console.log(err))
-    return { timetable, classes, teachers }
+    return { timetable, classes }
 }
 
 export default function SetTimeTable(params) {
-    const { timetable, classes, teachers } = useLoaderData();
-    const [firstClasses, setFirstClasses] = useState(classes.first);
-    const [secondClasses, setSecondClasses] = useState(classes.second);
+    const { timetable, classes } = useLoaderData();
 
     const hundleUpdateTable = async (e, time_day, time_section, time_grade) => {
         const sendData = new FormData();
@@ -74,58 +65,30 @@ export default function SetTimeTable(params) {
             .catch((err) => console.log(err))
     }
 
-    const hundleSubmit = async (e) => {
-        e.preventDefault();
-        const sendData = new FormData();
-        sendData.append('user_id', e.target.user_id.value)
-        sendData.append('class_name', e.target.class_name.value)
-        sendData.append('class_grade', e.target.class_grade.value)
-        const status = await fetch('http://localhost:8000/api/classes', {
-            method: 'POST',
-            body: sendData,
-            headers: {
-                'X-CSRFToken': `${Cookies.get('csrftoken')}`,
-            },
-            credentials: "include",
-            mode: "cors",
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log(data)
-                if (e.target.class_grade.value == 0) {
-                    setFirstClasses([...firstClasses, data])
-                }
-                else {
-                    setSecondClasses([...secondClasses, data])
-                }
-            })
-            .catch((err) => console.log(err))
 
-    }
     return (
-        <>
-            <div className="w-full h-14 bg-blue p-2 flex items-center">
-                <h2 className="text-2xl">
-                    時間割の編集
-                </h2>
-            </div>
-            <div>
-                <p>
-                    1年生
-                </p>
-            </div>
-            <TimeTable timetable={timetable.first} hundleUpdateTable={hundleUpdateTable} classes={firstClasses} time_grade={0} />
-            <div>
-                2年生
-            </div>
-            <TimeTable timetable={timetable.second} hundleUpdateTable={hundleUpdateTable} classes={secondClasses} time_grade={1} />
+        <div className="h-screen">
+            <header
+                className="
+            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around
+            ">
+                <TitleBar title={"時間割の設定"} />
 
-            <div>
-                新しく授業を作成
-            </div>
+                <div className="self-end flex gap-3 items-center m-4 w-96 text-xl">
+                    <Link
+                        to={"http://localhost:3000/mie/classes"}
+                        className="grid justify-center items-center text-banner hover:text-midnight h-12 w-32 rounded-lg">
+                        授業の設定へ
+                    </Link>
+                </div>
+            </header>
 
-            <CreateClasses teachers={teachers} hundleSubmit={hundleSubmit} />
-            
-        </>
+            <div className="mx-auto w-[80%] ">
+                <SubTitleBar title={'1年生'} />
+                <TimeTable timetable={timetable.first} hundleUpdateTable={hundleUpdateTable} classes={classes.first} time_grade={0} />
+                <SubTitleBar title={'2年生'} />
+                <TimeTable timetable={timetable.second} hundleUpdateTable={hundleUpdateTable} classes={classes.second} time_grade={1} />
+            </div>
+        </div>
     )
 }

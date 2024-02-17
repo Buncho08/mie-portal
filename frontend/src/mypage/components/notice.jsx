@@ -1,5 +1,5 @@
 import { UserData } from '../../root/root';
-import { useContext } from "react";
+import { Fragment, useContext } from "react";
 import { Link } from 'react-router-dom';
 import SubTitleBar from '../../public-components/SubTitleBar';
 
@@ -8,22 +8,54 @@ export default function Notice({ user_notice }) {
     return (
         <section>
             <SubTitleBar title={'おしらせ'} />
-            <ul className='px-side'>
+            <table className="mx-side w-3/6 text-left">
+                <thead className="border-b border-gray-200 ">
+                    <tr>
+                        <td>
+                            更新日
+                        </td>
+                        <td>
+                            本文
+                        </td>
+                        <td>
+                            授業
+                        </td>
+                    </tr>
+                </thead>
                 {user_notice.length > 0
                     ? (
-                        <>
+                        <tbody>
                             {user_notice.map((data) => (
-                                <Link key={data.notice_id} to={`http://localhost:3000/mie/class/${data.notice_classes.class_id}`}>
-                                    <li className='flex'>
-
-                                        <p>{data.notice_date}</p>
-                                        <p>{String(data.notice_main).length > 20 ? (`${String(data.notice_main).slice(0, 20)}....`) : (data.notice_main)}</p>
-                                        <p>{data.notice_classes.class_name}</p>
-
-                                    </li>
-                                </Link>
+                                <Fragment key={data.notice_id}>
+                                    {
+                                        data.notice_main !== "" && (< tr key={data.notice_id} className='hover:text-banner' >
+                                            <td className='self-end font-semibold py-2'>
+                                                <Link
+                                                    className='block'
+                                                    to={`http://localhost:3000/mie/class/${data.notice_classes.class_id}`}>
+                                                    {data.notice_date}
+                                                </Link>
+                                            </td>
+                                            <td>
+                                                <Link
+                                                    className='block'
+                                                    to={`http://localhost:3000/mie/class/${data.notice_classes.class_id}`}>
+                                                    {String(data.notice_main).length > 20 ? (`${String(data.notice_main).slice(0, 20)}....`) : (data.notice_main)}
+                                                </Link>
+                                            </td>
+                                            <td className="self-end">
+                                                <Link
+                                                    className='block'
+                                                    to={`http://localhost:3000/mie/class/${data.notice_classes.class_id}`}>
+                                                    {data.notice_classes.class_name}
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                        )
+                                    }
+                                </Fragment>
                             ))}
-                        </>
+                        </tbody>
                     )
                     : (
                         <li>
@@ -32,7 +64,7 @@ export default function Notice({ user_notice }) {
                     )
                 }
 
-            </ul>
+            </table>
         </section >
     )
 }

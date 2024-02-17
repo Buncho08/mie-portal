@@ -23,6 +23,7 @@ urlpatterns = [
     path('timetable', views.TimeTableView.as_view(), name='timetable'),
     path('timetable/today', views.TodayTimeTableView.as_view(), name='todaytimetable'),
     path('team', views.TeamView.as_view(), name='team'),
+    path('team/change/<int:pk>', views.TeamView.as_view(), name='teampatch'),
     path('team/chat/<int:pk>', views.TeamChatView.as_view(), name='teamchat'),
     path('team/file/<int:pk>', views.TeamFileView.as_view(), name='teamfile'),
     path('team/link/<int:pk>', views.TeamLinkView.as_view(), name='teamlink'),

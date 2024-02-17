@@ -218,7 +218,7 @@ class MyaccountUpdateView(views.APIView):
             if 'user_icon' in request.FILES:
                 user.user_icon = request.FILES['user_icon']
             else:
-                user.user_icon = 'icon/user/default_icon.png'
+                user.user_icon = 'icon/user/default_icon.webp'
             
             user.user_last = serializer.validated_data['user_last']
             user.user_first = serializer.validated_data['user_first']
@@ -439,15 +439,19 @@ class ClassesView(views.APIView):
     def post(self, request, *args, **kwargs):
         serializer = ClassesSerializer(data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            print(serializer.validated_data['class_name'])
+            if file.mkdir(dirname=serializer.validated_data['class_name'], ctg='assignments'):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'error':'既に存在する授業名です'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error':'既に存在する授業名です'}, status=status.HTTP_400_BAD_REQUEST)
         
     def patch(self, request, pk, *args, **kwargs):
         class_model = Classes.objects.filter(class_id=pk)
         if class_model.exists():
-            serializer = AssignmentSerializer(class_model.first(), data=request.data, partial=True)
+            serializer = ClassesSerializer(class_model.first(), data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -460,6 +464,7 @@ class ClassesView(views.APIView):
     def delete(self, request, pk, *args, **kwargs):
         class_model = Classes.objects.filter(class_id=pk)
         if class_model.exists():
+
             file.deleteDir(dirname=class_model.first().class_name, ctg='assignments')
             class_model.first().delete()
             return Response({"message" : "削除しました"}, status=status.HTTP_202_ACCEPTED)
@@ -484,9 +489,10 @@ class GetAssignmentsView(views.APIView):
         # pkは課題id
         assignments = Assignment.objects.filter(ast_id=pk)
         if assignments.exists():
-            assignments = assignments.first()
+            assignments = assignments.first()   
             state = AssignmentStatus.objects.filter(state_ast=assignments)
-            return Response(list(state.values()), status=status.HTTP_200_OK)
+            serializer = AssignmentStatusSerializer(instance=state, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Not found"}, status=status.HTTP_400_BAD_REQUEST)
     
@@ -525,9 +531,12 @@ class AssignmentView(views.APIView):
         if request.user.is_superuser or request.user.is_teacher:
             serializer = AssignmentSerializer(data=request.data)
             if serializer.is_valid():
-                file.mkdir(dirname=serializer.validated_data['ast_title'], ctg='assignments')
-                
-                serializer.save()
+                class_name = Classes.objects.get(class_id=pk).class_name
+                dirname = f"{class_name}/{serializer.validated_data['ast_title']}"
+                if file.mkdir(dirname=dirname, ctg='assignments'):
+                    serializer.save()
+                else:
+                    return Response({'error':'すでに存在している名前です。'})
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return Response({'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -539,6 +548,8 @@ class AssignmentView(views.APIView):
         if ast_model.exists():
             serializer = AssignmentSerializer(ast_model.first(), data=request.data, partial=True)
             if serializer.is_valid():
+                dirname = f'{ast_model.first().ast_classes.class_name}/{request.data["ast_title"]}'
+                file.renameDir(dirname=dirname, oldname=ast_model.first().ast_title, ctg='assignments')
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
@@ -551,7 +562,8 @@ class AssignmentView(views.APIView):
     def delete(self, request, pk, *args, **kwargs):
         ast_model = Assignment.objects.filter(ast_id=pk)
         if ast_model.exists():
-            if file.deleteDir(dirname=ast_model.first().ast_title, ctg='assignments'):
+            dirname = f'{ast_model.first().ast_classes.class_name}/{ast_model.first().ast_title}'
+            if file.deleteDir(dirname=dirname,ctg='assignments'):
                 ast_model.first().delete()
                 return Response({"message" : "削除しました"}, status=status.HTTP_202_ACCEPTED)
             else:
@@ -592,11 +604,11 @@ class AssignmentSubmitionView(views.APIView):
                 request.data['ast_id'] = pk
                 request.data['user_id'] = user.user_id
                 request.data['state_flg'] = True
-                request.data['state_res'] = request.FILES['assignment_file'].name
+                request.data['state_res'] = f"{user.user_stdNum}_{ast_model.ast_title}.{request.FILES['assignment_file'].name.split('.')[-1]}"
                 serializer = AssignmentSubmitionSerializer(data=request.data)
                 if serializer.is_valid():
-                    # 課題名_ユーザー学生番号 という形式で自動保存もできるけどどうでしょうか。
-                    if file.mkdirToSavefile(file=request.FILES['assignment_file'], dirname=ast_model.ast_title, ctg='assignments'):
+                    dirname = f'{ast_model.ast_classes.class_name}/{ast_model.ast_title}'
+                    if file.mkdirToSavefile(file=request.FILES['assignment_file'], name=f"{user.user_stdNum}_{ast_model.ast_title}.{request.FILES['assignment_file'].name.split('.')[-1]}",dirname=dirname, ctg='assignments'):
                         serializer.save()
                         return Response(serializer.data, status=status.HTTP_200_OK)
                     else:
@@ -615,8 +627,8 @@ class AssignmentSubmitionView(views.APIView):
             state_model = AssignmentStatus.objects.filter(state_id=pk)
             if state_model.exists():
                 state_model = state_model.first()
-
-                if file.deleteFile(dirname=state_model.state_ast.ast_title, filename=state_model.state_res, ctg='assignments'):
+                dirname = f'{state_model.state_ast.ast_classes.class_name}/{state_model.state_ast.ast_title}'
+                if file.deleteFile(dirname=dirname, filename=state_model.state_res, ctg='assignments'):
                     state_model.delete()
                     return Response({'message':'削除しました'}, status=status.HTTP_202_ACCEPTED)
                 else:
@@ -667,6 +679,23 @@ class TeamView(views.APIView):
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+    def patch(self, request, pk, *args, **kwargs):
+        team_model = Team.objects.filter(team_id=pk)
+        if team_model.exists():
+            serializer = TeamSerializer(team_model.first(), data=request.data, partial=True)
+            if serializer.is_valid():
+                dirname = f'{request.data["team_name"]}'
+                if file.renameDir(dirname=dirname, oldname=team_model.first().team_name, ctg='team'):
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                else:
+                    return Response({'error':'同じ名前のチームが存在しています。'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                print(serializer.errors)
+                return Response({'error':serializer.error}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"error": "Not found"}, status=status.HTTP_400_BAD_REQUEST)
+        
 # メッセージとチームページ情報API切り分けたい
 
 class TeamChatView(views.APIView):
@@ -678,12 +707,14 @@ class TeamChatView(views.APIView):
         team_model = Team.objects.filter(team_id=pk)
         if team_model.exists():
             team_model = team_model.first()
+            team_serializer = TeamSerializer(instance=team_model)
             message_model = Message.objects.filter(message_team=team_model)
             serializer = TeamChatSerializer(instance=message_model, many=True)
             res = {
                 'team_id':team_model.team_id,
                 'team_name':team_model.team_name,
-                'team_message':serializer.data
+                'team_message':serializer.data,
+                'team_admin':team_serializer.data['team_admin']
             }
             return Response(res, status=status.HTTP_200_OK)
         else:

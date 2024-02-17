@@ -1,12 +1,42 @@
 import Cookies from 'js-cookie';
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { UserData } from '../../root/root';
+import SubTitleBar from '../../public-components/SubTitleBar';
+import SectionTitleBar from '../../public-components/SectionTitleBar'
+import { AssignmentArea } from './AssignmentArea';
+import SubmssionAssignmentArea from './SubmmisionAssignmentArea';
+import Alert from '../../public-components/Alert';
 
+export default function Assignment_students({ setAlert, class_id }) {
+    const [assignmentData, setAssignment] = useState([]);
 
-export default function Assignment_students({ formatDate, assignment, setAssignment }) {
+    async function fetchAssignment(class_id) {
+        const data = await fetch(`http://localhost:8000/api/assignment/${class_id}`, {
+            method: 'GET',
+            credentials: "include",
+        })
+            .then((res) => res.json())
+            .then((data) => data)
+            .catch((err) => console.log(err))
+
+        return data
+    }
+
+    useEffect(() => {
+        let ignore = false;
+        fetchAssignment(class_id).then(res => {
+            if (!ignore) {
+                setAssignment(res)
+            }
+        })
+
+        return () => {
+            ignore = true
+        }
+    }, [])
 
     const fetchSubmittion = async (ast_id, sendData) => {
-        const res = await fetch(`http://localhost:8000/api/assignment/submition/${ast_id}`, {
+        const status = await fetch(`http://localhost:8000/api/assignment/submition/${ast_id}`, {
             method: 'POST',
             body: sendData,
             headers: {
@@ -16,39 +46,55 @@ export default function Assignment_students({ formatDate, assignment, setAssignm
             mode: "cors",
         })
             .then((res) => res.json())
-            .then((data) => {
-                if (data.error) {
-                    return false
-                }
-                else {
-                    setAssignment(assignment.map((item) => (
-                        item.ast_id === data.state_ast.ast_id
-                            ? (
-                                {
-                                    "ast_id": item.ast_id,
-                                    "ast_title": item.ast_title,
-                                    "ast_disc": item.ast_disc,
-                                    "ast_limit": item.ast_limit,
-                                    "user_state": true
-                                }
-                            )
-                            : item
-                    )));
-                }
-            })
+            .then((data) => data)
             .catch((err) => console.log(err))
 
+        console.log(status);
+        if (!status) {
+            setAlert(
+                {
+                    'message': 'エラー',
+                    'disc': '提出したファイルを確認してください。複数ファイルはZipフォルダにしてください。',
+                    'status': 1
+                }
+            )
+
+            return <></>
+        }
+        setAssignment(assignmentData.map((item) => (
+            item.ast_id === status.state_ast.ast_id
+                ? (
+                    {
+                        "ast_id": item.ast_id,
+                        "ast_title": item.ast_title,
+                        "ast_disc": item.ast_disc,
+                        "ast_limit": item.ast_limit,
+                        "user_state": true
+                    }
+                )
+                : item
+        )));
+        setAlert({
+            'message': '提出しました!',
+            'disc': 'おつかれさまでした✨',
+            'status': 0
+        })
     }
     // ドラッグアンドドロップで提出
     const hundleDropFile = async (e, ast_id) => {
         e.preventDefault();
 
         // MdNさんから拝借
-        if (e.dataTransfer.items) {
+        if (e.dataTransfer.items.length === 1) {
             // DataTransferItemList インターフェイスを使用して、ファイルにアクセスする
             [...e.dataTransfer.items].forEach((item, i) => {
                 // ドロップしたものがファイルでない場合は拒否する
                 if (item.name == '') {
+                    setAlert({
+                        'message': 'エラー',
+                        'disc': '不正なファイルです。複数ファイルはzipにして提出してください。',
+                        'status': 1
+                    })
                     return false
                 }
                 if (item.kind === "file") {
@@ -57,7 +103,22 @@ export default function Assignment_students({ formatDate, assignment, setAssignm
                     sendData.append('assignment_file', file)
                     const status = fetchSubmittion(ast_id, sendData)
                 }
+                else {
+                    setAlert({
+                        'message': 'エラー',
+                        'disc': '不正なファイルです。複数ファイルはzipにして提出してください。',
+                        'status': 1
+                    })
+                    return false
+                }
             });
+        }
+        else {
+            setAlert({
+                'message': 'エラー',
+                'disc': '複数ファイルはzipにまとめて提出してください。',
+                'status': 1
+            })
         }
         return <></>
     }
@@ -67,39 +128,22 @@ export default function Assignment_students({ formatDate, assignment, setAssignm
     }
     return (
         <section>
-            <div className="bg-slate-400 p-2">
-                <h3 className="text-lg">
-                    提出物
-                </h3>
-            </div>
-            <div className="bg-slate-400 p-2">
-                <h3 className="text-base">
-                    未提出
-                </h3>
-            </div>
-            <div className="bg-white p-2 grid grid-cols-3 ">
+            <SubTitleBar title={'提出物'} />
+            <p className='mx-side-side'>
+                ✅課題のエリアにドラッグアンドドロップで提出してください
+            </p>
+            <SectionTitleBar title={'未提出'} />
+            <div className="bg-white p-2 mx-side-side grid grid-cols-4 ">
                 {
-                    assignment.length > 0
+                    assignmentData.length > 0
                         ? (<>
                             {
-                                assignment.map((data) => (
+                                assignmentData.map((data) => (
                                     <Fragment key={data.ast_id}>
                                         {data.user_state
                                             ? <></>
                                             : (
-                                                <div className={`col-span-1 border-4 h-40`}
-                                                    onDrop={(e) => hundleDropFile(e, data.ast_id)} onDragOver={hundleDragOver}
-                                                >
-                                                    <p>
-                                                        {data.ast_title}
-                                                    </p>
-                                                    <p>
-                                                        {data.ast_disc}
-                                                    </p>
-                                                    <p>
-                                                        期限 : {formatDate(data.ast_limit)}
-                                                    </p>
-                                                </div>
+                                                <AssignmentArea data={data} hundleDropFile={hundleDropFile} hundleDragOver={hundleDragOver} />
                                             )
                                         }
                                     </Fragment>
@@ -119,54 +163,32 @@ export default function Assignment_students({ formatDate, assignment, setAssignm
 
 
             {
-                assignment.length > 0
-                    ? (
-                        <>
-                            <div className="bg-slate-400 p-2">
-                                <h3 className="text-base">
-                                    提出済
-                                </h3>
-                            </div>
-                            <div className="bg-white p-2 grid grid-cols-3 ">
+                assignmentData.length > 0
+                && (
+                    <>
+                        <SectionTitleBar title={'提出済'} />
+                        <div className="bg-white p-2 mx-side-side grid grid-cols-4 ">
 
-                                {
-                                    assignment.map((data, index) => (
-                                        <Fragment key={data.ast_id}>
-                                            {data.user_state
-                                                ? (
-                                                    <div className={`col-span-1 border-4 h-40 bg-tahiti`}
-                                                    >
-                                                        <p>
-                                                            {data.ast_title}
-                                                        </p>
-                                                        <p>
-                                                            {data.ast_disc}
-                                                        </p>
-                                                        <p>
-                                                            期限 : {formatDate(data.ast_limit)}
-                                                        </p>
-                                                    </div>
-                                                )
-                                                : <Fragment key={index * 1000}></Fragment>
-                                            }
-                                        </Fragment>
-                                    ))
-                                }
-                            </div>
-                        </>
-                    )
-                    : (
-                        <>
-                            <p>
-                                提出済の課題はありません。
-                            </p>
-                        </>
-                    )
+                            {
+                                assignmentData.map((data, index) => (
+                                    <Fragment key={data.ast_id}>
+                                        {data.user_state
+                                            ? (
+                                                <SubmssionAssignmentArea data={data} />
+                                            )
+                                            : <Fragment key={index * 1000}></Fragment>
+                                        }
+                                    </Fragment>
+                                ))
+                            }
+                        </div>
+                    </>
+                )
             }
 
 
 
 
-        </section>
+        </section >
     )
 }

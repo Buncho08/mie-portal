@@ -1,7 +1,12 @@
 import { Fragment, useState } from "react";
 import { useLoaderData, Link } from "react-router-dom";
-import AddTeam from "./addTeam";
+import AddTeam from "./components/addTeam";
 import Cookies from 'js-cookie';
+import TitleBar from '../public-components/TitleBar';
+import SubTitleBar from '../public-components/SubTitleBar';
+import TeamList from "./components/TeamList";
+import { UserData } from '../root/root';
+import { useContext } from "react";
 
 export async function LoadTeamData() {
     const teamlist = await fetch('http://localhost:8000/api/team', {
@@ -19,12 +24,15 @@ export async function LoadTeamData() {
 export default function TeamTop() {
     const { teamlist } = useLoaderData();
     const [team, setTeam] = useState(teamlist);
+    const [viewFlg, setViewFlg] = useState(0);
+    const userdata = useContext(UserData);
 
     const hundleAddTeam = async (e) => {
         e.preventDefault();
         const sendData = new FormData();
         sendData.append('team_grade', e.target.team_grade.value);
         sendData.append('team_name', e.target.team_name.value);
+        sendData.append('user_id', userdata.user_id);
         const status = await fetch('http://localhost:8000/api/team', {
             method: 'POST',
             body: sendData,
@@ -39,55 +47,82 @@ export default function TeamTop() {
             .catch((err) => console.log(err))
     }
 
-    return (
-        <div className="w-full h-screen">
-            <div className="w-full h-14 bg-blue p-2 flex items-center">
-                <h2 className="text-2xl">
-                    チーム
-                </h2>
-            </div>
+    const hundleViewModal = (e, grade) => {
+        e.preventDefault();
+        setViewFlg(grade);
+        return <></>
+    }
 
+    return (
+        <div className={`h-screen`}>
+            <>
+                {
+                    viewFlg > 0 && (
+                        <div className="bg-cover-gray absolute h-full w-full top-0 left-0">
+                            <AddTeam hundleAddTeam={hundleAddTeam} setViewFlg={setViewFlg} viewFlg={viewFlg} />
+                        </div>
+                    )
+                }
+            </>
+
+            <header
+                className="
+            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around
+            ">
+                <TitleBar title={'チームスレッド'} />
+
+            </header>
             <div id="main">
-                <div id="first" className="bg-slate-400 p-2 flex items-center justify-between">
-                    <h3 className="text-lg">
+                <div className="grid grid-cols-6 px-side py-yspace">
+                    <h2 className="grid items-center px-1 text-2xl font-bold col-start-1 col-span-2 row-span-1 row-start-1">
                         1年生
-                    </h3>
-                    <AddTeam hundleAddTeam={hundleAddTeam} team_grade={0} />
+                    </h2>
+                    <button className="col-start-3 col-span-1 row-span-1 row-start-1
+                    bg-sky-200 rounded-lg my-1 h-10 hover:bg-banner hover:text-white
+                    "
+                        onClick={(e) => hundleViewModal(e, 1)}
+                    >
+                        ＋1年生のスレッドを作成する
+                    </button>
+                    <div className="h-[0.1px] w-7/12 bg-midnight col-span-6 row-start-2">
+
+                    </div>
                 </div>
                 <div>
-                    <ul className="p-2 text-base">
-                        {team.map((data) => (
-                            <Fragment key={data.team_id && data.team_id}>
+                    <ul className="px-side-side text-base">
+                        {team.map((data, index) => (
+                            <Fragment key={data.team_id ? data.team_id : index * 11}>
                                 {
                                     data.team_grade == 0 && (
-                                        <li>
-                                            <Link key={data.team_id} to={`${data.team_id}`} className="hover:text-banner">
-                                                {data.team_name}
-                                            </Link>
-                                        </li>
+                                        <TeamList data={data} />
                                     )
                                 }
                             </Fragment>
                         ))}
                     </ul>
                 </div>
-                <div id="second" className="bg-slate-400 p-2 flex items-center justify-between">
-                    <h3 className="text-lg">
+                <div className="grid grid-cols-6 px-side py-yspace">
+                    <h2 className="grid items-center px-1 text-2xl font-bold col-start-1 col-span-2 row-span-1 row-start-1">
                         2年生
-                    </h3>
-                    <AddTeam hundleAddTeam={hundleAddTeam} team_grade={1} />
+                    </h2>
+                    <button className="col-start-3 col-span-1 row-span-1 row-start-1
+                    bg-sky-200 rounded-lg my-1 h-10 hover:bg-banner hover:text-white
+                    "
+                        onClick={(e) => hundleViewModal(e, 2)}
+                    >
+                        ＋2年生のスレッドを追加する
+                    </button>
+                    <div className="h-[0.1px] w-7/12 bg-midnight col-span-6 row-start-2">
+
+                    </div>
                 </div>
                 <div>
-                    <ul className="p-2 text-base">
-                        {team.map((data) => (
-                            <Fragment key={data.team_id && data.team_id}>
+                    <ul className="px-side-side text-base">
+                        {team.map((data, index) => (
+                            <Fragment key={data.team_id ? data.team_id : index * 10}>
                                 {
                                     data.team_grade == 1 && (
-                                        <li>
-                                            <Link key={data.team_id} to={`${data.team_id}`} className="hover:text-banner">
-                                                {data.team_name}
-                                            </Link>
-                                        </li>
+                                        <TeamList data={data} />
                                     )
                                 }
                             </Fragment>

@@ -1,3 +1,4 @@
+from email.policy import default
 from tabnanny import verbose
 from django.utils import timezone
 from datetime import datetime
@@ -86,7 +87,7 @@ class UserTable(AbstractBaseUser, PermissionsMixin):
     # ユーザーの名
     user_first = models.TextField(verbose_name='名', max_length=255, validators=[MinLengthValidator(1), MaxLengthValidator(255)])
     # アイコン
-    user_icon = ResizedImageField(force_format="WEBP", quality=75, verbose_name="アイコン", default='icon/user/default_icon.png', upload_to=savePath, null=True, blank=True)
+    user_icon = ResizedImageField(force_format="WEBP", quality=75, verbose_name="アイコン", default='icon/user/default_icon.webp', upload_to=savePath, null=True, blank=True)
     # 学生番号
     user_stdNum = models.TextField(verbose_name='学生番号', null=True, blank=True, unique=True, validators=[MinLengthValidator(9), MaxLengthValidator(9), RegexValidator(r'^[0-9]*$')])
     # 学年
@@ -211,8 +212,16 @@ class AssignmentStatus(models.Model):
     state_ast = models.ForeignKey(verbose_name='課題', to=Assignment, on_delete=models.CASCADE, related_name='state_ast')
     state_std = models.ForeignKey(verbose_name='ユーザー', to=UserTable, on_delete=models.CASCADE, related_name='state_std')
     state_flg = models.BooleanField(verbose_name='提出状況', default=False)
+    state_date = models.DateTimeField(verbose_name='提出日時', auto_now_add=True)
     state_res = models.TextField(verbose_name='提出物', blank=True, null=True)
 
+    def get_date(self):
+        date = list(str(self.state_date).split(' '))
+        day = list(date[0].split('-'))
+        time = list(date[1].split('.'))[0].split(':')
+        
+        return f'{day[0]}年{day[1]}月{day[2]}日 {time[0]}時{time[1]}分'
+    
 class Notice(models.Model):
     class Meta:
         verbose_name = _('お知らせ')
@@ -250,6 +259,7 @@ class Team(models.Model):
     team_id = models.AutoField(verbose_name='チームID', unique=True, primary_key=True, editable=False)
     team_grade = models.IntegerField(verbose_name='学年', choices=GRADE_CHOICES, default=0)
     team_name = models.TextField(verbose_name='チーム名', default=f'{datetime.now().date()}')
+    team_admin = models.ForeignKey(verbose_name='作成者', to=UserTable, on_delete=models.CASCADE, default='akahane' ,related_name='team_admin')
 
 class Message(models.Model):
     class Meta:
@@ -286,7 +296,8 @@ class TeamLink(models.Model):
     link_id = models.AutoField(verbose_name='チームリンクID', unique=True, primary_key=True, editable=False)
     link_team = models.ForeignKey(verbose_name='チーム', to=Team, on_delete=models.CASCADE, related_name='link_team')
     link_URL = models.TextField(verbose_name='リンク')
-
+    link_title = models.TextField(verbose_name='リンク名', null=True, blank=True)
+    
 class LikeCategory(models.Model):
     class Meta:
         verbose_name = _('好きなものカテゴリ')

@@ -1,7 +1,7 @@
 export default function MyMessage({ data, hundleDeleteMessage }) {
 
     return (
-        <li className="max-w-96 min-w-min ms-auto grid grid-cols-10 grid-rows-fr text-sm">
+        <li className="my-4 max-w-96 min-w-min ms-auto grid grid-cols-10 grid-rows-fr text-sm">
             <div className="col-span-10 row-span-1 grid grid-cols-10">
                 <div className="col-span-9 h-full flex px-3 justify-between ms-auto items-center">
                     <p>
@@ -13,7 +13,7 @@ export default function MyMessage({ data, hundleDeleteMessage }) {
                 </div>
             </div>
 
-            <div className="bg-white border col-start-1 col-span-9 row-start-2 row-span-4 self-start border-gray-200 rounded-2xl p-4">
+            <div className="bg-white border ml-4 col-start-1 col-span-9 row-start-2 row-span-4 self-start border-gray-400 rounded-2xl p-4">
 
                 <p>
                     {data.message}

@@ -1,26 +1,54 @@
 import { Link } from "react-router-dom"
-
+import SubTitleBar from "../../public-components/SubTitleBar"
 export default function NotSubmissions({ user_notsubmissions }) {
 
     return (
         <>
-            <div className="bg-slate-400 p-2">
-                <h3 className="text-lg">
-                    未提出の課題
-                </h3>
-            </div>
-            <ul>
+            <SubTitleBar title={'未提出の課題'} />
+            <table className="mx-side w-3/6 text-left">
+                <thead className="border-b border-gray-200 ">
+                    <tr>
+                        <td>
+                            期限
+                        </td>
+                        <td>
+                            課題名
+                        </td>
+                        <td>
+                            授業
+                        </td>
+                    </tr>
+                </thead>
+                <tbody className="text-left">
+                    {user_notsubmissions.map((data) => (
+                        <tr key={data.ast_id} className="hover:text-banner">
+                            <td className="self-end font-semibold py-2">
+                                <Link
+                                    className="block"
+                                    to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`} >
+                                    {data.ast_limit}
+                                </Link>
+                            </td>
+                            <td className="">
+                                <Link
+                                    className="block"
+                                    to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`}>
+                                    {data.ast_title}
+                                </Link>
+                            </td>
 
-                {user_notsubmissions.map((data) => (
-                    <Link key={data.ast_id} to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`}>
-                        <li className='flex'>
-                            <p>{data.ast_title}</p>
-                            <p>{data.ast_limit}</p>
-                            <p>{data.ast_classes.class_name}</p>
-                        </li>
-                    </Link>
-                ))}
-            </ul>
+                            <td className="self-end">
+                                <Link
+                                    className="block"
+                                    to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`}>
+                                    {data.ast_classes.class_name}
+                                </Link>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody >
+
+            </table >
         </>
     )
 }

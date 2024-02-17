@@ -4,7 +4,9 @@ import { UserData } from '../root/root';
 import Cookies from 'js-cookie';
 import LikeCategory from "./components/likecategory";
 import UserDataEdit from "./components/UserDataEdit";
-
+import TitleBar from "../public-components/TitleBar";
+import SubTitleBar from "../public-components/SubTitleBar";
+import SectionTitleBar from '../public-components/SectionTitleBar'
 
 export async function LoadUserSettingData() {
     const likecategory = await fetch(`http://localhost:8000/api/settings/like`, {
@@ -79,7 +81,7 @@ export default function Settings() {
 
 
     return (
-        <div className={`h-screen ${viewEdit && 'relative'}`}>
+        <div className={`h-screen`}>
             {
                 viewEdit && (
                     <div className="bg-cover-gray absolute h-full w-full top-0 left-0 z-20">
@@ -87,11 +89,13 @@ export default function Settings() {
                     </div>
                 )
             }
-            <div className="w-full h-14 bg-blue p-2 flex items-center">
-                <h2 className="text-2xl">
-                    マイプロフィール
-                </h2>
-            </div>
+            <header
+                className="
+            h-24 bg-[url('/class_bg.webp')] bg-center flex justify-around
+            ">
+                <TitleBar title={'マイプロフィール'} />
+
+            </header>
             <div className="h-[27%] relative">
                 <div className="flex absolute mx-16 top-4 w-4/5">
                     <img src={`http://localhost:8000/api${userdata.user_icon}`} alt="" className='rounded-full' width={150} height={150} />
@@ -111,7 +115,7 @@ export default function Settings() {
                         </button>
                     </div>
                 </div>
-                <div className="bg-blue w-full h-[50%]">
+                <div className="bg-[url('/class_bg.webp')] bg-center w-full h-[50%]">
                 </div>
                 <div className="bg-white w-full h-[50%]">
 
@@ -119,9 +123,7 @@ export default function Settings() {
             </div>
 
             <div className="mx-10">
-                <div className="w-full h-10 bg-blue p-2">
-                    <p>これすき！なものを設定してみましょう</p>
-                </div>
+                <SubTitleBar title={'すきなものを設定してみましょう'} />
                 <div className="flex justify-around items-center">
                     {category.map((data, index) => (
                         <button
@@ -140,9 +142,7 @@ export default function Settings() {
                 {category.map((data, index) => (
                     <Fragment key={index * 100}>
                         <div key={index * 100} className={`${showCategory == index ? ('') : ('hidden')}`}>
-                            <div className={`w-full h-10 bg-blue p-2 my-2`}>
-                                <p>{data}</p>
-                            </div>
+                            <SectionTitleBar title={data} />
                             <LikeCategory showLikeCategory={showLikeCategory} category={index} hundleSetLike={hundleSetLike} hundleDeleteLike={hundleDeleteLike} />
                         </div>
                     </Fragment>

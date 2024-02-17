@@ -91,7 +91,7 @@ export default function App() {
 
                 },
                 {
-                    path: 'assignments/:ast_id',
+                    path: 'assignments/:class_id/:ast_id',
                     element: <Assignments />,
                     errorElement: <ErrorPage />,
                     loader: LoadAssignmentsData

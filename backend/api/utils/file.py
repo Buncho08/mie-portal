@@ -14,10 +14,8 @@ def checkDirName(dirname, root_path) -> bool:
 
     dirList = []
     for directory in os.listdir(root_path):
-        print(directory)
         if os.path.isdir(os.path.join(root_path, directory)):
             dirList.append(directory)
-    print(dirList)
     if dirname in dirList:
         return True
     else:
@@ -42,7 +40,13 @@ def mkdir(dirname, ctg) -> bool:
         ページ名(課題, グループ名)でディレクトリを作成する
         ディレクトリが存在していた場合はfalse
     '''
-    ROOT_PATH = f'{settings.MEDIA_ROOT}/{ctg}/'
+    spl = dirname.split('/')
+    if len(spl) > 1:
+        pages = spl
+        dirname = spl.pop(-1)
+        ROOT_PATH = f'{settings.MEDIA_ROOT}/{ctg}/{pages[0]}/'
+    else:
+        ROOT_PATH = f'{settings.MEDIA_ROOT}/{ctg}/'
     PAGES_PATH = f'{ROOT_PATH}{dirname}/'
     if not checkDirName(dirname, ROOT_PATH):
         os.mkdir(PAGES_PATH)
@@ -50,14 +54,39 @@ def mkdir(dirname, ctg) -> bool:
     else:
         return False
 
+def renameDir(dirname, oldname, ctg) -> bool:
+    spl = dirname.split('/')
+    if len(spl) > 1:
+        pages = spl
+        dirname = spl.pop(-1)
+        ROOT_PATH = f'{settings.MEDIA_ROOT}/{ctg}/{pages[0]}/'
+    else:
+        ROOT_PATH = f'{settings.MEDIA_ROOT}/{ctg}/'
+
+    NEW_PAGES_PATH = f'{ROOT_PATH}{dirname}/'
+    OLD_PAGES_PATH = f'{ROOT_PATH}{oldname}/'
+    if not checkDirName(dirname, ROOT_PATH):
+        os.rename(OLD_PAGES_PATH, NEW_PAGES_PATH)
+        return True
+    else:
+        return False
+
+
 def mkdirToSavefile(dirname, file,  ctg, name=None) -> bool:
     '''
         ページ名(課題, グループ名)でディレクトリを作成し、ファイルを保存するツール
         ディレクトリが無い場合はディレクトリ作成後、ファイル保存
         ディレクトリがすでに存在する場合は保存のみを行う
-    '''
-    print(name)
-    ROOT_PATH = f'{settings.MEDIA_ROOT}/{ctg}/'
+    '''    
+    spl = dirname.split('/')
+    print(spl)
+    if len(spl) > 1:
+        pages = spl
+        dirname = spl.pop(-1)
+        ROOT_PATH = f'{settings.MEDIA_ROOT}/{ctg}/{pages[0]}/'
+    else:
+        ROOT_PATH = f'{settings.MEDIA_ROOT}/{ctg}/'
+
     PAGES_PATH = f'{ROOT_PATH}{dirname}/'
     FILENAME = ''
     if not checkDirName(dirname, ROOT_PATH):
@@ -96,7 +125,13 @@ def deleteDir(dirname, ctg) -> bool:
         指定されたディレクトリを削除する
         ない場合はfalse
     '''
-    ROOT_PATH = f'{settings.MEDIA_ROOT}/{ctg}/'
+    spl = dirname.split('/')
+    if len(spl) > 1:
+        pages = spl
+        dirname = spl.pop(-1)
+        ROOT_PATH = f'{settings.MEDIA_ROOT}/{ctg}/{pages[0]}/'
+    else:
+        ROOT_PATH = f'{settings.MEDIA_ROOT}/{ctg}/'
     PAGES_PATH = f'{ROOT_PATH}{dirname}/'
     if checkDirName(dirname=dirname, root_path=ROOT_PATH):
         shutil.rmtree(PAGES_PATH)

@@ -25,6 +25,7 @@ export default function LoginForm({ hundleForm, catchErr }) {
                             id="user_id"
                             autoComplete="username"
                             placeholder="英数字で6文字以上"
+                            required
                             className="peer h-8 w-full border-none bg-transparent p-0 placeholder-transparent focus:border-transparent focus:placeholder-side-gray focus:outline-none focus:ring-0 sm:text-sm"
                         />
 
@@ -52,6 +53,7 @@ export default function LoginForm({ hundleForm, catchErr }) {
                             id="password"
                             placeholder="英数6文字以上"
                             autoComplete="new-password"
+                            required
                             className="peer h-8 w-full border-none bg-transparent p-0 placeholder-transparent focus:border-transparent focus:placeholder-side-gray focus:outline-none focus:ring-0 sm:text-sm"
                         />
 

@@ -206,7 +206,21 @@ class AssignmentSubmitionSerializer(serializers.ModelSerializer):
         validated_data['state_ast'] = ast_id 
         state_model = AssignmentStatus.objects.create(**validated_data)
         return state_model
+
+# 提出状況
+class AssignmentStatusSerializer(serializers.ModelSerializer):
+    state_date = serializers.SerializerMethodField()
+    state_ast = AssignmentSerializer()
+    state_std = serializers.SerializerMethodField()
+    class Meta:
+        model = AssignmentStatus
+        fields = ['state_id', 'state_std', 'state_ast', 'state_res', 'state_date']
+
+    def get_state_date(self, instance):
+        return instance.get_date()
     
+    def get_state_std(self, instance):
+        return instance.state_std.get_full_name()
 # クラスページ
 class ClassPageSerializer(serializers.ModelSerializer):
     class_teacher = UserSerilaizer(read_only=True)
@@ -218,10 +232,20 @@ class ClassPageSerializer(serializers.ModelSerializer):
 
 # チーム
 class TeamSerializer(serializers.ModelSerializer):
+    user_id = serializers.PrimaryKeyRelatedField(queryset=UserTable.objects.all(), write_only=True)
+    team_admin = UserSerilaizer(read_only=True)
     class Meta:
         model = Team
-        fields = '__all__'
-        
+        fields = ['team_id', 'team_grade', 'team_name', 'user_id', 'team_admin']
+    
+    def create(self, validated_data):
+        user_id = validated_data.pop('user_id')
+
+        validated_data['team_admin'] = user_id
+
+        team_model = Team.objects.create(**validated_data)
+
+        return team_model
 # チームチャット
 class TeamChatSerializer(serializers.ModelSerializer):
     message_team = TeamSerializer(write_only=True)
@@ -268,7 +292,7 @@ class TeamLinkSerializer(serializers.ModelSerializer):
     link_team = TeamSerializer(write_only=True)
     class Meta:
         model = TeamLink
-        fields = ['link_id', 'link_team', 'team_id', 'link_URL']
+        fields = ['link_id', 'link_team', 'team_id', 'link_URL', 'link_title']
     
     def create(self, validated_data):
         team_id = validated_data.pop('team_id')

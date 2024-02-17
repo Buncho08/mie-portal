@@ -317,7 +317,7 @@ module.exports = {
         },
         spacing: {
             'side':'1.5rem',
-            'yspace':'0.75rem',
+            'yspace':'1.25rem',
             'side-side':'2rem'
         }
       }

@@ -1,8 +1,9 @@
 import { useLoaderData } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import User from "./components/user";
 import UserModal from "./components/usermodal";
-
+import TitleBar from "../public-components/TitleBar";
+import SubTitleBar from "../public-components/SubTitleBar";
 
 export async function LoadUsersData() {
     const usersdata = await fetch(`http://localhost:8000/api/userView`, {
@@ -21,7 +22,7 @@ export default function Profile() {
     const [viewUser, setViewUser] = useState({});
 
     return (
-        <div className={`h-screen ${Object.keys(viewUser).length > 0 && 'relative'}`}>
+        <div className={`h-screen`}>
             {
                 Object.keys(viewUser).length > 0 && (
                     <div className="bg-cover-gray absolute h-full w-full top-0 left-0">
@@ -29,33 +30,23 @@ export default function Profile() {
                     </div>
                 )
             }
-            <div className="w-full h-14 bg-blue p-2 flex items-center">
-                <h2 className="text-2xl">
-                    みんなのプロフィール
-                </h2>
-            </div>
+            <header
+                className="
+            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around
+            ">
+                <TitleBar title={'みんなのプロフィール'} />
+
+            </header>
+
             <div id="main">
-                <div id="first" className="bg-slate-400 p-2 flex items-center justify-between">
-                    <h3 className="text-lg">
-                        1年生
-                    </h3>
-                </div>
+                <SubTitleBar title={'1年生'} />
 
                 <User usersdata={usersdata.first} setViewUser={setViewUser} />
-
-                <div id="first" className="bg-slate-400 p-2 flex items-center justify-between">
-                    <h3 className="text-lg">
-                        2年生
-                    </h3>
-                </div>
+                <SubTitleBar title={'2年生'} />
 
                 <User usersdata={usersdata.second} setViewUser={setViewUser} />
 
-                <div id="first" className="bg-slate-400 p-2 flex items-center justify-between">
-                    <h3 className="text-lg">
-                        教師
-                    </h3>
-                </div>
+                <SubTitleBar title={'教師'} />
                 <User usersdata={usersdata.teacher} setViewUser={setViewUser} />
             </div>
         </div>
