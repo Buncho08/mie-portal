@@ -151,6 +151,10 @@ class LikeCategoryView(views.APIView):
         serializer = LikeCategorySerializer(instance=likecategory, many=True)
 
         return Response(serializer.data)
+    
+    def post(self, request, *args, **kwargs):
+
+        return 0
 
 # マイページすきなもの設定ビュー
 class MypageSettingView(views.APIView):
@@ -217,8 +221,6 @@ class MyaccountUpdateView(views.APIView):
         if serializer.is_valid():
             if 'user_icon' in request.FILES:
                 user.user_icon = request.FILES['user_icon']
-            else:
-                user.user_icon = 'icon/user/default_icon.webp'
             
             user.user_last = serializer.validated_data['user_last']
             user.user_first = serializer.validated_data['user_first']

@@ -1,4 +1,4 @@
-import { Fragment, useContext, useState } from "react";
+import { Fragment, useContext, useState, useRef, useEffect } from "react";
 import { UserData } from '../../root/root';
 import Cookies from 'js-cookie';
 import Message from "./message";
@@ -10,6 +10,7 @@ import ChatForm from "./chatForm";
 export default function Chat({ teammessage, team_id }) {
     const userdata = useContext(UserData);
     const [chatData, setChatData] = useState(teammessage)
+    const focusRef = useRef(null);
 
     const hundleDeleteMessage = async (e, message_id) => {
         e.preventDefault();
@@ -35,6 +36,12 @@ export default function Chat({ teammessage, team_id }) {
         if (status) {
             setChatData(chatData.filter((data) => data.message_id !== message_id))
         }
+    }
+
+    const focusLastElm = () => {
+        focusRef.current.children[focusRef.current.children.length - 1].scrollIntoView(true);
+        console.log(focusRef.current.children[focusRef.current.children.length - 1]);
+        return true;
     }
 
     const hundleSendMessage = async (e) => {
@@ -70,9 +77,9 @@ export default function Chat({ teammessage, team_id }) {
         if (!status) {
             return <></>
         }
-
         setChatData([...chatData, status]);
     }
+
 
     const getNewMessage = async (e) => {
         e.preventDefault();
@@ -86,6 +93,12 @@ export default function Chat({ teammessage, team_id }) {
 
         setChatData(message.team_message);
     }
+
+    // チャットが更新されたら(chatDataという状態が更新されたら)
+    // 最期の要素にフォーカスする。無限ループが起こらないかとても心配
+    useEffect(() => {
+        focusRef.current.children[focusRef.current.children.length - 1].scrollIntoView(true);
+    }, [chatData])
     return (
         <div className="w-[40%] h-full">
             <div className="bg-white border-b border-black flex p-2 h-[9.1%] justify-between items-center">
@@ -97,7 +110,7 @@ export default function Chat({ teammessage, team_id }) {
                 </button>
             </div>
 
-            <ul className="max-h-[80%] h-[80%] overflow-y-scroll">
+            <ul className="max-h-[80%] h-[80%] overflow-y-scroll" id="chat-area" ref={focusRef}>
                 {
                     chatData.length > 0
                         ? (
@@ -105,7 +118,7 @@ export default function Chat({ teammessage, team_id }) {
                                 <Fragment key={data.message_id}>
                                     {
                                         data.message_user.user_id === userdata.user_id
-                                            ? <MyMessage data={data} hundleDeleteMessage={hundleDeleteMessage} />
+                                            ? <MyMessage data={data} chatData={chatData} setChatData={setChatData} />
                                             : <Message data={data} />
                                     }
                                 </Fragment>

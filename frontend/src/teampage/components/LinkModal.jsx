@@ -1,20 +1,33 @@
 import ModalBar from "../../public-components/ModalBar"
+import { useState } from "react"
 
 export default function LinkModal({ hundleSubmit, setViewFlg }) {
+    const [link, setLink] = useState('');
+    const getTitle = async () => {
+        return 0
+    }
     return (
-        <div className="absolute w-[40%] bg-white h-[36%] m-auto top-0 left-0 right-0 bottom-0">
+        <div className="absolute w-[40%] bg-white h-[44%] m-auto top-0 left-0 right-0 bottom-0">
             <ModalBar closeFlg={setViewFlg} title={`リンクを共有`} />
+            <div className="mx-side-side text-center mt-4">
+                <small>
+                    🔗リンクの名前を設定できます🔗
+                    <br />
+                    空欄の場合、自動でURLがタイトルになります
+                </small>
+            </div>
             <div className="w-3/4 m-auto h-[88%] grid mt-8">
                 <form onSubmit={hundleSubmit}>
                     <label
                         htmlFor="link_title"
-                        className="relative block overflow-hidden border-b border-gray-600 bg-transparent pt-3 focus-within:border-blue-600"
+                        className="relative block overflow-hidden border-b border-gray-600 pt-2 bg-transparent focus-within:border-blue-600"
                     >
                         <input
                             type="text"
                             id="link_title"
                             name="link_title"
-                            placeholder="URL"
+                            placeholder="リンク名"
+                            defaultValue={link}
                             className="peer h-8 w-full border-none bg-transparent p-0 placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
                         />
 
@@ -33,6 +46,7 @@ export default function LinkModal({ hundleSubmit, setViewFlg }) {
                             type="text"
                             id="link_URL"
                             placeholder="URL"
+                            onChange={(e) => setLink(e.target.value)}
                             className="peer h-8 w-full border-none bg-transparent p-0 placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
                         />
 

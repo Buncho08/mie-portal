@@ -3,9 +3,15 @@ import Cookies from 'js-cookie';
 import { Link } from "react-router-dom";
 import SubTitleBar from "../../public-components/SubTitleBar";
 import LinkModal from "./LinkModal";
-export default function TeamLink({ team_id, teamlink }) {
+import Confirmation from "../../public-components/Confirmation";
+export default function TeamLink({ team_id, teamlink, setAlert }) {
     const [teamLink, setTeamLink] = useState(teamlink);
     const [viewFlg, setViewFlg] = useState(false);
+    const [viewModal, setViewModal] = useState(false);
+    const [target, setTarget] = useState({
+        'target': '',
+        'target_data': {},
+    });
 
     const hundleSubmit = async (e) => {
         e.preventDefault();
@@ -26,12 +32,18 @@ export default function TeamLink({ team_id, teamlink }) {
             .then((data) => data)
             .catch((err) => console.log(err))
         e.target.reset();
-        setTeamLink([...teamLink, status])
+        setTeamLink([...teamLink, status]);
+        setViewFlg(false);
+        setAlert({
+            'message': 'リンクを共有しました🔗',
+            'disc': '',
+            'status': 0
+        })
     }
 
-    const hundleDeleteLink = async (e, link_id) => {
+    const hundleDeleteLink = async (e) => {
         e.preventDefault();
-        const status = await fetch(`http://localhost:8000/api/team/link/${link_id}`, {
+        const status = await fetch(`http://localhost:8000/api/team/link/${target.target_data.link_id}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRFToken': `${Cookies.get('csrftoken')}`,
@@ -43,19 +55,34 @@ export default function TeamLink({ team_id, teamlink }) {
             .then((data) => data)
             .catch((err) => console.log())
 
-        setTeamLink(teamLink.filter((data) => data.link_id !== link_id))
+        setTeamLink(teamLink.filter((data) => data.link_id !== target.target_data.link_id));
+        setViewModal(false);
+        setAlert({
+            'message': `${target.target_data.link_title}を削除しました👋`,
+            'disc': '',
+            'status': 0
+        });
+        setTarget({
+            'target': '',
+            'target_data': {}
+        })
     }
     return (
         <div className="w-full">
-            <>
-                {
-                    viewFlg > 0 && (
-                        <div className="bg-cover-gray absolute h-full w-full top-0 left-0">
-                            <LinkModal hundleSubmit={hundleSubmit} setViewFlg={setViewFlg} viewFlg={viewFlg} />
-                        </div>
-                    )
-                }
-            </>
+            {
+                // 削除確認
+                viewModal
+                && (
+                    <Confirmation target={target} dofunc={hundleDeleteLink} setFlg={setViewModal} />
+                )
+            }
+            {
+                viewFlg > 0 && (
+                    <div className="bg-cover-gray absolute h-full w-full top-0 left-0">
+                        <LinkModal hundleSubmit={hundleSubmit} setViewFlg={setViewFlg} viewFlg={viewFlg} />
+                    </div>
+                )
+            }
             <div className="grid grid-cols-8 px-side py-yspace">
                 <h2 className="grid items-center px-1 text-2xl font-bold col-start-1 col-span-2 row-span-1 row-start-1">
                     共有されたリンク
@@ -83,7 +110,13 @@ export default function TeamLink({ team_id, teamlink }) {
                                             <Link to={data.link_URL} className="hover:text-banner">
                                                 {data.link_title ? (data.link_title) : (data.link_URL)}
                                             </Link>
-                                            <button onClick={(e) => hundleDeleteLink(e, data.link_id)}>
+                                            <button onClick={(e) => {
+                                                setViewModal(true);
+                                                setTarget({
+                                                    'target': data.link_title,
+                                                    'target_data': data
+                                                })
+                                            }}>
                                                 🗑️
                                             </button>
                                         </li>

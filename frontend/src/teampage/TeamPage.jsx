@@ -16,7 +16,6 @@ export async function LoadTeamPageData({ params }) {
         .then((res) => res.json())
         .then((data) => data)
         .catch((err) => console.log(err))
-    console.log(teamdata)
     const teamfile = await fetch(`http://localhost:8000/api/team/file/${params.team_id}`, {
         method: 'GET',
         credentials: "include",
@@ -131,8 +130,8 @@ export default function TeamPage() {
             </header>
             <div className="flex h-[87%] w-full">
                 <div className="w-[60%] h-full">
-                    <File team_id={teamdata.team_id} teamfile={teamfile} />
-                    <TeamLink team_id={teamdata.team_id} teamlink={teamlink} />
+                    <File team_id={teamdata.team_id} teamfile={teamfile} setAlert={setAlert} />
+                    <TeamLink team_id={teamdata.team_id} teamlink={teamlink} setAlert={setAlert} />
                 </div>
                 <Chat teammessage={teamdata.team_message} team_id={teamdata.team_id} />
             </div>
