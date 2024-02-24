@@ -80,8 +80,6 @@ export default function Login() {
                 console.log(err);
                 flg = 1;
             });
-
-        console.log('unko');
     }
 
 
@@ -93,12 +91,6 @@ export default function Login() {
             )}
             {/* ここからログインページ */}
             <section className="bg-white">
-                <p>
-                    <Link to={'/'} >
-                        あああ
-                    </Link>
-
-                </p>
                 <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
                     {/* ここからひだりの画像 */}
                     <aside className="relative block h-36 lg:order-last lg:col-span-5 lg:h-full xl:col-span-4">

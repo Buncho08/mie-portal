@@ -7,6 +7,7 @@ import SubTitleBar from '../public-components/SubTitleBar';
 import TeamList from "./components/TeamList";
 import { UserData } from '../root/root';
 import { useContext } from "react";
+import Alert from '../public-components/Alert';
 
 export async function LoadTeamData() {
     const teamlist = await fetch('http://localhost:8000/api/team', {
@@ -26,7 +27,11 @@ export default function TeamTop() {
     const [team, setTeam] = useState(teamlist);
     const [viewFlg, setViewFlg] = useState(0);
     const userdata = useContext(UserData);
-
+    const [alert, setAlert] = useState({
+        'message': '',
+        'disc': '',
+        'status': 0
+    })
     const hundleAddTeam = async (e) => {
         e.preventDefault();
         const sendData = new FormData();
@@ -43,8 +48,24 @@ export default function TeamTop() {
             mode: "cors",
         })
             .then((res) => res.json())
-            .then((data) => setTeam([...team, data]))
-            .catch((err) => console.log(err))
+            .then((data) => data)
+            .catch((err) => console.log(err));
+        if (status.error) {
+            setAlert({
+                'message': status.error,
+                'disc': '',
+                'status': 1
+            });
+        }
+        else {
+            setTeam([...team, status]);
+            setAlert({
+                'message': 'チームを作成しました✨',
+                'disc': '',
+                'status': 0
+            });
+            setViewFlg(0);
+        }
     }
 
     const hundleViewModal = (e, grade) => {
@@ -55,16 +76,18 @@ export default function TeamTop() {
 
     return (
         <div className={`h-screen`}>
-            <>
-                {
-                    viewFlg > 0 && (
-                        <div className="bg-cover-gray absolute h-full w-full top-0 left-0">
-                            <AddTeam hundleAddTeam={hundleAddTeam} setViewFlg={setViewFlg} viewFlg={viewFlg} />
-                        </div>
-                    )
-                }
-            </>
-
+            {
+                viewFlg > 0 && (
+                    <div className="bg-cover-gray absolute h-full w-full top-0 left-0">
+                        <AddTeam hundleAddTeam={hundleAddTeam} setViewFlg={setViewFlg} viewFlg={viewFlg} />
+                    </div>
+                )
+            }
+            {
+                alert.message !== "" && (
+                    <Alert alert={alert} setAlert={setAlert} />
+                )
+            }
             <header
                 className="
             h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around

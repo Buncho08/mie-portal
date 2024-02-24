@@ -26,6 +26,8 @@ export default function Signin() {
             const signinData = new FormData();
             signinData.append("user_id", e.target.user_id.value);
             signinData.append("user_stdNum", e.target.user_stdNum.value);
+            signinData.append('user_last', e.target.user_last.value);
+            signinData.append('user_first', e.target.user_first.value);
             signinData.append("user_grade", e.target.user_grade.value);
             signinData.append("password", e.target.password.value);
 
@@ -53,7 +55,6 @@ export default function Signin() {
                     else {
                         // エラーなしなので、すでにあるエラー文等をリセット
                         setErr({});
-                        setLoginStatus(true);
                     }
                 })
                 .catch((err) => {
@@ -82,6 +83,7 @@ export default function Signin() {
                         return (res.json())
                     })
                     .then((data) => {
+                        setLoginStatus(true);
                         console.log(data);
                     })
                     .catch((err) => {
@@ -96,7 +98,7 @@ export default function Signin() {
         <>
             {/* ログインできたらリダイレクト */}
             {loginStatus && (
-                <Navigate to="/Mypage" replace={true} />
+                <Navigate to="/mie/Mypage" replace={true} />
             )}
 
             {/* ここから新規登録ページ */}

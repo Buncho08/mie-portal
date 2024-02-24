@@ -1,8 +1,7 @@
-import Notice from "./components/notice";
+import Notice from "./components/Notice";
 import Classes_day_students from "./components/classes_day_students";
 import Classes_day_teacher from './components/classes_day_teacher';
 import NotSubmissions from "./components/NotSubmissions";
-import MyClasses from "./components/MyClasses";
 import TitleBar from "../public-components/TitleBar";
 
 import { UserData } from '../root/root';
@@ -31,7 +30,6 @@ export default function MypageTop() {
             h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around
             ">
                 <TitleBar title={'マイページ'} />
-
             </header>
             <>
                 {
@@ -44,24 +42,6 @@ export default function MypageTop() {
                 {userdata.user_grade === 2
                     ? <Classes_day_teacher user_classes={mypagedata.user_classes} />
                     : <Classes_day_students user_classes={mypagedata.user_classes} />
-                }
-            </>
-            <>
-                {
-                    userdata.user_grade === 2 && (
-                        <>
-                            <Link to={'/mie/timetable'}>
-                                → 時間割の編集
-                            </Link>
-                            <br />
-                            <Link to={'/mie/classes'}>
-                                →授業一覧
-                            </Link>
-                            <MyClasses />
-
-                        </>
-
-                    )
                 }
             </>
         </div>

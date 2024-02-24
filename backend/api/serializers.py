@@ -16,7 +16,7 @@ class UserSerilaizer(serializers.ModelSerializer):
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserTable
-        fields = ['user_id', 'user_grade', 'user_stdNum', 'password']
+        fields = ['user_id', 'user_first', 'user_last', 'user_grade', 'user_stdNum', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
 from rest_framework.fields import empty

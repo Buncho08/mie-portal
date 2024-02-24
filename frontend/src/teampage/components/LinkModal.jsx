@@ -7,7 +7,7 @@ export default function LinkModal({ hundleSubmit, setViewFlg }) {
         return 0
     }
     return (
-        <div className="absolute w-[40%] bg-white h-[44%] m-auto top-0 left-0 right-0 bottom-0">
+        <div className="animate-scale-up-center shadow-lg rounded-lg absolute w-[40%] bg-white h-[44%] m-auto top-0 left-0 right-0 bottom-0">
             <ModalBar closeFlg={setViewFlg} title={`リンクを共有`} />
             <div className="mx-side-side text-center mt-4">
                 <small>

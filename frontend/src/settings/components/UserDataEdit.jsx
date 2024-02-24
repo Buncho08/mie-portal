@@ -1,12 +1,20 @@
 import Cookies from 'js-cookie';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import ModalBar from '../../public-components/ModalBar';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCameraRetro } from '@fortawesome/free-solid-svg-icons'
+import { faCameraRetro } from '@fortawesome/free-solid-svg-icons';
+import ImageModal from '../../Resize/ImageModal';
+import Cropper from 'cropperjs';
 
 export default function UserDataEdit({ setViewEdit, userdata }) {
     const [iconCover, setIconCover] = useState(false);
-    const [userIcon, setUserIcon] = useState(`http://localhost:8000/api${userdata.user_icon}`)
+    const [userIcon, setUserIcon] = useState(`http://localhost:8000/api${userdata.user_icon}`);
+    const [cropper, setCropper] = useState();
+    const [viewFlg, setViewFlg] = useState();
+    const [prev, setPrev] = useState(`http://localhost:8000/api${userdata.user_icon}`);
+    const imgRef = useRef(null);
+    const fileRef = useRef(null);
+
     const hundleUpdateUser = async (e) => {
         console.log('unko')
         e.preventDefault();
@@ -29,18 +37,47 @@ export default function UserDataEdit({ setViewEdit, userdata }) {
             .then((res) => res.json())
             .then((data) => data)
             .catch((err) => console.log(err))
-
+        console.log(status);
         location.reload();
     }
-    return (
-        <form onSubmit={hundleUpdateUser} className="absolute w-[60%] bg-white h-[40%] m-auto top-0 left-0 right-0 bottom-0">
 
+    const hundleClick = (e) => {
+        e.preventDefault();
+        let canvas = cropper.getCroppedCanvas();
+        canvas.toBlob(function (imgBlob) {
+            const croppedImgFile = new File([imgBlob], '切り抜き画像.png', { type: "image/png" });
+            const dt = new DataTransfer();
+            dt.items.add(croppedImgFile);
+            fileRef.current.files = dt.files;
+        });
+        let data = canvas.toDataURL();
+        setPrev(data);
+        setViewFlg(false);
+    }
+
+    const changeImg = (e) => {
+        e.preventDefault();
+        if (!e.target.files) {
+            return <></>;
+        }
+        const fileobj = e.target.files[0];
+        console.log(imgRef.current);
+        setViewFlg(true);
+        imgRef.current.src = window.URL.createObjectURL(fileobj);
+        setCropper(new Cropper(imgRef.current, { aspectRatio: 1 / 1 }));
+        return e.target.files[0];
+    }
+
+
+
+    return (
+        <form onSubmit={hundleUpdateUser} className="z-30 animate-scale-up-center shadow-lg rounded-lg absolute w-[60%] bg-white h-[40%] m-auto top-0 left-0 right-0 bottom-0">
             <ModalBar closeFlg={setViewEdit} flg={false} title={`プロフィールの編集`} />
 
             <div className="h-[27%] relative">
                 <div >
-                    <div className="flex absolute mx-16 top-4 z-40">
-                        <label className='relative block z-40' htmlFor='user_icon'
+                    <div className="flex absolute mx-16 top-4">
+                        <label className='relative block' htmlFor='user_icon'
                             onMouseOver={() => setIconCover(true)}
                             onMouseLeave={() => setIconCover(false)}
                         >
@@ -58,18 +95,11 @@ export default function UserDataEdit({ setViewEdit, userdata }) {
                             </button>
                             <div className={`bg-black cursor-pointer h-full w-full absolute rounded-full opacity-0 ${iconCover && ('opacity-50')}`}>
                             </div>
-                            <input type="file" name="user_icon" id="user_icon" className='hidden'
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    if (!e.target.files) {
-                                        return <></>;
-                                    }
-                                    const fileobj = e.target.files[0];
-                                    setUserIcon(window.URL.createObjectURL(fileobj));
-                                    return e.target.files[0];
-                                }}
+                            <input type="file" name="user_icon" id="user_icon" className='hidden' accept='.jpg,.jpeg,.png,.gif'
+                                ref={fileRef}
+                                onChange={(e) => changeImg(e)}
                             />
-                            <img src={userIcon} alt="" width={150} height={150} className="bg-slate-400 rounded-full" />
+                            <img src={prev} alt="" width={150} height={150} className="bg-slate-400 rounded-full" />
                         </label>
                         <div className="grid items-end mx-5 mb-2">
                             <div>
@@ -125,6 +155,8 @@ export default function UserDataEdit({ setViewEdit, userdata }) {
                     更新
                 </button>
             </div>
+
+            <ImageModal setViewFlg={setViewFlg} viewFlg={viewFlg} userIcon={userIcon} imgRef={imgRef} hundleClick={hundleClick} />
 
         </form >
     )

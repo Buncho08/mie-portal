@@ -31,7 +31,7 @@ export default function UserModal({ userdata, setViewUser }) {
         }
     }, [])
     return (
-        <div className="absolute w-[60%] bg-white h-[80%] m-auto top-0 left-0 right-0 bottom-0">
+        <div className="animate-scale-up-center shadow-lg rounded-lg absolute w-[60%] bg-white h-[80%] m-auto top-0 left-0 right-0 bottom-0">
             <ModalBar closeFlg={setViewUser} flg={{}} title={`${userdata.user_last} ${userdata.user_first} さんのプロフィール`} />
             <div className="h-[27%] relative">
                 <div className="flex absolute mx-16 top-4">

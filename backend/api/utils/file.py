@@ -23,16 +23,15 @@ def checkDirName(dirname, root_path) -> bool:
 
 def checkFileName(filename, path) -> bool:
     fileList = []
+    print(path)
     for file in os.listdir(path):
         if not os.path.isdir(os.path.join(path, file)):
             fileList.append(file)
     
     
     if filename in fileList:
-        print('ありまあす')
         return True
     else:
-        print('ないいい')
         return False
 
 def mkdir(dirname, ctg) -> bool:
@@ -113,7 +112,10 @@ def deleteFile(dirname=None, filename=None, ctg=None) -> bool:
         ない場合はfalse
     '''
     ROOT_PATH = f'{settings.MEDIA_ROOT}/{ctg}/'
-    PAGES_PATH = f'{ROOT_PATH}{dirname}/'
+    if dirname:        
+        PAGES_PATH = f'{ROOT_PATH}{dirname}/'
+    else:
+        PAGES_PATH = f'{ROOT_PATH}'
     if checkFileName(filename=filename, path=PAGES_PATH):
         os.remove(f'{PAGES_PATH}{filename}')
         return True

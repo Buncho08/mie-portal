@@ -83,7 +83,7 @@ export default function SetTimeTable(params) {
                 </div>
             </header>
 
-            <div className="mx-auto w-[80%] ">
+            <div className="mx-auto pb-10 w-[80%] ">
                 <SubTitleBar title={'1年生'} />
                 <TimeTable timetable={timetable.first} hundleUpdateTable={hundleUpdateTable} classes={classes.first} time_grade={0} />
                 <SubTitleBar title={'2年生'} />

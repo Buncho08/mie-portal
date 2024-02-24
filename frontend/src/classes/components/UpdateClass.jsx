@@ -2,9 +2,9 @@ import ModalBar from "../../public-components/ModalBar"
 
 export default function UpdateClass({ target, setViewModal, hundleUpdateName, teachers }) {
     return (
-        <div className="absolute w-[50%] bg-white h-[35%] m-auto top-0 left-0 right-0 bottom-0 z-40">
+        <div className="animate-scale-up-center shadow-lg rounded-lg absolute w-[50%] bg-white h-[37%] m-auto top-0 left-0 right-0 bottom-0 z-40">
             <ModalBar closeFlg={setViewModal} title={'授業を編集する'} />
-            <div className="w-3/4 m-auto h-[88%] grid mt-8">
+            <div className="w-3/4 m-auto h-[88%] grid my-8">
                 <form onSubmit={hundleUpdateName}>
                     <label
                         htmlFor="class_name"

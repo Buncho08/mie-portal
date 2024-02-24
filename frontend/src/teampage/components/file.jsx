@@ -127,7 +127,7 @@ export default function File({ team_id, teamfile, setAlert }) {
                                             <Link
                                                 className="hover:text-banner"
                                                 onClick={(e) => downloadFile(e, `http://localhost:8000/api/file/team/${data.file_name}`, data.file_name.split('/')[1])}>
-                                                ・ {data.file_name.split('/')[1]}
+                                                {data.file_name.split('/')[1]}
                                             </Link>
                                             <button onClick={(e) => {
                                                 setTarget({

@@ -42,7 +42,7 @@ export default function LoginForm({ hundleForm, catchErr }) {
                 {/* ユーザーIDここまで */}
 
                 {/* 学生番号 */}
-                <div className="mb-6">
+                <div className="mb-3">
                     <label
                         htmlFor="user_stdNum"
                         className="relative block overflow-hidden border-b border-gray-200 bg-transparent pt-3 focus-within:border-blue-600"
@@ -76,7 +76,54 @@ export default function LoginForm({ hundleForm, catchErr }) {
                     }
                 </div>
                 {/* 学生番号ここまで */}
+                {/* 学生番号 */}
+                <div className="mb-6 flex">
+                    <label
+                        htmlFor="user_last"
+                        className="relative block w-full overflow-hidden border-b border-gray-200 bg-transparent pt-3 focus-within:border-blue-600"
+                    >
+                        <input
+                            type="text"
+                            id="user_last"
+                            placeholder="苗字"
+                            autoComplete="off"
+                            className="peer h-8 w-full border-none bg-transparent p-0 placeholder-transparent focus:border-transparent focus:placeholder-side-gray focus:outline-none focus:ring-0 sm:text-sm"
+                        />
 
+                        <span
+                            className={`
+                            absolute start-0 top-2 -translate-y-1/2 text-xs text-gray-700 transition-all 
+                            peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:text-xs
+                            ${catchErr.user_last ? 'text-error' : ''}
+                            `}
+                        >
+                            苗字
+                        </span>
+                    </label>
+                    <label
+                        htmlFor="user_first"
+                        className="relative ml-2 w-full block overflow-hidden border-b border-gray-200 bg-transparent pt-3 focus-within:border-blue-600"
+                    >
+                        <input
+                            type="text"
+                            id="user_first"
+                            placeholder="名前"
+                            autoComplete="off"
+                            className="peer h-8 w-full border-none bg-transparent p-0 placeholder-transparent focus:border-transparent focus:placeholder-side-gray focus:outline-none focus:ring-0 sm:text-sm"
+                        />
+
+                        <span
+                            className={`
+                            absolute start-0 top-2 -translate-y-1/2 text-xs text-gray-700 transition-all 
+                            peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:text-xs
+                            ${catchErr.user_first ? 'text-error' : ''}
+                            `}
+                        >
+                            名前
+                        </span>
+                    </label>
+                </div>
+                {/* 学生番号ここまで */}
                 {/* 学年選択ここから */}
                 <fieldset className="mb-3 grid grid-cols-2 gap-3">
                     <legend className="sr-only">学年</legend>

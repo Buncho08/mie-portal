@@ -1,5 +1,5 @@
-import { useLoaderData } from "react-router-dom";
-import { Fragment, useContext, useState, useEffect } from "react";
+import { redirect, useLoaderData, Navigate } from "react-router-dom";
+import { Fragment, useContext, useState } from "react";
 import { UserData } from '../root/root';
 import Cookies from 'js-cookie';
 import Chat from "./components/chat";
@@ -7,6 +7,7 @@ import File from "./components/file";
 import TeamLink from "./components/link";
 import TitleBar from "../public-components/TitleBar";
 import Alert from '../public-components/Alert';
+import Confirmation from "../public-components/Confirmation";
 
 export async function LoadTeamPageData({ params }) {
     const teamdata = await fetch(`http://localhost:8000/api/team/chat/${params.team_id}`, {
@@ -31,7 +32,6 @@ export async function LoadTeamPageData({ params }) {
         .then((res) => res.json())
         .then((data) => data)
         .catch((err) => console.log(err))
-
     return { teamdata, teamfile, teamlink }
 }
 
@@ -43,9 +43,14 @@ export default function TeamPage() {
         'message': '',
         'disc': '',
         'status': 0
-    })
+    });
+    const [viewModal, setViewModal] = useState(false);
     const userdata = useContext(UserData);
-
+    const [target, setTarget] = useState({
+        'target': teamdata.team_name,
+        'target_data': teamdata
+    });
+    const [rd, setRd] = useState(false);
     const hundleChangeTeamName = async (e) => {
         e.preventDefault();
         if (e.target.team_name.value.length <= 0) {
@@ -82,11 +87,40 @@ export default function TeamPage() {
         })
         return 0
     }
+
+    const hundleDeleteTeam = async (e) => {
+        e.preventDefault();
+        const status = await fetch(`http://localhost:8000/api/team/delete/${teamdata.team_id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': `${Cookies.get('csrftoken')}`,
+            },
+            credentials: "include",
+            mode: "cors",
+        })
+            .then((res) => res.json())
+            .then((data) => data)
+            .catch((err) => console.log(err));
+        setRd(true);
+        return <></>;
+    }
     return (
         <div className="h-screen">
+            {
+                rd && (
+                    <Navigate to="/mie/team" replace={true} />
+                )
+            }
+            {
+                // 削除確認
+                viewModal
+                && (
+                    <Confirmation target={target} dofunc={hundleDeleteTeam} setFlg={setViewModal} />
+                )
+            }
             <header
                 className="
-            h-[12%] bg-[url('/class_bg.webp')] bg-center grid grid-cols-4
+            h-[12%] bg-[url('/class_bg.webp')] bg-center flex
             ">
                 {
                     teamdata.team_admin.user_id === userdata.user_id || userdata.user_grade === 2 ? (
@@ -96,8 +130,8 @@ export default function TeamPage() {
                                     ? (
                                         <form
                                             onSubmit={(e) => hundleChangeTeamName(e)}
-                                            className="w-full px-4 pt-7 font-bold flex items-center col-span-3">
-                                            <input type="text" name="team_name" id="team_name" defaultValue={teamdata.team_name}
+                                            className="w-full px-4 pt-7 font-bold flex items-center col-span-4">
+                                            <input type="text" name="team_name" id="team_name" maxLength="30" defaultValue={teamdata.team_name}
                                                 className="text-4xl" />
                                             <button
                                                 type="submit"
@@ -109,7 +143,14 @@ export default function TeamPage() {
                                     : (
                                         <Fragment>
                                             <TitleBar title={[`${teamdata.team_name}`, <small className="ml-3" key={'small'}>チーム</small>, <button onClick={() => setEdit(true)} className="text-lg">🖋</button>]} />
-                                            <div className="self-end pb-4 col-start-2 col-span-2">
+                                            <div className="grid items-end pb-4">
+                                                <button
+                                                    onClick={() => setViewModal(true)}
+                                                >
+                                                    🗑️
+                                                </button>
+                                            </div>
+                                            <div className="self-end pb-4 w-72">
                                                 作成者 : {teamdata.team_admin.user_last} {teamdata.team_admin.user_first}
                                             </div>
                                         </Fragment>

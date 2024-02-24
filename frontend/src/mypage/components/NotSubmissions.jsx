@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import { Fragment } from "react"
 import SubTitleBar from "../../public-components/SubTitleBar"
 export default function NotSubmissions({ user_notsubmissions }) {
 
@@ -20,32 +21,52 @@ export default function NotSubmissions({ user_notsubmissions }) {
                     </tr>
                 </thead>
                 <tbody className="text-left">
-                    {user_notsubmissions.map((data) => (
-                        <tr key={data.ast_id} className="hover:text-banner">
-                            <td className="self-end font-semibold py-2">
-                                <Link
-                                    className="block"
-                                    to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`} >
-                                    {data.ast_limit}
-                                </Link>
-                            </td>
-                            <td className="">
-                                <Link
-                                    className="block"
-                                    to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`}>
-                                    {data.ast_title}
-                                </Link>
-                            </td>
+                    {user_notsubmissions.length > 0
+                        ? (
+                            <Fragment>
+                                {
+                                    user_notsubmissions.map((data) => (
+                                        <tr key={data.ast_id} className="hover:text-banner">
+                                            <td className="self-end font-semibold py-2">
+                                                <Link
+                                                    className="block"
+                                                    to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`} >
+                                                    {data.ast_limit}
+                                                </Link>
+                                            </td>
+                                            <td className="">
+                                                <Link
+                                                    className="block"
+                                                    to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`}>
+                                                    {data.ast_title}
+                                                </Link>
+                                            </td>
+                                            <td className="self-end">
+                                                <Link
+                                                    className="block"
+                                                    to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`}>
+                                                    {data.ast_classes.class_name}
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))
+                                }
+                            </Fragment>
+                        )
+                        : (
+                            <tr>
+                                <td className="py-3">
+                                    現在、未提出の課題はありません。
+                                </td>
+                                <td>
 
-                            <td className="self-end">
-                                <Link
-                                    className="block"
-                                    to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`}>
-                                    {data.ast_classes.class_name}
-                                </Link>
-                            </td>
-                        </tr>
-                    ))}
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                        )
+                    }
                 </tbody >
 
             </table >

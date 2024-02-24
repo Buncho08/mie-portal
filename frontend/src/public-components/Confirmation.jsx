@@ -3,11 +3,12 @@ import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
 
 export default function Confirmation({ dofunc, target, setFlg }) {
     return (
-        <div className="bg-cover-gray absolute h-full w-full top-0 left-0 z-20">
+        <div className="bg-cover-gray animate-opacity-transition absolute h-full w-full top-0 left-0 z-20">
             <div className="top-0 bottom-0 left-0 right-0 m-auto w-96 absolute
+            animate-scale-up-center
             grid items-center">
                 <div role="alert" className="
-                 w-96 rounded-xl border border-gray-100 bg-white p-4
+                 w-96 rounded-xl border border-gray-100 bg-white p-4 shadow-lg
                 ">
                     <div className="ml-5 flex items-start gap-4">
                         <span className="text-error">

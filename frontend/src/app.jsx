@@ -19,6 +19,7 @@ import Settings from "./settings/settings.jsx";
 import SetTimeTable from "./settimetable/SetTimeTable.jsx";
 import Assignments from "./class/components/Assignments.jsx";
 import ClassesAll from "./classes/ClassesAll.jsx";
+import Resize from "./Resize/Resize.jsx";
 
 import { LoadUserData } from './root/root.jsx';
 import { LoadLoggedStatus } from './login/Login.jsx'
@@ -101,6 +102,11 @@ export default function App() {
                     element: <ClassesAll />,
                     errorElement: <ErrorPage />,
                     loader: LoadClassesData
+                },
+                {
+                    path: 'resize',
+                    element: <Resize />,
+                    errorElement: <ErrorPage />,
                 }
             ]
         },

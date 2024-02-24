@@ -106,7 +106,7 @@ export default function TeamLink({ team_id, teamlink, setAlert }) {
                             <ul className="px-side-side text-base">
                                 {
                                     teamLink.map((data) => (
-                                        <li key={data.link_id} className="my-2">
+                                        <li key={data.link_id} className="list-none m-0 my-2">
                                             <Link to={data.link_URL} className="hover:text-banner">
                                                 {data.link_title ? (data.link_title) : (data.link_URL)}
                                             </Link>

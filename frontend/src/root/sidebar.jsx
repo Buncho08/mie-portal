@@ -1,27 +1,37 @@
 import { useContext, useState, useEffect } from 'react';
 import { UserData } from './root';
 import { Link } from "react-router-dom";
+import Logout from '../logout/Logout';
 
 export default function SideBar() {
     const user = useContext(UserData);
-    const [nowPage, setNowPage] = useState(String(window.location.href).split('/')[4])
+    const [nowPage, setNowPage] = useState(String(window.location.href).split('/')[4]);
+    const [logout, setLogout] = useState(false);
+
     return (
         <aside className="w-52 flex h-screen flex-col justify-between border-e bg-blue text-white">
+            {
+                logout && (
+                    <Logout setFlg={setLogout} userdata={user} />
+                )
+            }
             <div>
                 {/* ロゴ */}
                 <div className="m-5">
-                    <svg
-                        width="160"
-                        height="50"
-                        viewBox="0 0 112 38"
-                        version="1.1"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            className="text-64 fill-accent stroke fill"
-                            d="m 222.44803,82.064984 4.992,46.463996 h -16.576 l -1.024,-33.151996 -6.4,33.151996 h -16.768 l -6.528,-32.895996 -0.96,32.895996 h -16.576 l 4.992,-46.463996 h 21.76 l 5.568,30.271996 4.864,-30.271996 z m 46.91603,12.736 q -7.616,-0.384 -11.264,-0.448 v 21.887996 q 3.712,-0.064 11.264,-0.448 v 12.736 h -37.184 v -12.736 q 7.36,0.384 11.2,0.448 V 94.352984 q -3.84,0.064 -11.2,0.448 v -12.736 h 37.184 z m 19.84395,22.015996 q 24.32,-0.128 35.264,-0.704 -0.448,2.624 -0.576,5.44 -0.064,2.752 -0.064,6.976 h -49.728 q 0.512,-12.416 0.512,-23.232 0,-10.815996 -0.512,-23.231996 h 49.728 v 11.584 h -34.624 v 6.144 q 3.072,0.064 9.088,0.064 10.176,0 21.056,-0.384 v 11.007996 q -10.88,-0.384 -21.056,-0.384 -6.016,0 -9.088,0.064 z m -182.03001,29.312 q 12.736,0 17.728,4.544 4.992,4.48 4.992,12.672 0,5.632 -1.984,9.6 -1.984,3.904 -6.976,6.144 -4.992,2.176 -13.76,2.176 H 93.865999 v 11.264 h -15.744 q 0.512,-12.416 0.512,-23.232 0,-10.816 -0.512,-23.232 h 15.744 v 0.064 z m -4.48,22.784 q 5.312,0 7.936,-0.384 2.688,-0.448 3.712,-1.536 1.088,-1.088 1.088,-3.2 0,-2.112 -1.024,-3.136 -0.96,-1.088 -3.648,-1.472 -2.624,-0.384 -8.064,-0.384 h -8.832001 v 10.112 z m 60.41999,24.256 q -14.656,0 -21.568,-6.336 -6.912,-6.4 -6.912,-17.92 0,-11.392 6.848,-17.792 6.912,-6.4 21.632,-6.4 14.784,0 21.632,6.4 6.912,6.4 6.912,17.792 0,11.584 -6.848,17.92 -6.848,6.336 -21.696,6.336 z m 0,-13.056 q 7.104,0 10.24,-2.688 3.136,-2.752 3.136,-8.512 0,-5.632 -3.136,-8.384 -3.136,-2.752 -10.24,-2.752 -7.04,0 -10.176,2.752 -3.136,2.752 -3.136,8.384 0,5.696 3.136,8.448 3.136,2.752 10.176,2.752 z m 84.67605,-18.56 q 0,5.568 -2.752,9.408 -2.688,3.84 -9.28,5.568 0.768,1.024 1.088,1.6 l 10.368,14.4 h -17.408 q -2.816,-5.248 -8.896,-14.848 h -9.408 v 14.848 h -15.104 q 0.512,-12.416 0.512,-23.232 0,-10.816 -0.512,-23.232 h 15.104 v 0.064 h 13.12 q 12.928,0 18.048,4.16 5.12,4.16 5.12,11.264 z m -36.288,-3.136 v 7.296 h 8.64 q 5.44,0 8.192,-0.32 2.816,-0.384 3.904,-1.152 1.088,-0.768 1.088,-2.24 0,-1.408 -1.024,-2.176 -1.024,-0.768 -3.84,-1.088 -2.816,-0.32 -8.32,-0.32 z m 92.80401,1.088 q -10.048,-0.32 -19.52,-0.384 v 33.408 h -16 v -33.408 q -9.536,0.064 -19.456,0.384 v -13.44 h 54.976 z m 40.00395,33.024 q -1.216,-3.648 -3.264,-9.152 h -20.416 l -3.2,9.152 H 301.37 l 17.92,-46.464 h 23.552 l 18.048,46.464 z m -6.912,-19.136 q -2.432,-6.72 -4.992,-13.44 l -1.536,-4.16 q -2.24,5.824 -6.592,17.6 z m 40.83603,6.208 q 18.56,-0.128 30.72,-0.64 -0.832,3.264 -1.024,6.272 -0.192,3.008 -0.192,7.296 h -45.12 q 0.512,-12.416 0.512,-23.232 0,-10.816 -0.512,-23.232 h 15.616 z"
-                            transform="matrix(0.34123125,0,0,0.34123125,-26.65631,-27.658634)"
-                            aria-label="MIE PORTAL" />
-                    </svg>
+                    <Link to={'/mie/Mypage'}>
+                        <svg
+                            width="160"
+                            height="50"
+                            viewBox="0 0 112 38"
+                            version="1.1"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                className="text-64 fill-accent stroke fill"
+                                d="m 222.44803,82.064984 4.992,46.463996 h -16.576 l -1.024,-33.151996 -6.4,33.151996 h -16.768 l -6.528,-32.895996 -0.96,32.895996 h -16.576 l 4.992,-46.463996 h 21.76 l 5.568,30.271996 4.864,-30.271996 z m 46.91603,12.736 q -7.616,-0.384 -11.264,-0.448 v 21.887996 q 3.712,-0.064 11.264,-0.448 v 12.736 h -37.184 v -12.736 q 7.36,0.384 11.2,0.448 V 94.352984 q -3.84,0.064 -11.2,0.448 v -12.736 h 37.184 z m 19.84395,22.015996 q 24.32,-0.128 35.264,-0.704 -0.448,2.624 -0.576,5.44 -0.064,2.752 -0.064,6.976 h -49.728 q 0.512,-12.416 0.512,-23.232 0,-10.815996 -0.512,-23.231996 h 49.728 v 11.584 h -34.624 v 6.144 q 3.072,0.064 9.088,0.064 10.176,0 21.056,-0.384 v 11.007996 q -10.88,-0.384 -21.056,-0.384 -6.016,0 -9.088,0.064 z m -182.03001,29.312 q 12.736,0 17.728,4.544 4.992,4.48 4.992,12.672 0,5.632 -1.984,9.6 -1.984,3.904 -6.976,6.144 -4.992,2.176 -13.76,2.176 H 93.865999 v 11.264 h -15.744 q 0.512,-12.416 0.512,-23.232 0,-10.816 -0.512,-23.232 h 15.744 v 0.064 z m -4.48,22.784 q 5.312,0 7.936,-0.384 2.688,-0.448 3.712,-1.536 1.088,-1.088 1.088,-3.2 0,-2.112 -1.024,-3.136 -0.96,-1.088 -3.648,-1.472 -2.624,-0.384 -8.064,-0.384 h -8.832001 v 10.112 z m 60.41999,24.256 q -14.656,0 -21.568,-6.336 -6.912,-6.4 -6.912,-17.92 0,-11.392 6.848,-17.792 6.912,-6.4 21.632,-6.4 14.784,0 21.632,6.4 6.912,6.4 6.912,17.792 0,11.584 -6.848,17.92 -6.848,6.336 -21.696,6.336 z m 0,-13.056 q 7.104,0 10.24,-2.688 3.136,-2.752 3.136,-8.512 0,-5.632 -3.136,-8.384 -3.136,-2.752 -10.24,-2.752 -7.04,0 -10.176,2.752 -3.136,2.752 -3.136,8.384 0,5.696 3.136,8.448 3.136,2.752 10.176,2.752 z m 84.67605,-18.56 q 0,5.568 -2.752,9.408 -2.688,3.84 -9.28,5.568 0.768,1.024 1.088,1.6 l 10.368,14.4 h -17.408 q -2.816,-5.248 -8.896,-14.848 h -9.408 v 14.848 h -15.104 q 0.512,-12.416 0.512,-23.232 0,-10.816 -0.512,-23.232 h 15.104 v 0.064 h 13.12 q 12.928,0 18.048,4.16 5.12,4.16 5.12,11.264 z m -36.288,-3.136 v 7.296 h 8.64 q 5.44,0 8.192,-0.32 2.816,-0.384 3.904,-1.152 1.088,-0.768 1.088,-2.24 0,-1.408 -1.024,-2.176 -1.024,-0.768 -3.84,-1.088 -2.816,-0.32 -8.32,-0.32 z m 92.80401,1.088 q -10.048,-0.32 -19.52,-0.384 v 33.408 h -16 v -33.408 q -9.536,0.064 -19.456,0.384 v -13.44 h 54.976 z m 40.00395,33.024 q -1.216,-3.648 -3.264,-9.152 h -20.416 l -3.2,9.152 H 301.37 l 17.92,-46.464 h 23.552 l 18.048,46.464 z m -6.912,-19.136 q -2.432,-6.72 -4.992,-13.44 l -1.536,-4.16 q -2.24,5.824 -6.592,17.6 z m 40.83603,6.208 q 18.56,-0.128 30.72,-0.64 -0.832,3.264 -1.024,6.272 -0.192,3.008 -0.192,7.296 h -45.12 q 0.512,-12.416 0.512,-23.232 0,-10.816 -0.512,-23.232 h 15.616 z"
+                                transform="matrix(0.34123125,0,0,0.34123125,-26.65631,-27.658634)"
+                                aria-label="MIE PORTAL" />
+                        </svg>
+                    </Link>
                 </div>
                 {/* ロゴここまで */}
 
@@ -31,7 +41,10 @@ export default function SideBar() {
                     {/* ユーザ情報エリア */}
                     <div className='mb-3 grid justify-center items-center'>
                         {/* アイコン */}
-                        <img src={`http://localhost:8000/api${user.user_icon}`} alt="" width={130} height={130} />
+                        <Link to={'/mie/settings'}>
+                            <img src={`http://localhost:8000/api${user.user_icon}`} alt="" width={130} height={130} className='rounded-full' />
+                        </Link>
+
                         {/* アイコンここまで */}
                         <div className='mt-2 text-center'>
                             <small>
@@ -45,7 +58,7 @@ export default function SideBar() {
                     {/* ユーザ情報エリアここまで */}
 
                     {/* アイコン群 */}
-                    <ul className="space-y-1 border-t border-gray-100 pt-4">
+                    <ul className="list-none m-0 space-y-1 border-t border-gray-100 pt-2">
                         {/* マイページリンクアイコン */}
                         <li className='grid justify-center'>
                             <Link
@@ -122,7 +135,7 @@ export default function SideBar() {
                         {/* チームページここまで */}
 
                         {/* みんなのページここから */}
-                        <li>
+                        <li className='grid justify-center'>
                             <Link
                                 to={'profile/'}
                                 className={`
@@ -171,7 +184,7 @@ export default function SideBar() {
                         {/* みんなのプロフィールここまで */}
 
                         {/* マイプロフィール設定ここから */}
-                        <li>
+                        <li className='grid justify-center'>
                             <Link
                                 to={'settings/'}
                                 className={`
@@ -217,58 +230,56 @@ export default function SideBar() {
 
                         {/* 教師のみ */}
                         {/* 時間割や授業の設定ここから */}
-                        {
-                            user.user_grade === 2 && (
-                                <li>
-                                    <Link
-                                        to={'classes/'}
-                                        className={`
+
+                        <li className='grid justify-center'>
+                            <Link
+                                to={'classes/'}
+                                className={`
                                     group relative flex justify-center rounded px-2 py-1.5  
                                     ${nowPage == 'timetable' ? ('') : ('hover:text-side-gray')}
                                     hover:text-side-gray
                                     `}
-                                        onClick={() => setNowPage('timetable')}
-                                    >
-                                        <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
-                                            width="214px" height="214px" viewBox="0 0 512 512"
-                                            className={`row-span-1 w-16 h-16 ${nowPage == 'timetable' ? ('fill-white') : ('fill-side-gray hover:fill-white')}`} xmlSpace="preserve">
+                                onClick={() => setNowPage('timetable')}
+                            >
+                                <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
+                                    width="214px" height="214px" viewBox="0 0 512 512"
+                                    className={`row-span-1 w-16 h-16 ${nowPage == 'timetable' ? ('fill-white') : ('fill-side-gray hover:fill-white')}`} xmlSpace="preserve">
 
-                                            <g>
-                                                <path className="st0" d="M164.893,89.791c13.875,0,25.126-11.243,25.126-25.134V25.118C190.019,11.252,178.768,0,164.893,0
+                                    <g>
+                                        <path className="st0" d="M164.893,89.791c13.875,0,25.126-11.243,25.126-25.134V25.118C190.019,11.252,178.768,0,164.893,0
 		                                            s-25.135,11.252-25.135,25.118v39.538C139.758,78.548,151.018,89.791,164.893,89.791z"></path>
-                                                <path className="st0" d="M350.184,89.791c13.867,0,25.126-11.243,25.126-25.134V25.118C375.31,11.252,364.05,0,350.184,0
+                                        <path className="st0" d="M350.184,89.791c13.867,0,25.126-11.243,25.126-25.134V25.118C375.31,11.252,364.05,0,350.184,0
 		                                            c-13.875,0-25.135,11.252-25.135,25.118v39.538C325.048,78.548,336.309,89.791,350.184,89.791z"></path>
-                                                <path className="st0" d="M437.25,35.807h-39.865v28.849c0,26.04-21.169,47.218-47.201,47.218c-26.032,0-47.209-21.178-47.209-47.218
+                                        <path className="st0" d="M437.25,35.807h-39.865v28.849c0,26.04-21.169,47.218-47.201,47.218c-26.032,0-47.209-21.178-47.209-47.218
 		                                            V35.807h-90.881v28.849c0,26.04-21.178,47.218-47.2,47.218c-26.032,0-47.21-21.178-47.21-47.218V35.807H74.75
 		                                            c-38.977,0-70.575,31.599-70.575,70.575v335.043C4.175,480.401,35.773,512,74.75,512H437.25c38.976,0,70.575-31.599,70.575-70.575
 		                                            V106.382C507.825,67.406,476.226,35.807,437.25,35.807z M473.484,441.425c0,19.978-16.256,36.235-36.235,36.235H74.75
 		                                            c-19.979,0-36.235-16.257-36.235-36.235V150.984h434.969V441.425z"></path>
-                                                <rect x="174.928" y="382.512" className="st0" width="63.591" height="63.591"></rect>
-                                                <rect x="174.928" y="283.96" className="st0" width="63.591" height="63.591"></rect>
-                                                <rect x="76.385" y="382.512" className="st0" width="63.582" height="63.591"></rect>
-                                                <rect x="76.385" y="283.96" className="st0" width="63.582" height="63.591"></rect>
-                                                <rect x="372.032" y="185.417" className="st0" width="63.583" height="63.582"></rect>
-                                                <rect x="273.48" y="185.417" className="st0" width="63.591" height="63.582"></rect>
-                                                <polygon className="st0" points="350.041,293.216 331.127,278.51 296.686,322.811 276.238,306.454 261.273,325.142 300.677,356.673 	
+                                        <rect x="174.928" y="382.512" className="st0" width="63.591" height="63.591"></rect>
+                                        <rect x="174.928" y="283.96" className="st0" width="63.591" height="63.591"></rect>
+                                        <rect x="76.385" y="382.512" className="st0" width="63.582" height="63.591"></rect>
+                                        <rect x="76.385" y="283.96" className="st0" width="63.582" height="63.591"></rect>
+                                        <rect x="372.032" y="185.417" className="st0" width="63.583" height="63.582"></rect>
+                                        <rect x="273.48" y="185.417" className="st0" width="63.591" height="63.582"></rect>
+                                        <polygon className="st0" points="350.041,293.216 331.127,278.51 296.686,322.811 276.238,306.454 261.273,325.142 300.677,356.673 	
 		                                            "></polygon>
-                                                <rect x="372.032" y="283.96" className="st0" width="63.583" height="63.591"></rect>
-                                                <rect x="273.48" y="382.512" className="st0" width="63.591" height="63.591"></rect>
-                                                <rect x="174.928" y="185.417" className="st0" width="63.591" height="63.582"></rect>
-                                            </g>
-                                        </svg>
+                                        <rect x="372.032" y="283.96" className="st0" width="63.583" height="63.591"></rect>
+                                        <rect x="273.48" y="382.512" className="st0" width="63.591" height="63.591"></rect>
+                                        <rect x="174.928" y="185.417" className="st0" width="63.591" height="63.582"></rect>
+                                    </g>
+                                </svg>
 
-                                        <span
-                                            className={`absolute start-full w-20 z-50 top-1/2 text-center -translate-y-1/2 rounded bg-midnight px-2 py-1.5 text-xs font-medium text-white 
+                                <span
+                                    className={`absolute start-full w-20 z-50 top-1/2 text-center -translate-y-1/2 rounded bg-midnight px-2 py-1.5 text-xs font-medium text-white 
                                         ${nowPage == 'timetable' ? ('invisible') : ('invisible group-hover:visible')}
                                         
                                         `}
-                                        >
-                                            授業設定
-                                        </span>
-                                    </Link>
-                                </li>
-                            )
-                        }
+                                >
+                                    授業
+                                </span>
+                            </Link>
+                        </li>
+
                     </ul>
                     {/* アイコン群ここまで */}
 
@@ -276,11 +287,12 @@ export default function SideBar() {
             </div>
 
 
-            <div className="sticky inset-x-0 bottom-0 border-t border-gray-100 bg-blue p-2">
-                <form action="/logout">
+            <div className="sticky inset-x-0 bottom-0 border-t  border-gray-100 bg-blue p-2 hover:bg-midnight">
+                <div>
                     <button
                         type="submit"
-                        className="group relative flex w-full justify-center rounded-lg pxtrokeLinejoin-2 py-1.5 text-sm text-gray-500 hover:bg-midnight hover:text-white"
+                        onClick={() => setLogout(true)}
+                        className="group relative flex w-full text-white justify-center rounded-lg pxtrokeLinejoin-2 py-1.5 text-sm hover:text-white"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -298,7 +310,7 @@ export default function SideBar() {
                         </svg>
                         ログアウト
                     </button>
-                </form>
+                </div>
             </div>
         </aside>
     )

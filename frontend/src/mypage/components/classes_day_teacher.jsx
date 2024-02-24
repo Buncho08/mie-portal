@@ -22,7 +22,7 @@ export default function Classes_day_teacher({ user_classes }) {
             {
                 user_classes.map((data, index) => (
                     // ユニークなキーがなかったorz
-                    <details key={index * 100} open>
+                    <details key={index * 100} open className="pb-10">
                         <summary className="my-3 mx-side-side">
                             {`${index + 1}年生の授業`}
                         </summary>

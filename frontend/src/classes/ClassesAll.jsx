@@ -1,5 +1,5 @@
 import { useLoaderData, Link } from "react-router-dom"
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Class from "./components/Class";
 import TitleBar from "../public-components/TitleBar";
 import SubTitleBar from "../public-components/SubTitleBar";
@@ -8,6 +8,7 @@ import Cookies from 'js-cookie';
 import Confirmation from "../public-components/Confirmation";
 import Alert from '../public-components/Alert'
 import UpdateClass from "./components/UpdateClass";
+import { UserData } from '../root/root';
 
 export async function LoadClassesData() {
     const classes = await fetch('http://localhost:8000/api/classes', {
@@ -17,7 +18,7 @@ export async function LoadClassesData() {
         .then((res) => res.json())
         .then((data) => data)
         .catch((err) => console.log(err))
-
+    console.log(classes);
     const teachers = await fetch('http://localhost:8000/api/userView/teacher', {
         method: 'GET',
         credentials: 'include'
@@ -30,6 +31,7 @@ export async function LoadClassesData() {
 
 export default function ClassesAll() {
     const { classes, teachers } = useLoaderData();
+    const userdata = useContext(UserData);
     const [firstClasses, setFirstClasses] = useState(classes.first);
     const [secondClasses, setSecondClasses] = useState(classes.second);
     // 1 => 編集modal 2 => 削除モーダル
@@ -182,7 +184,7 @@ export default function ClassesAll() {
             {
                 viewModal === 1
                 && (
-                    <div className="bg-cover-gray absolute h-full w-full top-0 left-0 z-30">
+                    <div className="animate-opacity-transition bg-cover-gray absolute h-full w-full top-0 left-0 z-30">
                         <UpdateClass teachers={teachers} target={target} setViewModal={setViewModal} hundleUpdateName={hundleUpdateName} />
                     </div>
                 )
@@ -205,35 +207,41 @@ export default function ClassesAll() {
             h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around
             ">
                 <TitleBar title={"授業設定"} />
-
-                <div className="self-end flex gap-3 items-center m-4 w-96 text-xl">
-                    <Link
-                        to={"http://localhost:3000/mie/timetable/"}
-                        className="grid justify-center items-center text-banner hover:text-midnight h-12 w-44 rounded-lg">
-                        時間割の設定へ
-                    </Link>
-                </div>
-            </header>
-            <div className="w-[70%] mx-auto">
-
-                <details className="my-3 mt-6">
-                    <summary className="grid items-center">
-                        <div className="px-side">
-                            <h3 className="text-2xl font-bold">
-                                ▶ 授業を新しく作成する
-                            </h3>
-                            <div className="h-[0.1px] w-7/12 bg-midnight">
-
-                            </div>
+                {
+                    userdata.user_grade === 2 && (
+                        <div className="self-end flex gap-3 items-center m-4 w-96 text-xl">
+                            <Link
+                                to={"http://localhost:3000/mie/timetable/"}
+                                className="grid justify-center items-center text-banner hover:text-midnight h-12 w-44 rounded-lg">
+                                時間割の設定へ
+                            </Link>
                         </div>
-                    </summary>
-                    <CreateClasses teachers={teachers} hundleSubmit={hundleSubmit} />
-                </details>
+                    )
+                }
 
+            </header>
+            <div className="w-[70%] mx-auto pb-10">
+                {
+                    userdata.user_grade === 2 && (
+                        <details className="my-3 mt-6">
+                            <summary className="grid items-center">
+                                <div className="px-side">
+                                    <h3 className="text-2xl font-bold">
+                                        ▶ 授業を新しく作成する
+                                    </h3>
+                                    <div className="h-[0.1px] w-7/12 bg-midnight">
+
+                                    </div>
+                                </div>
+                            </summary>
+                            <CreateClasses teachers={teachers} hundleSubmit={hundleSubmit} />
+                        </details>
+                    )
+                }
                 <SubTitleBar title={'1年生'} />
-                <Class classdata={firstClasses} setViewModal={setViewModal} setTarget={setTarget} />
+                <Class classdata={firstClasses} setViewModal={setViewModal} setTarget={setTarget} user_grade={userdata.user_grade} />
                 <SubTitleBar title={'2年生'} />
-                <Class classdata={secondClasses} setViewModal={setViewModal} setTarget={setTarget} />
+                <Class classdata={secondClasses} setViewModal={setViewModal} setTarget={setTarget} user_grade={userdata.user_grade} />
             </div>
         </div>
     )

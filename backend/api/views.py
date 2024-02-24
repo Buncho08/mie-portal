@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from functools import partial
+from unicodedata import category
 from rest_framework import status, views
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.conf import settings
@@ -49,6 +50,8 @@ class RegisterView(views.APIView):
 
                 user = UserTable(
                     user_id=serializer.validated_data['user_id'],
+                    user_first=serializer.validated_data['user_first'],
+                    user_last=serializer.validated_data['user_last'],
                     user_stdNum=serializer.validated_data['user_stdNum'],
                     user_grade=serializer.validated_data['user_grade'],
                     is_teacher=is_teacher
@@ -69,13 +72,12 @@ class LogoutView(views.APIView):
     serializer_class = LoginSerializer
     def post(self, request, *args, **kwargs):
         # try:
-        refresh_token = request.COOKIES["refresh_token"]
-        token = RefreshToken(refresh_token)
-        token.blacklist()
-
         response = Response(data=request.data, status=status.HTTP_205_RESET_CONTENT)
         try:
             response.delete_cookie('user_grade')
+            response.delete_cookie('access_token')
+            response.delete_cookie('refresh_token')
+            response.delete_cookie('sessionid')
             return response
         except Exception as e:
             print(e)
@@ -132,7 +134,7 @@ class MyPageView(views.APIView):
             notsubmissions = NotSubmissionsView.get(self, request).data
 
 
-        notice = Notice.objects.order_by('notice_date').filter(~Q(notice_main=None))[:3]
+        notice = Notice.objects.order_by('-notice_date').filter(~Q(notice_main=None))[:4]
         notice_classes = NoticeSerializer(instance=notice, many=True)
 
         response_data['user_classes'] = res
@@ -147,14 +149,39 @@ class LikeCategoryView(views.APIView):
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, *args, **kwargs):
-        likecategory = LikeCategory.objects.all()
-        serializer = LikeCategorySerializer(instance=likecategory, many=True)
-
-        return Response(serializer.data)
+        game = LikeCategorySerializer(instance=LikeCategory.objects.filter(like_category=0), many=True).data
+        hobby = LikeCategorySerializer(instance=LikeCategory.objects.filter(like_category=1), many=True).data
+        pg = LikeCategorySerializer(instance=LikeCategory.objects.filter(like_category=2), many=True).data
+        animal = LikeCategorySerializer(instance=LikeCategory.objects.filter(like_category=3), many=True).data
+        res = [
+            game, 
+            hobby,
+            pg,
+            animal
+        ]
+        return Response(res)
     
     def post(self, request, *args, **kwargs):
-
-        return 0
+        serializer = LikeCategorySerializer(data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def delete(self, request, pk, *args, **kwargs):
+        if request.user.is_superuser or request.user.is_teacher:
+            model = LikeCategory.objects.filter(like_id=pk)
+            if model.exists():
+                if file.deleteFile(dirname='like', filename=f"{model.first().like_name}_icon.webp", ctg='icon'):
+                    model.first().delete()
+                    return Response({'message':'削除しました。'}, status=status.HTTP_202_ACCEPTED)
+                else:
+                    return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'error':'not found'}, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({'error':'権限がありません'}, status=status.HTTP_401_UNAUTHORIZED)
 
 # マイページすきなもの設定ビュー
 class MypageSettingView(views.APIView):
@@ -162,14 +189,19 @@ class MypageSettingView(views.APIView):
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, *args, **kwargs):
-        like_ctg = LikeCategory.objects.all()
-        # if 'user' in request.GET:
-        #     user = UserTable.objects.get(user_id=request.GET['user'])
-        #     serializer = MypageSettingSerializer(instance=like_ctg, many=True, user=user)
-        # else:
+
         user = UserTable.objects.get(user_id=request.user.user_id)
-        serializer = MypageSettingSerializer(instance=like_ctg, many=True, user=user)
-        return Response(serializer.data, status.HTTP_200_OK)
+        game = MypageSettingSerializer(instance=LikeCategory.objects.filter(like_category=0), many=True, user=user).data
+        hobby = MypageSettingSerializer(instance=LikeCategory.objects.filter(like_category=1), many=True, user=user).data
+        pg = MypageSettingSerializer(instance=LikeCategory.objects.filter(like_category=2), many=True, user=user).data
+        animal = MypageSettingSerializer(instance=LikeCategory.objects.filter(like_category=3), many=True, user=user).data
+        res = [
+            game, 
+            hobby,
+            pg,
+            animal
+        ]
+        return Response(res, status.HTTP_200_OK)
 
 
 # ユーザーのすきなもの表示
@@ -279,7 +311,8 @@ class NoticeUpdateView(views.APIView):
         
         if serializer.is_valid():
             serializer.save()
-
+            if serializer.validated_data['notice_main'] == "":
+                file.deleteDir(dirname=class_model.class_name, ctg='notice')
             return Response({"message" : "情報を更新しました"}, status=status.HTTP_200_OK)
         else:
             Response({"error": "Updation failed", "cause": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -427,7 +460,7 @@ class TimeTableView(views.APIView):
 # 授業編集ぺーじ用の全授業いちらん
 class ClassesView(views.APIView):
     serializer_class = ClassesSerializer
-    permission_classes = [IsAdmin, ]
+    permission_classes = [IsAuthenticated, ]
     def get(self, request, *args, **kwargs):
         first = Classes.objects.filter(class_grade=0)
         first_serializer = ClassesSerializer(instance=first, many=True)
@@ -697,13 +730,26 @@ class TeamView(views.APIView):
                 return Response({'error':serializer.error}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"error": "Not found"}, status=status.HTTP_400_BAD_REQUEST)
-        
+    
+    def delete(self, request, pk, *args, **kwargs):
+        model = Team.objects.filter(team_id=pk)
+        user = UserTable.objects.get(user_id=request.user.user_id)
+        if model.exists() and (user == model.first().team_admin or user.is_teacher or user.is_superuser):
+            model = model.first()
+            if file.deleteDir(dirname=model.team_name, ctg='team'):
+                model.delete()
+                return Response({'message':'チームを削除しました'},status=status.HTTP_200_OK)
+            else:
+                print('ファイル削除できんわ')
+                return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print('ありませんわ')
+            return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
 # メッセージとチームページ情報API切り分けたい
 
 class TeamChatView(views.APIView):
     serializer_class = TeamChatSerializer
     permission_classes = [IsAuthenticated, ]
-
 
     def get(self, request, pk, *args, **kwargs):
         team_model = Team.objects.filter(team_id=pk)
@@ -820,6 +866,16 @@ class TeamLinkView(views.APIView):
         else:
             return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
 
+class NoticeImageSaveView(views.APIView):
+    permission_classes = [IsAuthenticated, ]
+
+    def post(self, request, *args, **kwargs):
+        files = request.FILES['notice_image']
+        class_model = Classes.objects.get(class_id=request.data['class_id'])
+        if file.mkdirToSavefile(dirname=f'{class_model.class_name}', file=files, ctg='notice', name=files.name):
+            return Response({'image_url': f"{settings.MEDIA_URL}notice/{class_model.class_name}/{files.name}" }, status=status.HTTP_200_OK)
+        else:
+            return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
 
 # # ログイン、使わないかもしれない
 # # api/login/

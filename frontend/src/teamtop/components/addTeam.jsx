@@ -1,7 +1,7 @@
 import ModalBar from "../../public-components/ModalBar"
 export default function AddTeam({ hundleAddTeam, setViewFlg, viewFlg }) {
     return (
-        <div className="absolute w-[50%] bg-white h-[30%] m-auto top-0 left-0 right-0 bottom-0">
+        <div className="animate-scale-up-center shadow-lg rounded-lg absolute w-[50%] bg-white h-[30%] m-auto top-0 left-0 right-0 bottom-0">
             <ModalBar closeFlg={setViewFlg} title={`${viewFlg}年生のスレッドを作成`} />
             <div className="w-3/4 m-auto h-[88%] grid mt-8">
                 <form onSubmit={hundleAddTeam}>
@@ -10,6 +10,8 @@ export default function AddTeam({ hundleAddTeam, setViewFlg, viewFlg }) {
                         className="relative block overflow-hidden border-b border-gray-600 bg-transparent pt-3 focus-within:border-blue-600"
                     >
                         <input
+                            required
+                            maxLength={20}
                             type="text"
                             id="team_name"
                             placeholder="チーム名"

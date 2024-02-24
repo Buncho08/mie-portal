@@ -1,6 +1,6 @@
 export default function ModalBar({ closeFlg, flg, title }) {
     return (
-        <div className="bg-blue w-full h-[10%] flex justify-between items-center p-4">
+        <div className="bg-blue w-full rounded-t-lg h-[50px] flex justify-between items-center p-4">
             <p className="text-white">
                 {title}
             </p>

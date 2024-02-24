@@ -101,7 +101,7 @@ export default function Assignment_teacher({ class_id, setAlert }) {
             })
             .catch((err) => console.log(err))
 
-        setAssignment(assignment.map((data) => (
+        setAssignment(assignmentData.map((data) => (
             data.ast_id === ast_id
                 ? status
                 : data

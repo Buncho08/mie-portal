@@ -1,4 +1,5 @@
 from email.policy import default
+from enum import unique
 from tabnanny import verbose
 from django.utils import timezone
 from datetime import datetime
@@ -230,7 +231,7 @@ class Notice(models.Model):
     notice_id = models.AutoField(verbose_name='お知らせID', unique=True, primary_key=True, editable=False)
     notice_classes = models.ForeignKey(verbose_name='授業', to=Classes, on_delete=models.CASCADE, related_name='notice_classes')
     notice_user = models.ForeignKey(verbose_name='更新者', to=UserTable,blank=True, null=True, on_delete=models.CASCADE, related_name='notice_user')
-    notice_main = models.TextField(verbose_name='本文', max_length=2048, blank=True, null=True)
+    notice_main = models.TextField(verbose_name='本文', max_length=2048, blank=True, null=True, default="")
     notice_date = models.DateField(verbose_name='更新日時', auto_now=True)
 
 
@@ -311,9 +312,9 @@ class LikeCategory(models.Model):
     ]
     
     like_id = models.AutoField(verbose_name='好きなものID', unique=True, primary_key=True, editable=False)
-    like_name = models.TextField(verbose_name='好きなもの名')
+    like_name = models.TextField(verbose_name='好きなもの名', unique=True)
     like_category = models.IntegerField(verbose_name='好きなものカテゴリ', choices=CATEGORY_CHOICES, default=0)
-    like_icon = models.ImageField(verbose_name="アイコン", default='icon/like/default_icon.png', upload_to=saveLikePath, null=True, blank=True)
+    like_icon = ResizedImageField(force_format="WEBP", quality=75, verbose_name="アイコン", default='icon/like/default_icon.webp', upload_to=saveLikePath, null=True, blank=True)
 
 class LikeUser(models.Model):
     class Meta:

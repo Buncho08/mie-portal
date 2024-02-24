@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 
-export default function Class({ classdata, setTarget, setViewModal }) {
+export default function Class({ classdata, setTarget, setViewModal, user_grade }) {
     return (
         <div className="overflow-hidden rounded-lg border border-gray-200 shadow-md">
             <table className="bg-gray-50 w-full">
@@ -12,12 +12,18 @@ export default function Class({ classdata, setTarget, setViewModal }) {
                         <td className="text-center">
                             教師
                         </td>
-                        <td>
+                        {
+                            user_grade === 2 && (
+                                <>
+                                    <td>
 
-                        </td>
-                        <td>
+                                    </td>
+                                    <td>
 
-                        </td>
+                                    </td>
+                                </>
+                            )
+                        }
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 border-t border-gray-100">
@@ -32,32 +38,38 @@ export default function Class({ classdata, setTarget, setViewModal }) {
                             <td className="px-4 py-2 text-center">
                                 {data.class_teacher.user_last}先生
                             </td>
-                            <td>
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        setViewModal(1);
-                                        setTarget({
-                                            'target': data.class_name,
-                                            'target_data': data,
-                                        })
-                                    }}
-                                >
-                                    🖋
-                                </button>
-                            </td>
-                            <td>
-                                <button onClick={(e) => {
-                                    e.preventDefault();
-                                    setViewModal(2);
-                                    setTarget({
-                                        'target': data.class_name,
-                                        'target_data': data,
-                                    });
-                                }}>
-                                    🗑️
-                                </button>
-                            </td>
+                            {
+                                user_grade === 2 && (
+                                    <>
+                                        <td>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    setViewModal(1);
+                                                    setTarget({
+                                                        'target': data.class_name,
+                                                        'target_data': data,
+                                                    })
+                                                }}
+                                            >
+                                                🖋
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button onClick={(e) => {
+                                                e.preventDefault();
+                                                setViewModal(2);
+                                                setTarget({
+                                                    'target': data.class_name,
+                                                    'target_data': data,
+                                                });
+                                            }}>
+                                                🗑️
+                                            </button>
+                                        </td>
+                                    </>
+                                )
+                            }
                         </tr>
                     ))}
                 </tbody>

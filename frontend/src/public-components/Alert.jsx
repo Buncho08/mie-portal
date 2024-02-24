@@ -15,7 +15,7 @@ export default function SuccessAlert({ alert, setAlert }) {
         }
     }, [])
     return (
-        <div className={`border-t-2 rounded-lg p-4 absolute w-1/3 left-0 right-0 bottom-12 m-auto h-20
+        <div className={`z-50 animate-scale-up-center shadow-lg border-t-2 rounded-lg p-4 absolute w-1/3 left-0 right-0 bottom-12 m-auto h-20
         ${alert.status ? ('bg-red-100 border-red-500') : ('border-teal-500 bg-teal-50')}
         `} role="alert">
             <div className="flex">
@@ -36,9 +36,9 @@ export default function SuccessAlert({ alert, setAlert }) {
 
                 </div>
                 <div className="ms-3">
-                    <h3 className="text-gray-800 font-semibold dark:text-white">
+                    <h4 className="text-gray-800 font-semibold dark:text-white">
                         {alert.message}
-                    </h3>
+                    </h4>
                     <p className="text-sm text-gray-700 dark:text-gray-400">
                         {alert.disc}
                     </p>
