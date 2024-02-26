@@ -1,5 +1,5 @@
 import Sidebar from './sidebar';
-import { redirect, Outlet, useLoaderData, useNavigate } from "react-router-dom";
+import { redirect, Outlet, useLoaderData, Navigate } from "react-router-dom";
 
 import { createContext, useState } from 'react';
 

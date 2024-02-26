@@ -38,6 +38,11 @@ import { LoadAllAssignmentData } from "./allsubmissions/AllSubmissions.jsx";
 export default function App() {
     const router = createBrowserRouter([
         {
+            path: '/',
+            element: <App />,
+            errorElement: <ErrorPage />
+        },
+        {
             path: "/mie",
             element: <Root />,
             id: 'root',
@@ -128,6 +133,8 @@ export default function App() {
     ]);
 
     return (
-        <RouterProvider router={router} />
+        <>
+            <RouterProvider router={router} />
+        </>
     )
 }
