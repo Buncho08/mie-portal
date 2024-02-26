@@ -101,23 +101,28 @@ export default function File({ team_id, teamfile, setAlert }) {
 
             {
                 viewFlg && (
-                    <div className="bg-cover-gray absolute h-full w-full top-0 left-0">
+                    <div className="bg-cover-gray absolute h-full z-40 w-full top-0 left-0">
                         <FileModal hundleUploadFile={hundleUploadFile} setFilename={setFilename} filename={filename} setViewFlg={setViewFlg} viewFlg={viewFlg} />
                     </div>
                 )
             }
 
             <div className="w-full grid grid-cols-8 px-side py-yspace">
-                <h2 className="grid items-center px-1 text-2xl font-bold col-start-1 col-span-2 row-span-1 row-start-1">
+                <h2 className="grid items-center px-1 text-2xl font-bold col-start-1 col-span-3 row-span-1 row-start-1">
                     共有されたファイル
                 </h2>
-                <button className="col-start-6 col-span-2 row-span-1 row-start-1
-                    bg-sky-200 rounded-lg my-1 h-10 hover:bg-banner hover:text-white
-                    "
-                    onClick={() => setViewFlg(true)}
-                >
-                    ＋ファイルを共有
+
+                <button onClick={() => setViewFlg(true)}
+                    className="col-start-5 col-span-2 row-span-1 row-start-1 mb-2 relative w-64 inline-flex items-center justify-start px-6 py-3 overflow-hidden font-medium transition-all  bg-gradient-to-br from-gray-100 via-gray-200 to-gray-200 rounded-xl group">
+                    <span className="absolute top-0 right-0 inline-block w-4 h-4 transition-all duration-100 ease-in-out  bg-gradient-to-br from-sky-500 via-banner to-sky-500 rounded group-hover:-mr-4 group-hover:-mt-4">
+                        <span className="absolute top-0 right-0 w-5 h-5 rotate-45 translate-x-1/2 -translate-y-1/2 bg-white"></span>
+                    </span>
+                    <span className="absolute bottom-0 left-0 w-full h-full transition-all duration-400 ease-in-out delay-200 -translate-x-full translate-y-full  bg-gradient-to-br from-sky-500 via-banner to-sky-500 rounded-2xl group-hover:mb-12 group-hover:translate-x-0"></span>
+                    <span className="relative w-full text-gray-900 text-center transition-colors duration-200 ease-in-out group-hover:text-white">
+                        ＋ファイルを共有
+                    </span>
                 </button>
+
                 <div className="h-[0.1px] bg-midnight col-span-7 row-start-2">
 
                 </div>

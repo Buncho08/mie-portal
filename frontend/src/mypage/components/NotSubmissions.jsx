@@ -4,7 +4,7 @@ import SubTitleBar from "../../public-components/SubTitleBar"
 export default function NotSubmissions({ user_notsubmissions }) {
 
     return (
-        <>
+        <div className="px-side-side">
             <SubTitleBar title={'未提出の課題'} />
             <table className="mx-side w-3/6 text-left">
                 <thead className="border-b border-gray-200 ">
@@ -70,7 +70,7 @@ export default function NotSubmissions({ user_notsubmissions }) {
                 </tbody >
 
             </table >
-        </>
+        </div>
     )
 }
 

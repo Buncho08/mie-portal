@@ -7,9 +7,9 @@ import ChatForm from "./chatForm";
 
 // チャットだけ再レンダリング、再取得できるようにしたい
 
-export default function Chat({ teammessage, team_id }) {
+export default function Chat({ teammessage, team_id, bg }) {
     const userdata = useContext(UserData);
-    const [chatData, setChatData] = useState(teammessage)
+    const [chatData, setChatData] = useState(teammessage);
     const focusRef = useRef(null);
     const bgList = [
         "bg-[radial-gradient(77.95%_77.95%_at_74.66%_58.07%,rgba(255,254,220,0.1)_0%,rgba(255,255,255,0.152)_62.28%,rgba(255,255,255,0)_100%),radial-gradient(89.67%_70.39%_at_93.75%_92.16%,#29C2D7_0%,rgba(144,160,215,0.09)_52.46%,rgba(255,156,156,0.1)_100%),radial-gradient(68.86%_68.86%_at_94.55%_1.7%,rgba(250,208,144,0.3)_0%,rgba(250,220,144,0)_100%),linear-gradient(130.87deg,rgba(245,115,122,0.18)_3.47%,rgba(245,115,122,0)_77.25%)] bg-blend-[overlay,normal,normal,normal,normal,normal] backdrop-blur-[73px]",
@@ -107,18 +107,8 @@ export default function Chat({ teammessage, team_id }) {
         focusRef.current.children[focusRef.current.children.length - 1].scrollIntoView(true);
     }, [chatData])
     return (
-        <div className="w-[40%] h-full">
-
-            <div className="bg-white border-b border-gray-400 flex p-2 h-[9.1%] justify-between items-center shadow-[inset_0px_-3px_20px_5px_rgba(88,114,168,0.08)]">
-                <h3 className="text-lg ml-5">
-                    チャット
-                </h3>
-                <button className="text-2xl" onClick={(e) => getNewMessage(e)}>
-                    🔁
-                </button>
-            </div>
-
-            <ul className={`max-h-[80%] h-[80%] overflow-y-scroll ${bgList[rd]}`} id="chat-area" ref={focusRef}>
+        <>
+            <ul className={`max-h-[80%] h-[80%] overflow-y-scroll ${bg}`} id="chat-area" ref={focusRef}>
                 {
                     chatData.length > 0
                         ? (
@@ -134,7 +124,7 @@ export default function Chat({ teammessage, team_id }) {
                         )
                         : (
                             <div className="h-full grid items-center justify-center">
-                                <div className="bg-white h-24 grid items-center justify-center w-52">
+                                <div className="font-bold h-24 grid items-center justify-center w-52">
                                     <p>
                                         メッセージを送ってみましょう！
                                     </p>
@@ -144,6 +134,7 @@ export default function Chat({ teammessage, team_id }) {
                 }
             </ul>
             <ChatForm hundleSendMessage={hundleSendMessage} />
-        </div>
+
+        </>
     )
 }

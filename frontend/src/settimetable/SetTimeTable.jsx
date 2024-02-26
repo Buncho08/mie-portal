@@ -74,7 +74,7 @@ export default function SetTimeTable(params) {
         <div className="h-screen">
             <header
                 className="
-            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around
+            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around px-side-side
             ">
                 <TitleBar title={"時間割"} />
 

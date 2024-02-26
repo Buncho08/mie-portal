@@ -2,7 +2,7 @@ import { redirect, useLoaderData, Navigate } from "react-router-dom";
 import { Fragment, useContext, useState } from "react";
 import { UserData } from '../root/root';
 import Cookies from 'js-cookie';
-import Chat from "./components/chat";
+import ChatArea from "./components/ChatArea";
 import File from "./components/file";
 import TeamLink from "./components/link";
 import TitleBar from "../public-components/TitleBar";
@@ -79,9 +79,9 @@ export default function TeamPage() {
             })
             return <></>
         }
-
+        setEdit(false);
         setAlert({
-            'message': 'チーム名を変更しました✨',
+            'message': 'スレッド名を変更しました✨',
             'disc': '',
             'status': 0
         })
@@ -142,7 +142,7 @@ export default function TeamPage() {
                                     )
                                     : (
                                         <Fragment>
-                                            <TitleBar title={[`${teamdata.team_name}`, <small className="ml-3" key={'small'}>チーム</small>, <button onClick={() => setEdit(true)} className="text-lg">🖋</button>]} />
+                                            <TitleBar title={[`${teamdata.team_name}`, <small className="ml-3" key={'small'}>スレッド</small>, <button onClick={() => setEdit(true)} className="text-lg">🖋</button>]} />
                                             <div className="grid items-end pb-4">
                                                 <button
                                                     onClick={() => setViewModal(true)}
@@ -150,7 +150,7 @@ export default function TeamPage() {
                                                     🗑️
                                                 </button>
                                             </div>
-                                            <div className="self-end pb-4 w-72">
+                                            <div className="self-end pb-4 w-80">
                                                 作成者 : {teamdata.team_admin.user_last} {teamdata.team_admin.user_first}
                                             </div>
                                         </Fragment>
@@ -161,8 +161,8 @@ export default function TeamPage() {
                         :
                         (
                             <Fragment>
-                                <TitleBar title={[`${teamdata.team_name}`, <small className="ml-3" key={'small'}>チーム</small>]} />
-                                <div className="self-end pb-4 col-start-2 col-span-2">
+                                <TitleBar title={[`${teamdata.team_name}`, <small className="ml-3" key={'small'}>スレッド</small>]} />
+                                <div className="self-end pb-4 w-[30%]">
                                     作成者 : {teamdata.team_admin.user_last} {teamdata.team_admin.user_first}
                                 </div>
                             </Fragment>
@@ -174,7 +174,7 @@ export default function TeamPage() {
                     <File team_id={teamdata.team_id} teamfile={teamfile} setAlert={setAlert} />
                     <TeamLink team_id={teamdata.team_id} teamlink={teamlink} setAlert={setAlert} />
                 </div>
-                <Chat teammessage={teamdata.team_message} team_id={teamdata.team_id} />
+                <ChatArea teammessage={teamdata.team_message} team_id={teamdata.team_id} />
             </div>
             {
                 alert.message !== '' && (

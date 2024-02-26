@@ -32,13 +32,13 @@ export default function Profile() {
             }
             <header
                 className="
-            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around
+            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around px-side-side
             ">
                 <TitleBar title={'みんなのプロフィール'} />
 
             </header>
 
-            <div id="main">
+            <div className="px-side-side">
                 <SubTitleBar title={'1年生'} />
 
                 <User usersdata={usersdata.first} setViewUser={setViewUser} />

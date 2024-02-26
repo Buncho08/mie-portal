@@ -18,7 +18,7 @@ export default function Logout({ setFlg, userdata }) {
     }
     return (
         <div id="hs-sign-out-alert-small-window" className={`bg-cover-gray z-10 p-20 animate-opacity-transition size-full fixed top-0 start-0 overflow-x-hidden `}>
-            <div className={`mt-0 animate-scale-up-center  sm:max-w-xs sm:w-full m-3 sm:mx-auto`}>
+            <div className={`mt-0 animate-scale-up-center sm:max-w-xs sm:w-full m-3 sm:mx-auto`}>
                 <div className="relative flex flex-col bg-white shadow-lg rounded-xl">
                     <div className="absolute top-2 end-2">
                         <button
@@ -41,7 +41,8 @@ export default function Logout({ setFlg, userdata }) {
                             ログアウト
                         </h3>
                         <p className="text-gray-500">
-                            ログアウトしてもよろしいでしょうか？
+                            ログアウトしても <br />
+                            よろしいでしょうか？
                         </p>
 
                         <div className="mt-6 grid gap-y-2">

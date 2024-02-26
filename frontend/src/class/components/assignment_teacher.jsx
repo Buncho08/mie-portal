@@ -142,7 +142,7 @@ export default function Assignment_teacher({ class_id, setAlert }) {
     }
 
     return (
-        <section>
+        <section className='pb-10'>
             {
                 viewModal && (
                     <Confirmation target={target} dofunc={hundleDeleteAssignment} setFlg={setViewModal} />
@@ -153,13 +153,18 @@ export default function Assignment_teacher({ class_id, setAlert }) {
             <div className="bg-white px-side grid grid-cols-3 gap-3 w-2/3">
                 {assignmentData.map((data) => (
 
-                    <div key={data.ast_id} className="col-span-1 border-4 rounded-lg p-3 h-48">
+                    <div key={data.ast_id} className="col-span-1 border-4 rounded-lg p-3 h-52">
                         <form onSubmit={(e) => hundleUpdateAssignment(e, data.ast_id)}>
-                            <input type="text" className='text-lg outline-0 font-semibold' name="update_title" defaultValue={data.ast_title} required />
+                            <input type="text" className='text-lg w-full outline-1 outline-slate-200 font-semibold' name="update_title" defaultValue={data.ast_title} required />
                             <br />
-                            <input type="text" name="update_disc" className='outline-0' defaultValue={data.ast_disc} />
+                            <input type="text" name="update_disc" className='outline-1 outline-slate-200 w-full' defaultValue={data.ast_disc} />
                             <br />
                             <input type="date" className='self-end mt-3' name="update_limit" defaultValue={data.ast_limit} />
+                            <Link
+                                className='col-span-2 grid justify-end col-start-3 mt-3 h-6 text-center text-indigo-900 hover:text-banner'
+                                to={`/mie/assignments/${class_id}/${data.ast_id}`}>
+                                課題ページへ ➡
+                            </Link>
                             <div className="flex my-1 justify-end">
                                 <button
                                     className='mx-3'
@@ -173,32 +178,42 @@ export default function Assignment_teacher({ class_id, setAlert }) {
                                     }}>
                                     🗑️
                                 </button>
-                                <button type='submit' className='h-8 w-20 rounded-lg bg-bermuda  hover:text-white hover:bg-banner'>
-                                    更新
+                                <button type='submit' className="w-24 relative inline-flex items-center justify-start px-6 py-3 overflow-hidden font-medium transition-all bg-banner rounded-xl group">
+                                    <span className="absolute top-0 right-0 inline-block w-4 h-4 transition-all duration-500 ease-in-out bg-indigo-900 rounded group-hover:-mr-4 group-hover:-mt-4">
+                                        <span className="absolute top-0 right-0 w-5 h-5 rotate-45 translate-x-1/2 -translate-y-1/2 bg-white"></span>
+                                    </span>
+                                    <span className="absolute bottom-0 left-0 w-full h-full transition-all duration-500 ease-in-out delay-200 -translate-x-full translate-y-full bg-gradient-to-br from-sky-500 via-banner to-sky-500 rounded-2xl group-hover:mb-12 group-hover:translate-x-0"></span>
+                                    <span className="relative w-full text-center text-white transition-colors duration-200 ease-in-out group-hover:text-white">
+                                        更新
+                                    </span>
                                 </button>
                             </div>
                         </form>
-                        <Link
-                            className='col-span-2 grid justify-end col-start-3 text-center hover:text-banner border-b border-blue'
-                            to={`/mie/assignments/${class_id}/${data.ast_id}`}>
-                            課題ページへ ➡
-                        </Link>
                     </div>
                 ))}
 
-                <div className="col-span-1 border-4 rounded-lg p-3 h-48">
+                <div className="col-span-1 border-4 rounded-lg p-3 h-52">
                     <form onSubmit={hundleAddAssignment}>
-                        <input type="text" className='text-lg outline-0 font-semibold' name="title" placeholder='課題タイトル' required />
+                        <input type="text" className='text-lg outline-1 outline-slate-200 w-full font-semibold' name="title" placeholder='課題タイトル' required />
                         <br />
-                        <input type="text" name="disc" className='outline-0' placeholder='課題の説明(空欄可)' />
+                        <input type="text" name="disc" className='outline-1 outline-slate-200 w-full' placeholder='課題の説明(空欄可)' />
                         <br />
                         <label htmlFor="limit">
                             期限 :
                             <input type="date" className='outline-0 border border-gray-700 self-end mt-3 ml-3' name="limit" required />
                         </label>
-                        <div className="flex my-7 justify-end">
-                            <button type='submit' className='h-8 w-20 rounded-lg bg-bermuda  hover:text-white hover:bg-banner'>
-                                登録
+                        <Link
+                            className='col-span-2 grid justify-end col-start-3 mt-3 h-6'>
+                        </Link>
+                        <div className="flex my-1 justify-end">
+                            <button type='submit' className="w-24 relative inline-flex items-center justify-start px-6 py-3 overflow-hidden font-medium transition-all bg-banner rounded-xl group">
+                                <span className="absolute top-0 right-0 inline-block w-4 h-4 transition-all duration-500 ease-in-out bg-indigo-900 rounded group-hover:-mr-4 group-hover:-mt-4">
+                                    <span className="absolute top-0 right-0 w-5 h-5 rotate-45 translate-x-1/2 -translate-y-1/2 bg-white"></span>
+                                </span>
+                                <span className="absolute bottom-0 left-0 w-full h-full transition-all duration-500 ease-in-out delay-200 -translate-x-full translate-y-full bg-gradient-to-br from-sky-500 via-banner to-sky-500 rounded-2xl group-hover:mb-12 group-hover:translate-x-0"></span>
+                                <span className="relative w-full text-center text-white transition-colors duration-200 ease-in-out group-hover:text-white">
+                                    登録
+                                </span>
                             </button>
                         </div>
                     </form>

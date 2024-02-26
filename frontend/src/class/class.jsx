@@ -36,7 +36,7 @@ export default function Classes() {
         <div className={`h-screen w-full`}>
             <header
                 className="
-            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around
+            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around px-side-side
             ">
                 <TitleBar title={classdata.class_name} />
 
@@ -48,7 +48,7 @@ export default function Classes() {
                 </div>
             </header>
 
-            <main>
+            <main className="px-side-side">
                 <Notice class_id={classdata.class_id} notice_main={classdata.notice_classes[0].notice_main} setAlert={setAlert} />
                 {userdata.user_grade === 2
                     ? (<Assignment_teacher class_id={classdata.class_id} setAlert={setAlert} />)

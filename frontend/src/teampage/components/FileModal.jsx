@@ -2,7 +2,7 @@ import ModalBar from "../../public-components/ModalBar"
 
 export default function FileModal({ hundleUploadFile, setViewFlg, filename, setFilename }) {
     return (
-        <div className="animate-scale-up-center shadow-lg rounded-lg absolute w-[40%] bg-white h-[30%] m-auto top-0 left-0 right-0 bottom-0">
+        <div className="animate-scale-up-center z-50 shadow-lg rounded-lg absolute w-[40%] bg-white h-[30%] m-auto top-0 left-0 right-0 bottom-0">
             <ModalBar closeFlg={setViewFlg} title={`ファイルをアップロード`} />
             <div className="w-3/4 m-auto h-[88%] grid mt-8">
                 <form onSubmit={hundleUploadFile}>

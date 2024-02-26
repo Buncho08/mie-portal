@@ -9,7 +9,7 @@ export default function SideBar() {
     const [logout, setLogout] = useState(false);
 
     return (
-        <aside className="w-52 flex h-screen flex-col justify-between border-e bg-blue text-white">
+        <aside className="w-52 flex h-screen flex-col justify-between border-e bg-gradient-to-br from-sky-600 via-banner to-sky-500 text-white">
             {
                 logout && (
                     <Logout setFlg={setLogout} userdata={user} />
@@ -50,7 +50,7 @@ export default function SideBar() {
                             <small>
                                 {user.user_stdNum}
                             </small>
-                            <p>
+                            <p className='max-w-32'>
                                 {user.user_last ? (`${user.user_last} ${user.user_first}さん`) : ('none さん')}
                             </p>
                         </div>
@@ -73,7 +73,7 @@ export default function SideBar() {
 
                                 <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
                                     width="214px" height="214px" viewBox="0 0 512 512"
-                                    className={`row-span-1 w-16 h-16 ${nowPage == 'Mypage' ? ('fill-white') : ('fill-side-gray hover:fill-white')}`} xmlSpace="preserve">
+                                    className={`row-span-1 w-16 h-16 ${nowPage == 'Mypage' ? ('fill-yellow-100') : ('fill-gray-200 hover:fill-white')}`} xmlSpace="preserve">
 
                                     <g>
                                         <polygon className="st0" points="442.531,218 344.828,120.297 256,31.469 167.172,120.297 69.438,218.047 0,287.469 39.984,327.453 
@@ -108,7 +108,7 @@ export default function SideBar() {
                             >
                                 <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
                                     width="214px" height="214px" viewBox="0 0 512 512"
-                                    className={`row-span-1 w-16 h-16 ${nowPage == 'team' ? ('fill-white') : ('fill-side-gray hover:fill-white')}`} xmlSpace="preserve">
+                                    className={`row-span-1 w-16 h-16 ${nowPage == 'team' ? ('fill-yellow-100') : ('fill-gray-200 hover:fill-white')}`} xmlSpace="preserve">
 
                                     <g>
                                         <path className="st0" d="M85.09,225.65c0-25.46,5.277-49.897,15.369-72.591C39.291,172.32,0,220.374,0,276.675
@@ -147,7 +147,7 @@ export default function SideBar() {
                             >
                                 <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
                                     width="214px" height="214px" viewBox="0 0 512 512"
-                                    className={`row-span-1 w-16 h-16 ${nowPage == 'profile' ? ('fill-white') : ('fill-side-gray hover:fill-white')}`} xmlSpace="preserve">
+                                    className={`row-span-1 w-16 h-16 ${nowPage == 'profile' ? ('fill-yellow-100') : ('fill-gray-200 hover:fill-white')}`} xmlSpace="preserve">
 
                                     <g>
                                         <path className="st0" d="M256.495,96.434c26.632,0,48.213-21.597,48.213-48.205C304.708,21.58,283.128,0,256.495,0
@@ -196,7 +196,7 @@ export default function SideBar() {
                             >
                                 <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
                                     width="214px" height="214px" viewBox="0 0 512 512"
-                                    className={`row-span-1 w-16 h-16 ${nowPage == 'settings' ? ('fill-white') : ('fill-side-gray hover:fill-white')}`} xmlSpace="preserve">
+                                    className={`row-span-1 w-16 h-16 ${nowPage == 'settings' ? ('fill-yellow-100') : ('fill-gray-200 hover:fill-white')}`} xmlSpace="preserve">
 
                                     <g>
                                         <path className="st0" d="M472.656,203.996l-28.535-1.742c-4.14-14.519-9.894-28.347-17.09-41.277l18.938-21.402
@@ -243,7 +243,7 @@ export default function SideBar() {
                             >
                                 <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
                                     width="214px" height="214px" viewBox="0 0 512 512"
-                                    className={`row-span-1 w-16 h-16 ${nowPage == 'timetable' ? ('fill-white') : ('fill-side-gray hover:fill-white')}`} xmlSpace="preserve">
+                                    className={`row-span-1 w-16 h-16 ${nowPage == 'timetable' ? ('fill-yellow-100') : ('fill-gray-200 hover:fill-white')}`} xmlSpace="preserve">
 
                                     <g>
                                         <path className="st0" d="M164.893,89.791c13.875,0,25.126-11.243,25.126-25.134V25.118C190.019,11.252,178.768,0,164.893,0
@@ -287,8 +287,12 @@ export default function SideBar() {
             </div>
 
 
-            <div className="sticky inset-x-0 bottom-0 border-t  border-gray-100 bg-blue p-2 hover:bg-midnight">
-                <div>
+            <div className="sticky inset-x-0 bottom-0 border-t  border-gray-100 bg-gradient-to-br from-banner to-sky-500 p-2 
+            after:contents-[''] after:absolute after:w-full after:h-full after:bg-white after:top-0 after:bottom-0 after:left-0 after:right-0 
+            after:bg-gradient-to-br after:from-sky-100 afterr:via-sky-500 after:to-banner after:opacity-0 after:transition-opacity
+            hover:after:opacity-100
+            ">
+                <div className='relative z-50'>
                     <button
                         type="submit"
                         onClick={() => setLogout(true)}

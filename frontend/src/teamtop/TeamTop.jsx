@@ -3,7 +3,6 @@ import { useLoaderData, Link } from "react-router-dom";
 import AddTeam from "./components/addTeam";
 import Cookies from 'js-cookie';
 import TitleBar from '../public-components/TitleBar';
-import SubTitleBar from '../public-components/SubTitleBar';
 import TeamList from "./components/TeamList";
 import { UserData } from '../root/root';
 import { useContext } from "react";
@@ -78,7 +77,7 @@ export default function TeamTop() {
         <div className={`h-screen`}>
             {
                 viewFlg > 0 && (
-                    <div className="bg-cover-gray absolute h-full w-full top-0 left-0">
+                    <div className="bg-cover-gray absolute h-full w-full top-0 left-0 z-50">
                         <AddTeam hundleAddTeam={hundleAddTeam} setViewFlg={setViewFlg} viewFlg={viewFlg} />
                     </div>
                 )
@@ -90,22 +89,25 @@ export default function TeamTop() {
             }
             <header
                 className="
-            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around
+            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around px-side-side
             ">
                 <TitleBar title={'チームスレッド'} />
 
             </header>
-            <div id="main">
+            <div className="px-side-side">
                 <div className="grid grid-cols-6 px-side py-yspace">
                     <h2 className="grid items-center px-1 text-2xl font-bold col-start-1 col-span-2 row-span-1 row-start-1">
                         1年生
                     </h2>
-                    <button className="col-start-3 col-span-1 row-span-1 row-start-1
-                    bg-sky-200 rounded-lg my-1 h-10 hover:bg-banner hover:text-white
-                    "
-                        onClick={(e) => hundleViewModal(e, 1)}
-                    >
-                        ＋1年生のスレッドを作成する
+                    <button onClick={(e) => hundleViewModal(e, 1)}
+                        className="mb-2 relative w-72 inline-flex items-center justify-start px-6 py-3 overflow-hidden font-medium transition-all bg-gradient-to-br from-gray-100 via-gray-200 to-gray-200 rounded-xl group">
+                        <span className="absolute top-0 right-0 inline-block w-4 h-4 transition-all duration-100 ease-in-out bg-gradient-to-br from-sky-600 via-banner to-sky-500 rounded group-hover:-mr-4 group-hover:-mt-4">
+                            <span className="absolute top-0 right-0 w-5 h-5 rotate-45 translate-x-1/2 -translate-y-1/2 bg-white"></span>
+                        </span>
+                        <span className="absolute bottom-0 left-0 w-full h-full transition-all duration-400 ease-in-out delay-200 -translate-x-full translate-y-full bg-gradient-to-br from-sky-600 via-banner to-sky-500 rounded-2xl group-hover:mb-12 group-hover:translate-x-0"></span>
+                        <span className="relative w-full text-gray-900 text-center transition-colors duration-200 ease-in-out group-hover:text-white">
+                            ＋1年生のスレッドを作成する
+                        </span>
                     </button>
                     <div className="h-[0.1px] w-7/12 bg-midnight col-span-6 row-start-2">
 
@@ -128,12 +130,15 @@ export default function TeamTop() {
                     <h2 className="grid items-center px-1 text-2xl font-bold col-start-1 col-span-2 row-span-1 row-start-1">
                         2年生
                     </h2>
-                    <button className="col-start-3 col-span-1 row-span-1 row-start-1
-                    bg-sky-200 rounded-lg my-1 h-10 hover:bg-banner hover:text-white
-                    "
-                        onClick={(e) => hundleViewModal(e, 2)}
-                    >
-                        ＋2年生のスレッドを追加する
+                    <button onClick={(e) => hundleViewModal(e, 2)}
+                        className="mb-2 relative w-72 inline-flex items-center justify-start px-6 py-3 overflow-hidden font-medium transition-all bg-gradient-to-br from-gray-100 via-gray-200 to-gray-200  rounded-xl group">
+                        <span className="absolute top-0 right-0 inline-block w-4 h-4 transition-all duration-100 ease-in-out bg-gradient-to-br from-sky-600 via-banner to-sky-500 rounded group-hover:-mr-4 group-hover:-mt-4">
+                            <span className="absolute top-0 right-0 w-5 h-5 rotate-45 translate-x-1/2 -translate-y-1/2 bg-white"></span>
+                        </span>
+                        <span className="absolute bottom-0 left-0 w-full h-full transition-all duration-400 ease-in-out delay-200 -translate-x-full translate-y-full bg-gradient-to-br from-sky-600 via-banner to-sky-500 rounded-2xl group-hover:mb-12 group-hover:translate-x-0"></span>
+                        <span className="relative w-full text-gray-900 text-center transition-colors duration-200 ease-in-out group-hover:text-white">
+                            ＋2年生のスレッドを作成する
+                        </span>
                     </button>
                     <div className="h-[0.1px] w-7/12 bg-midnight col-span-6 row-start-2">
 
@@ -153,7 +158,7 @@ export default function TeamTop() {
                     </ul>
                 </div>
             </div>
-        </div>
+        </div >
 
 
     )

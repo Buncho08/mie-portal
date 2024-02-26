@@ -204,7 +204,7 @@ export default function ClassesAll() {
 
             <header
                 className="
-            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around
+            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around px-side-side
             ">
                 <TitleBar title={"授業一覧"} />
 

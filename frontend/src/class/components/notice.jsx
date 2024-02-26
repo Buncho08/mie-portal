@@ -157,9 +157,9 @@ export default function Notice({ class_id, notice_main, setAlert }) {
         };
     }, []);
     return (
-        <section>
+        <section className='w-full'>
             {title}
-            <div className="bg-white p-2 grid grid-cols-2 gap-4">
+            <div className="p-2 grid grid-cols-2 gap-4 w-full">
                 {userdata.user_grade === 2
                     ? (
                         <>
@@ -184,7 +184,7 @@ export default function Notice({ class_id, notice_main, setAlert }) {
 
                                             <button
                                                 type="submit"
-                                                className="rounded bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+                                                className="rounded bg-banner px-3 py-1.5 text-sm font-medium text-white hover:bg-sky-500"
                                             >
                                                 編集
                                             </button>
@@ -198,11 +198,12 @@ export default function Notice({ class_id, notice_main, setAlert }) {
                     )
                     : (
                         // 学生は表示するだけ
-                        <div className='mx-side-side'>
+                        <div className='mx-side-side col-span-2'>
                             {notice_main
                                 ? (
-                                    <div>
-                                        <div className='ml-10' dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked(textVal)) }}></div>
+
+                                    <div className='ml-10 w-full' dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked(textVal)) }}>
+
                                     </div>
                                 )
                                 :

@@ -15,16 +15,16 @@ export default function Classes_day_students({ user_classes }) {
     const day = today.getDay();
     let i = 1;
     return (
-        <>
+        <div className="w-full">
             <SubTitleBar title={`${year}年 ${month}月 ${date}日 ${weekday[day]}曜日 の授業`} />
 
-            <div className="grid grid-cols-6 gap-1 mx-side">
+            <div className="grid grid-cols-6 pl-1 gap-1">
                 {
                     user_classes.map((data, index) => (
                         <Class data={data} key={data.time_id} index={index} />
                     ))
                 }
             </div >
-        </>
+        </div>
     )
 }

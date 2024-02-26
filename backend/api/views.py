@@ -693,25 +693,33 @@ class AllAssignmentView(views.APIView):
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, *args, **kwargs):
+        gradelist = ['first', 'second']
         if 'teacher' in request.GET:
             teacher = UserTable.objects.get(user_id=request.GET['teacher'])
-            grade = request.GET['grade']
-            class_model = Classes.objects.filter(class_teacher=teacher, class_grade=grade)
-            ast_model = Assignment.objects.filter(ast_classes=class_model.first()).order_by('ast_classes__class_grade')
-            if not ast_model.exists():
+            ast_model = Classes.objects.filter(class_teacher=teacher).prefetch_related('ast_classes')
+            res = {
+                'first':[],
+                'second':[]
+            }
+            for item in ast_model:
+                if item.ast_classes.all():
+                    serializer = AssignmentSerializer(instance=item.ast_classes.all(), many=True)
+                    res[gradelist[item.class_grade]].append(serializer.data[0])
+            if len(res) <= 0:
                 return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
+            print(res)
+            return Response(res, status=status.HTTP_200_OK)
         else:
             ast_model = Assignment.objects.all().order_by('ast_classes__class_grade')
 
-        serializer = AssignmentSerializer(instance=ast_model, many=True)
+            serializer = AssignmentSerializer(instance=ast_model, many=True)
         res = {
             'first':[],
             'second':[]
         }
-        grade = ['first', 'second']
+        
         for item in serializer.data:
-            res[grade[item['ast_classes']['class_grade']]].append(item)
-
+            res[gradelist[item['ast_classes']['class_grade']]].append(item) 
         return Response(res, status=status.HTTP_200_OK)
     
 

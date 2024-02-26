@@ -44,10 +44,12 @@ export default function MyMessage({ data, chatData, setChatData }) {
                 // 削除確認
                 viewModal
                 && (
-                    <Confirmation target={target} dofunc={hundleDeleteMessage} setFlg={setViewModal} />
+                    <div className="h-[100%] sticky">
+                        <Confirmation target={target} dofunc={hundleDeleteMessage} setFlg={setViewModal} />
+                    </div>
                 )
             }
-            <div className="col-span-10 row-span-1 grid grid-cols-10">
+            <div className="col-span-10 row-span-1 grid grid-cols-10 ">
                 <div className="col-span-9 h-full flex px-3 justify-between ms-auto items-center">
                     <p>
                         {data.message_user.user_last} {data.message_user.user_first}
@@ -60,7 +62,7 @@ export default function MyMessage({ data, chatData, setChatData }) {
 
             <div className="bg-white border ml-4 col-start-1 col-span-9 row-start-2 row-span-4 self-start border-gray-400 rounded-2xl p-4">
 
-                <p>
+                <p className="">
                     {data.message}
                 </p>
                 <div className="w-full h-5 flex justify-end mt-3">

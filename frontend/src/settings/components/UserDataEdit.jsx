@@ -71,11 +71,11 @@ export default function UserDataEdit({ setViewEdit, userdata }) {
 
 
     return (
-        <form onSubmit={hundleUpdateUser} className="z-30 animate-scale-up-center shadow-lg rounded-lg absolute w-[60%] bg-white h-[40%] m-auto top-0 left-0 right-0 bottom-0">
+        <form onSubmit={hundleUpdateUser} className="z-30 animate-scale-up-center shadow-lg rounded-lg absolute w-[60%] bg-white h-[43%] m-auto top-0 left-0 right-0 bottom-0">
             <ModalBar closeFlg={setViewEdit} flg={false} title={`プロフィールの編集`} />
 
             <div className="h-[27%] relative">
-                <div >
+                <div className='w-[80%] mx-auto'>
                     <div className="flex absolute mx-16 top-4">
                         <label className='relative block' htmlFor='user_icon'
                             onMouseOver={() => setIconCover(true)}
@@ -99,7 +99,7 @@ export default function UserDataEdit({ setViewEdit, userdata }) {
                                 ref={fileRef}
                                 onChange={(e) => changeImg(e)}
                             />
-                            <img src={prev} alt="" width={150} height={150} className="bg-slate-400 rounded-full" />
+                            <img src={prev} alt="" width={150} height={150} className="bg-slate-400 rounded-full shadow-lg" />
                         </label>
                         <div className="grid items-end mx-5 mb-2">
                             <div>
@@ -151,8 +151,15 @@ export default function UserDataEdit({ setViewEdit, userdata }) {
                 </div>
             </div >
             <div className="flex justify-end mt-28 mr-auto pr-28">
-                <button type='submit' className='h-10 w-20 rounded-lg bg-cyan-200'>
-                    更新
+                <button type='submit'
+                    className="relative inline-flex items-center justify-center w-40 p-4 px-6 py-3 overflow-hidden font-medium text-indigo-600 transition duration-300 ease-out border-2 border-banner rounded-full shadow-md group">
+                    <span className="absolute inset-0 flex items-center justify-center w-full h-full text-white duration-300 -translate-x-full bg-banner group-hover:translate-x-0 ease">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </span>
+                    <span className="absolute flex items-center justify-center w-full h-full text-banner transition-all duration-300 transform group-hover:translate-x-full ease">
+                        更新
+                    </span>
+                    <span className="relative invisible">更新</span>
                 </button>
             </div>
 

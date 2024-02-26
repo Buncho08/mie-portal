@@ -20,7 +20,7 @@ module.exports = {
       'silver': '#ecebff',
       'bubble-gum': '#ff77e9',
       'bermuda': '#78dcca',
-      'banner':'  #126FC7',
+      'banner':'#0974d9',
       'accent':'#E0E62D',
       'light-blue':'#1BD4F1',
       'side-gray':'#DBD3D8',
@@ -324,6 +324,8 @@ module.exports = {
             "scale-up-center": "scale-up-center 0.3s cubic-bezier(0.390, 0.575, 0.565, 1.000) both",
             "opacity-transition":"opacity 0.2s both",
             'jump': 'jump .5s both',
+            'jump-out': 'jump-out .5s both',
+            'wiggle': 'wiggle 1s infinite',
         },
         keyframes: {
             "scale-up-center": {
@@ -351,6 +353,25 @@ module.exports = {
                 },
                 '50%': {
                     transform: 'scale(120%)',
+                },
+            },
+            'jump-out': {
+                '0%': {
+                    transform: 'scale(100%)',
+                },
+                '20%': {
+                    transform: 'scale(120%)',
+                },
+                '100%': {
+                    transform: 'scale(0%)',
+                },
+            },
+            'wiggle': {
+                '0%, 100%': {
+                    transform: 'rotate(-3deg)',
+                },
+                '50%': {
+                    transform: 'rotate(3deg)',
                 },
             },
         }
