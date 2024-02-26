@@ -11,7 +11,7 @@ import UpdateClass from "./components/UpdateClass";
 import { UserData } from '../root/root';
 
 export async function LoadClassesData() {
-    const classes = await fetch('http://localhost:8000/api/classes', {
+    const classes = await fetch(`${import.meta.env.VITE_BACKEND_URI}/classes`, {
         method: 'GET',
         credentials: 'include'
     })
@@ -19,7 +19,7 @@ export async function LoadClassesData() {
         .then((data) => data)
         .catch((err) => console.log(err))
     console.log(classes);
-    const teachers = await fetch('http://localhost:8000/api/userView/teacher', {
+    const teachers = await fetch(`${import.meta.env.VITE_BACKEND_URI}/userView/teacher`, {
         method: 'GET',
         credentials: 'include'
     })
@@ -31,6 +31,13 @@ export async function LoadClassesData() {
 
 export default function ClassesAll() {
     const { classes, teachers } = useLoaderData();
+    const bgList = [
+        "bg-[radial-gradient(77.95%_77.95%_at_74.66%_58.07%,rgba(255,254,220,0.1)_0%,rgba(255,255,255,0.152)_62.28%,rgba(255,255,255,0)_100%),radial-gradient(89.67%_70.39%_at_93.75%_92.16%,#29C2D7_0%,rgba(144,160,215,0.09)_52.46%,rgba(255,156,156,0.1)_100%),radial-gradient(68.86%_68.86%_at_94.55%_1.7%,rgba(250,208,144,0.3)_0%,rgba(250,220,144,0)_100%),linear-gradient(130.87deg,rgba(245,115,122,0.18)_3.47%,rgba(245,115,122,0)_77.25%)] bg-blend-[overlay,normal,normal,normal,normal,normal] backdrop-blur-[73px]",
+        "bg-[radial-gradient(ellipse_at_50%_50%,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0)_100%),radial-gradient(ellipse_at_70%_60%,rgba(195,224,96,0.2)_0%,rgba(195,224,96,0)_90%),radial-gradient(ellipse_at_30%_30%,rgba(255,179,171,0.3)_0%,rgba(195,224,96,0)_60%),radial-gradient(ellipse_at_bottom_left,_rgba(255,179,171,0.3)_0%,rgba(176,255,231,0.2)_70%),linear-gradient(to_right,rgba(98,87,147,0.2)_0%,rgba(213,93,100,0.2)_35%,rgba(228,145,41,0.2)_65%,rgba(192,103,28,0.2)_100%)] bg-blend-[overlay,luminosity,color-dodge,saturation,screen,color] backdrop-blur-[73px]",
+        "bg-[radial-gradient(ellipse_at_50%_50%,rgba(184,248,255,0.4)_0%,rgba(255,255,255,0)_100%),radial-gradient(ellipse_at_70%_60%,rgba(145,217,230,0.3)_0%,rgba(230,145,174,0.3)_90%),radial-gradient(ellipse_at_30%_30%,rgba(145,217,230,0.3)_0%,rgba(195,224,96,0)_60%),radial-gradient(ellipse_at_bottom_left,_rgba(192,103,28,0.2)_0%,rgba(230,145,174,0)_70%),linear-gradient(to_left,rgba(184,248,255,0.4)_0%,rgba(213,93,100,0)_35%,rgba(228,145,41,0)_65%,rgba(184,248,255,0.4)_100%)] bg-blend-[overlay,luminosity,nomal,saturation,screen,overlay] backdrop-blur-[90px]",
+        "bg-[radial-gradient(ellipse_at_70%_60%,rgba(195,224,96,0)_0%,rgba(195,224,96,0)_90%),radial-gradient(ellipse_at_30%_30%,rgba(195,224,96,0.1)_0%,rgba(195,224,96,0)_60%),radial-gradient(ellipse_at_bottom_left,rgba(0,163,203,0.2)_0%,rgba(0,163,203,0)_70%),radial-gradient(ellipse_at_bottom_right,rgba(98,87,147,0.1)_0%,rgba(213,93,100,0.1)_35%,rgba(228,145,41,0.1)_65%,rgba(192,103,28,0.1)_100%)] bg-blend-overlay bg-blend-luminosity bg-blend-color-dodge bg-blend-saturation bg-blend-screen bg-blend-color backdrop-blur-[70px]"
+    ]
+    const rd = Math.floor(Math.random() * 4);
     const userdata = useContext(UserData);
     const [firstClasses, setFirstClasses] = useState(classes.first);
     const [secondClasses, setSecondClasses] = useState(classes.second);
@@ -51,7 +58,7 @@ export default function ClassesAll() {
         sendData.append('user_id', e.target.user_id.value)
         sendData.append('class_name', e.target.class_name.value)
         sendData.append('class_grade', e.target.class_grade.value)
-        const status = await fetch('http://localhost:8000/api/classes', {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/classes`, {
             method: 'POST',
             body: sendData,
             headers: {
@@ -91,7 +98,7 @@ export default function ClassesAll() {
 
     const hundleDelete = async (e) => {
         e.preventDefault();
-        const status = await fetch(`http://localhost:8000/api/classes/update/${target.target_data.class_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/classes/update/${target.target_data.class_id}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRFToken': `${Cookies.get('csrftoken')}`,
@@ -135,7 +142,7 @@ export default function ClassesAll() {
         const sendData = new FormData();
         sendData.append('user_id', e.target.user_id.value);
         sendData.append('class_name', e.target.class_name.value);
-        const status = await fetch(`http://localhost:8000/api/classes/update/${target.target_data.class_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/classes/update/${target.target_data.class_id}`, {
             method: 'PATCH',
             body: sendData,
             headers: {
@@ -203,14 +210,14 @@ export default function ClassesAll() {
             }
 
             <header
-                className="
-            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around px-side-side
-            ">
+                className={`
+                h-32 ${bgList[rd]} bg-center flex justify-around px-side-side
+                `}>
                 <TitleBar title={"授業一覧"} />
 
                 <div className="self-end flex gap-3 items-center m-4 w-96 text-xl">
                     <Link
-                        to={"http://localhost:3000/mie/timetable/"}
+                        to={"/mie/timetable/"}
                         className="grid justify-center items-center text-banner hover:text-midnight h-12 w-44 rounded-lg">
                         時間割へ
                     </Link>

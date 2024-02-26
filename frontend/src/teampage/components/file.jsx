@@ -24,7 +24,7 @@ export default function File({ team_id, teamfile, setAlert }) {
         sendData.append('team_id', team_id);
         sendData.append('file_obj', e.target.file_obj.files[0]);
         sendData.append('file_name', filename);
-        const status = await fetch(`http://localhost:8000/api/team/file/${team_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/team/file/${team_id}`, {
             method: 'POST',
             body: sendData,
             headers: {
@@ -64,7 +64,7 @@ export default function File({ team_id, teamfile, setAlert }) {
     }
 
     const hundleDeleteFile = async () => {
-        const status = await fetch(`http://localhost:8000/api/team/file/${target.target_data.file_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/team/file/${target.target_data.file_id}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRFToken': `${Cookies.get('csrftoken')}`,
@@ -138,7 +138,7 @@ export default function File({ team_id, teamfile, setAlert }) {
                                         <li key={data.file_id} className="my-2">
                                             <Link
                                                 className="hover:text-banner"
-                                                onClick={(e) => downloadFile(e, `http://localhost:8000/api/file/team/${data.file_name}`, data.file_name.split('/')[1])}>
+                                                onClick={(e) => downloadFile(e, `${import.meta.env.VITE_BACKEND_URI}/file/team/${data.file_name}`, data.file_name.split('/')[1])}>
                                                 {data.file_name.split('/')[1]}
                                             </Link>
                                             <button onClick={(e) => {

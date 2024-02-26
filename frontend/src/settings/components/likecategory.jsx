@@ -1,5 +1,4 @@
 import { Fragment, useState } from "react"
-import SectionTitleBar from "../../public-components/SectionTitleBar";
 import Cookies from 'js-cookie';
 import AddLikeCategory from "./AddLikeCategoty";
 import Alert from '../../public-components/Alert';
@@ -25,7 +24,7 @@ export default function LikeCategory({ likecategory, userdata }) {
         const sendData = new FormData();
         sendData.append('like_id', like_id);
         sendData.append('user_id', userdata.user_id);
-        const status = await fetch(`http://localhost:8000/api/settings/like/set`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/settings/like/set`, {
             method: 'POST',
             body: sendData,
             headers: {
@@ -53,7 +52,7 @@ export default function LikeCategory({ likecategory, userdata }) {
     }
 
     const hundleDeleteLike = async (e, conf_id) => {
-        const status = await fetch(`http://localhost:8000/api/settings/like/delete/${conf_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/settings/like/delete/${conf_id}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRFToken': `${Cookies.get('csrftoken')}`,
@@ -82,7 +81,7 @@ export default function LikeCategory({ likecategory, userdata }) {
         sendData.append('like_category', showCategory);
         sendData.append('like_name', e.target.like_name.value);
         sendData.append('like_icon', e.target.like_icon.files[0]);
-        const status = await fetch('http://localhost:8000/api/likecategory', {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/likecategory`, {
             method: 'POST',
             body: sendData,
             headers: {
@@ -130,7 +129,7 @@ export default function LikeCategory({ likecategory, userdata }) {
 
     const hundleDeleteCategory = async (e) => {
         e.preventDefault();
-        const status = await fetch(`http://localhost:8000/api/likecategory/delete/${target.target_data.like_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/likecategory/delete/${target.target_data.like_id}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRFToken': `${Cookies.get('csrftoken')}`,
@@ -180,7 +179,7 @@ export default function LikeCategory({ likecategory, userdata }) {
             }
             <div className="flex justify-around items-center">
                 {category.map((data, index) => (
-                    <button href="#_"
+                    <button
                         key={index * 10}
                         onClick={() => {
                             setShowCategory(index)

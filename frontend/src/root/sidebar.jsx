@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState } from 'react';
 import { UserData } from './root';
 import { Link } from "react-router-dom";
 import Logout from '../logout/Logout';
@@ -42,7 +42,7 @@ export default function SideBar() {
                     <div className='mb-3 grid justify-center items-center'>
                         {/* アイコン */}
                         <Link to={'/mie/settings'}>
-                            <img src={`http://localhost:8000/api${user.user_icon}`} alt="" width={130} height={130} className='rounded-full' />
+                            <img src={`${import.meta.env.VITE_BACKEND_URI}${user.user_icon}`} alt="" width={130} height={130} className='rounded-full' />
                         </Link>
 
                         {/* アイコンここまで */}

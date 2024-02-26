@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom"
-import Alert from '../../public-components/Alert';
 
 export default function SubmissionsList({ viewList }) {
     return (
@@ -30,12 +29,12 @@ export default function SubmissionsList({ viewList }) {
                                         {viewList.map((data) => (
                                             <tr key={data.ast_id}>
                                                 <td className="font-medium  text-gray-900 pl-10">
-                                                    <Link className="block hover:text-banner" to={`http://localhost:3000/mie/assignments/${data.ast_classes.class_id}/${data.ast_id}`}>
+                                                    <Link className="block hover:text-banner" to={`/mie/assignments/${data.ast_classes.class_id}/${data.ast_id}`}>
                                                         {data.ast_title}
                                                     </Link>
                                                 </td>
                                                 <td className="px-4 py-2 text-center">
-                                                    <Link className="block hover:text-banner" to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`}>
+                                                    <Link className="block hover:text-banner" to={`/mie/class/${data.ast_classes.class_id}`}>
                                                         {data.ast_classes.class_name}
                                                     </Link>
                                                 </td>

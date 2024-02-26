@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import LoginForm from './components/login-form';
 import { Link, Navigate } from "react-router-dom";
-
+import Logo from '/top-logo.svg';
+import Hero from '/top.png'
 /*
     新規登録ページの親コンポーネント
     子componentは
@@ -32,7 +33,7 @@ export default function Signin() {
             signinData.append("password", e.target.password.value);
 
             const response = await fetch(
-                "http://localhost:8000/api/signup", {
+                `${import.meta.env.VITE_BACKEND_URI}/signup`, {
                 method: 'POST',
                 body: signinData,
             })
@@ -65,13 +66,12 @@ export default function Signin() {
 
             // サインアップできたら
             if (!flg) {
-                console.log('こん');
                 const authData = new FormData();
                 authData.append("user_id", e.target.user_id.value);
                 authData.append("password", e.target.password.value);
 
                 const login = await fetch(
-                    "http://localhost:8000/auth/",
+                    `${import.meta.env.VITE_AUTH_URI}/`,
                     {
                         method: "POST",
                         credentials: "include",
@@ -108,7 +108,7 @@ export default function Signin() {
                     <aside className="relative block h-36 lg:col-span-5 lg:h-full xl:col-span-4">
                         <img
                             alt="Pattern"
-                            src="/top.png"
+                            src={Hero}
                             className="absolute inset-0 h-full w-full object-cover"
                         />
                         {/* レスポンシブ対応しています width640px 以下になると、上のバナー画像になります。 */}
@@ -122,7 +122,7 @@ export default function Signin() {
                         <div className="max-w-4xl lg:max-w-3xl">
                             <a className="block text-blue-600">
                                 <span className="sr-only">Home</span>
-                                <img src="/top-logo.svg" alt="松本情報工科専門学校" />
+                                <img src={Logo} alt="松本情報工科専門学校" />
                             </a>
                             {/* トップのロゴです。a要素でクリックしてトップページへ飛ぶようになっています。 */}
 

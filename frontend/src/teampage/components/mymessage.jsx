@@ -10,7 +10,7 @@ export default function MyMessage({ data, chatData, setChatData }) {
 
     const hundleDeleteMessage = async (e) => {
         e.preventDefault();
-        const status = await fetch(`http://localhost:8000/api/team/chat/${target.target_data.message_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/team/chat/${target.target_data.message_id}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRFToken': `${Cookies.get('csrftoken')}`,
@@ -56,7 +56,7 @@ export default function MyMessage({ data, chatData, setChatData }) {
                     </p>
                 </div>
                 <div className="flex justify-center items-center">
-                    <img className="w-full rounded-full" src={`http://localhost:8000/api${data.message_user.user_icon}`} alt={`${data.message_user.user_id}のアイコン`} />
+                    <img className="w-full rounded-full" src={`${import.meta.env.VITE_BACKEND_URI}${data.message_user.user_icon}`} alt={`${data.message_user.user_id}のアイコン`} />
                 </div>
             </div>
 

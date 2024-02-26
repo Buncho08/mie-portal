@@ -31,7 +31,7 @@ export default function Class({ classdata, setTarget, setViewModal, user_grade }
                     {classdata.map((data) => (
                         <tr key={data.class_id}>
                             <td className="font-medium  text-gray-900 pl-10">
-                                <Link className="block hover:text-banner" to={`http://localhost:3000/mie/class/${data.class_id}`}>
+                                <Link className="block hover:text-banner" to={`/mie/class/${data.class_id}`}>
                                     {data.class_name}
                                 </Link>
                             </td>

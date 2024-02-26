@@ -10,7 +10,7 @@ import Confirmation from '../../public-components/Confirmation';
 import Cookies from 'js-cookie';
 
 export async function LoadAssignmentsData({ params }) {
-    const assignments = await fetch(`http://localhost:8000/api/assignment/status/${params.ast_id}`, {
+    const assignments = await fetch(`${import.meta.env.VITE_BACKEND_URI}/assignment/status/${params.ast_id}`, {
         method: 'GET',
         credentials: 'include'
     })
@@ -41,7 +41,7 @@ export default function Assignments(params) {
 
     const hundleDelete = async (e) => {
         e.preventDefault();
-        const status = await fetch(`http://localhost:8000/api/assignment/submition/${target.target_data.state_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/assignment/submition/${target.target_data.state_id}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRFToken': `${Cookies.get('csrftoken')}`,
@@ -143,7 +143,7 @@ export default function Assignments(params) {
                 <TitleBar title={`${assignment.length > 0 ? (`${assignment[0].state_ast.ast_title}`) : ('')} 提出状況`} />
 
                 <div className="self-end flex gap-3 items-center m-4 w-96 text-xl">
-                    <Link className="hover:text-banner" to={`http://localhost:3000/mie/class/${class_id}`}>
+                    <Link className="hover:text-banner" to={`/mie/class/${class_id}`}>
                         🔙授業ページへ戻る
                     </Link>
                 </div>
@@ -192,7 +192,7 @@ export default function Assignments(params) {
                                                 <td className="whitespace-nowrap pr-10 py-2 text-center  text-gray-700">
                                                     <Link
                                                         className="hover:text-banner"
-                                                        onClick={(e) => downloadFile(e, `http://localhost:8000/api/file/assignments/${data.state_ast.ast_classes.class_name}/${data.state_ast.ast_title}/${data.state_res}`, data.state_res)}
+                                                        onClick={(e) => downloadFile(e, `${import.meta.env.VITE_BACKEND_URI}/file/assignments/${data.state_ast.ast_classes.class_name}/${data.state_ast.ast_title}/${data.state_res}`, data.state_res)}
                                                     >
                                                         {data.state_res}
                                                     </Link>
@@ -200,7 +200,7 @@ export default function Assignments(params) {
                                                 <td className="whitespace-nowrap pr-10 py-2 text-center">
                                                     <Link
                                                         className="inline-block rounded bg-indigo-600 px-4 py-2 text-center text-xs font-medium text-white hover:bg-indigo-700"
-                                                        onClick={(e) => downloadFile(e, `http://localhost:8000/api/file/assignments/${data.state_ast.ast_classes.class_name}/${data.state_ast.ast_title}/${data.state_res}`, data.state_res)}>
+                                                        onClick={(e) => downloadFile(e, `${import.meta.env.VITE_BACKEND_URI}/file/assignments/${data.state_ast.ast_classes.class_name}/${data.state_ast.ast_title}/${data.state_res}`, data.state_res)}>
                                                         ダウンロード
                                                     </Link>
                                                 </td>
@@ -219,7 +219,7 @@ export default function Assignments(params) {
                                                 </td>
                                                 <td>
                                                     <p className="data-url hidden">
-                                                        {`http://localhost:8000/api/file/assignments/${data.state_ast.ast_classes.class_name}/${data.state_ast.ast_title}/${data.state_res}`}
+                                                        {`${import.meta.env.VITE_BACKEND_URI}/file/assignments/${data.state_ast.ast_classes.class_name}/${data.state_ast.ast_title}/${data.state_res}`}
                                                     </p>
                                                 </td>
 

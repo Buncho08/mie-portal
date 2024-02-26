@@ -6,10 +6,10 @@ import SubTitleBar from "../public-components/SubTitleBar";
 import StdTimeTable from "./components/std_TimeTable";
 import { useContext } from "react";
 import { UserData } from '../root/root';
-
+import bgimg from '/class_bg.webp';
 
 export async function LoadTimeTableData(params) {
-    const timetable = await fetch('http://localhost:8000/api/timetable', {
+    const timetable = await fetch(`${import.meta.env.VITE_BACKEND_URI}/timetable`, {
         method: 'GET',
         credentials: 'include'
     })
@@ -17,7 +17,7 @@ export async function LoadTimeTableData(params) {
         .then((data) => data)
         .catch((err) => console.log(err))
 
-    const classes = await fetch('http://localhost:8000/api/classes', {
+    const classes = await fetch(`${import.meta.env.VITE_BACKEND_URI}/classes`, {
         method: 'GET',
         credentials: 'include'
     })
@@ -26,6 +26,7 @@ export async function LoadTimeTableData(params) {
         .catch((err) => console.log(err))
 
     console.log(timetable)
+    console.log(classes);
     return { timetable, classes }
 }
 
@@ -38,7 +39,7 @@ export default function SetTimeTable(params) {
         sendData.append('time_day', time_day);
         sendData.append('time_section', time_section);
         if (e.target.value === 'blank') {
-            const status = await fetch('http://localhost:8000/api/timetable', {
+            const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/timetable`, {
                 method: 'DELETE',
                 body: sendData,
                 headers: {
@@ -55,7 +56,7 @@ export default function SetTimeTable(params) {
         }
         sendData.append('class_id', e.target.value);
 
-        const status = await fetch('http://localhost:8000/api/timetable', {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/timetable`, {
             method: 'POST',
             body: sendData,
             headers: {
@@ -73,14 +74,14 @@ export default function SetTimeTable(params) {
     return (
         <div className="h-screen">
             <header
-                className="
-            h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around px-side-side
-            ">
+                className={`
+                h-32 bg-[url('${bgimg}')] bg-center flex justify-around px-side-side
+                `}>
                 <TitleBar title={"時間割"} />
 
                 <div className="self-end flex gap-3 items-center m-4 w-96 text-xl">
                     <Link
-                        to={"http://localhost:3000/mie/classes"}
+                        to={"/mie/classes"}
                         className="grid justify-center items-center text-banner hover:text-midnight h-12 w-32 rounded-lg">
                         授業一覧へ
                     </Link>

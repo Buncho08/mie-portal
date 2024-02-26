@@ -4,7 +4,7 @@ export default function Message({ data }) {
         <li className="my-4 max-w-96 min-w-min grid grid-cols-9 grid-rows-fr text-sm">
             <div className="col-span-10 row-span-1 grid grid-cols-10">
                 <div className="flex justify-center items-center">
-                    <img className="w-full rounded-full" src={`http://localhost:8000/api${data.message_user.user_icon}`} alt={`${data.message_user.user_id}のアイコン`} />
+                    <img className="w-full rounded-full" src={`${import.meta.env.VITE_BACKEND_URI}${data.message_user.user_icon}`} alt={`${data.message_user.user_id}のアイコン`} />
                 </div>
                 <div className="col-span-9 h-full flex px-3 justify-between items-center">
                     <p>

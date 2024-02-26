@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function StdTimeTable({ timetable, classes, hundleUpdateTable, time_grade }) {
+export default function StdTimeTable({ timetable }) {
     const daydate = ['月', '火', '水', '木', '金'];
 
     return (
@@ -31,7 +31,7 @@ export default function StdTimeTable({ timetable, classes, hundleUpdateTable, ti
                                             <p className="w-[10.2rem] outline-0">
                                                 <Link
                                                     className="hover:text-banner block w-full"
-                                                    to={time.time_classes_id ? `http://localhost:3000/mie/class/${time.time_classes_id.class_id}` : ('')}>
+                                                    to={time.time_classes_id ? `/mie/class/${time.time_classes_id.class_id}` : ('')}>
                                                     {time.time_classes_id ? time.time_classes_id.class_name : '-'}
                                                 </Link>
                                             </p>

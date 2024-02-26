@@ -35,7 +35,7 @@ export default function LikeIcon({ like, hundleDeleteLike, hundleSetLike, user_g
 
 
             <img
-                src={`http://localhost:8000/api${like.like_icon}`}
+                src={`${import.meta.env.VITE_BACKEND_URI}${like.like_icon}`}
                 alt=""
                 width={100} height={100}
                 className={`${like.conf_like ? ('animate-jump animate-once animate-ease-in') : ('grayscale')}`} />

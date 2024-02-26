@@ -8,10 +8,10 @@ import Cropper from 'cropperjs';
 
 export default function UserDataEdit({ setViewEdit, userdata }) {
     const [iconCover, setIconCover] = useState(false);
-    const [userIcon, setUserIcon] = useState(`http://localhost:8000/api${userdata.user_icon}`);
+    const [userIcon, setUserIcon] = useState(`${import.meta.env.VITE_BACKEND_URI}${userdata.user_icon}`);
     const [cropper, setCropper] = useState();
     const [viewFlg, setViewFlg] = useState();
-    const [prev, setPrev] = useState(`http://localhost:8000/api${userdata.user_icon}`);
+    const [prev, setPrev] = useState(`${import.meta.env.VITE_BACKEND_URI}${userdata.user_icon}`);
     const imgRef = useRef(null);
     const fileRef = useRef(null);
 
@@ -25,7 +25,7 @@ export default function UserDataEdit({ setViewEdit, userdata }) {
         }
         sendData.append('user_last', e.target.user_last.value);
         sendData.append('user_first', e.target.user_first.value);
-        const status = await fetch('http://localhost:8000/api/myaccount/update', {
+        const status = await fetch('${import.meta.env.VITE_BACKEND_URI}/myaccount/update', {
             method: 'PATCH',
             body: sendData,
             headers: {

@@ -47,21 +47,21 @@ export default function Notice({ user_notice }) {
                                             <td className='self-end font-semibold py-2'>
                                                 <Link
                                                     className='block'
-                                                    to={`http://localhost:3000/mie/class/${data.notice_classes.class_id}`}>
+                                                    to={`/mie/class/${data.notice_classes.class_id}`}>
                                                     {data.notice_date}
                                                 </Link>
                                             </td>
                                             <td>
                                                 <Link
                                                     className='block'
-                                                    to={`http://localhost:3000/mie/class/${data.notice_classes.class_id}`}>
+                                                    to={`/mie/class/${data.notice_classes.class_id}`}>
                                                     {String(data.notice_main).length > 20 ? (`${replaceNotice(String(data.notice_main)).slice(0, 20)}....`) : (replaceNotice(data.notice_main))}
                                                 </Link>
                                             </td>
                                             <td className="self-end">
                                                 <Link
                                                     className='block'
-                                                    to={`http://localhost:3000/mie/class/${data.notice_classes.class_id}`}>
+                                                    to={`/mie/class/${data.notice_classes.class_id}`}>
                                                     {data.notice_classes.class_name}
                                                 </Link>
                                             </td>

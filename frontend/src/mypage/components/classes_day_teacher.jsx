@@ -3,7 +3,6 @@ import { useContext, Fragment } from "react";
 import { UserData } from '../../root/root';
 
 import SubTitleBar from "../../public-components/SubTitleBar";
-import SectionTitleBar from "../../public-components/SectionTitleBar";
 import Class from "./Class";
 
 export default function Classes_day_teacher({ user_classes }) {

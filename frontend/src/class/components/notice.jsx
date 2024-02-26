@@ -9,7 +9,6 @@ import { marked } from 'marked';
 
 export default function Notice({ class_id, notice_main, setAlert }) {
     const userdata = useContext(UserData);
-    const [prev, setPrev] = useState('');
     const [textVal, setTextVal] = useState(notice_main);
     const [simpleMdeInstance, setMdeInstance] = useState(null);
     const title = useMemo(() => {
@@ -40,7 +39,7 @@ export default function Notice({ class_id, notice_main, setAlert }) {
         }
         const sendNotice = new FormData();
         sendNotice.append('notice_main', e.target.notice.value);
-        await fetch(`http://localhost:8000/api/notice/${class_id}`, {
+        await fetch(`${import.meta.env.VITE_BACKEND_URI}/notice/${class_id}`, {
             method: "PATCH",
             body: sendNotice,
             headers: {
@@ -67,7 +66,7 @@ export default function Notice({ class_id, notice_main, setAlert }) {
         notice.value = '';
         const sendNotice = new FormData();
         sendNotice.append('notice_main', '');
-        await fetch(`http://localhost:8000/api/notice/${class_id}`, {
+        await fetch(`${import.meta.env.VITE_BACKEND_URI}/notice/${class_id}`, {
             method: "PATCH",
             body: sendNotice,
             headers: {
@@ -114,7 +113,7 @@ export default function Notice({ class_id, notice_main, setAlert }) {
         const sendData = new FormData();
         sendData.append('notice_image', file, file.name);
         sendData.append('class_id', class_id);
-        const imageUrl = await fetch('http://localhost:8000/api/notice/save', {
+        const imageUrl = await fetch(`{${import.meta.env.VITE_BACKEND_URI}/notice/save}`, {
             method: 'POST',
             body: sendData,
             headers: {
@@ -140,7 +139,7 @@ export default function Notice({ class_id, notice_main, setAlert }) {
         const imgURL = await uploadImage(file);
         if (imgURL) {
             setTextVal((prev) => {
-                const ret = prev + `<img style="width:45%" src='http://localhost:8000/api${imgURL}' alt='${file.name}' >`;
+                const ret = prev + `<img style="width:45%" src='${import.meta.env.VITE_BACKEND_URI}${imgURL}' alt='${file.name}' >`;
                 document.getElementById('notice').value = ret;
                 return ret;
             });
@@ -167,7 +166,7 @@ export default function Notice({ class_id, notice_main, setAlert }) {
                             <form onSubmit={hundleUpdateNoticeForm} className='mb-2'>
                                 <div className=''>
                                     <div
-                                        className="overflow-hidden w-full rounded-lg border border-gray-200 shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
+                                        className="overflow-hidden w-full rounded-lg  border border-gray-200 shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
                                     >
                                         <SimpleMde options={anOptions} getMdeInstance={getMdeInstanceCallback} value={textVal} onChange={onChange} />
                                         <textarea name="notice" id="notice" className='hidden' cols="30" rows="10"

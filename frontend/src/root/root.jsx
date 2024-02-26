@@ -1,13 +1,13 @@
 import Sidebar from './sidebar';
-import { redirect, Outlet, useLoaderData, Navigate } from "react-router-dom";
+import { redirect, Outlet, useLoaderData } from "react-router-dom";
 
-import { createContext, useState } from 'react';
+import { createContext } from 'react';
 
 // リフレッシュトークンを使うとめんどくさいので、使いません。ログイン期限は長めに設定しておきます。
 export async function LoadUserData() {
     // 認証が正常に処理できたかどうかのフラグ。うまくいかなかったら/loginにリダイレクトされます。
     // トークン切れると401が返ってきます。
-    const userdata = await fetch('http://localhost:8000/api/myaccount', {
+    const userdata = await fetch(`${import.meta.env.VITE_BACKEND_URI}/myaccount`, {
         method: 'GET',
         credentials: "include",
     })

@@ -21,7 +21,7 @@ export default function Chat({ teammessage, team_id, bg }) {
     console.log(rd);
     const hundleDeleteMessage = async (e, message_id) => {
         e.preventDefault();
-        const status = await fetch(`http://localhost:8000/api/team/chat/${message_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/team/chat/${message_id}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRFToken': `${Cookies.get('csrftoken')}`,
@@ -61,7 +61,7 @@ export default function Chat({ teammessage, team_id, bg }) {
         sendData.append('user_id', userdata.user_id)
         sendData.append('team_id', team_id)
         e.target.reset();
-        const status = await fetch(`http://localhost:8000/api/team/chat/${team_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/team/chat/${team_id}`, {
             method: 'POST',
             body: sendData,
             headers: {
@@ -90,7 +90,7 @@ export default function Chat({ teammessage, team_id, bg }) {
 
     const getNewMessage = async (e) => {
         e.preventDefault();
-        const message = await fetch(`http://localhost:8000/api/team/chat/${team_id}`, {
+        const message = await fetch(`${import.meta.env.VITE_BACKEND_URI}/team/chat/${team_id}`, {
             method: 'GET',
             credentials: 'include'
         })

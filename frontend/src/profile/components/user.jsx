@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+
 
 export default function User({ usersdata, setViewUser }) {
     return (
@@ -8,7 +8,7 @@ export default function User({ usersdata, setViewUser }) {
                     <div className="" key={data.user_id}>
                         <div className="grid justify-center items-center">
                             <button onClick={() => setViewUser(data)}>
-                                <img src={`http://localhost:8000/api${data.user_icon}`} alt="" className="rounded-full shadow-md" width={100} height={100} />
+                                <img src={`${import.meta.env.VITE_BACKEND_URI}${data.user_icon}`} alt="" className="rounded-full shadow-md" width={100} height={100} />
                             </button>
                         </div>
 

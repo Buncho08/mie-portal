@@ -1,8 +1,8 @@
 import Cookies from 'js-cookie';
 
-export default function Logout({ setFlg, userdata }) {
+export default function Logout({ setFlg }) {
     const hundleLogout = async () => {
-        const status = await fetch('http://localhost:8000/api/logout', {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/logout`, {
             method: 'POST',
             headers: {
                 'X-CSRFToken': `${Cookies.get('csrftoken')}`,

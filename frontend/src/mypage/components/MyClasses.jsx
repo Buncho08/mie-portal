@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function MyClasses() {
     const [myClasses, setMyClasses] = useState([]);
     async function fetchClasses() {
-        const data = await fetch('http://localhost:8000/api/classes/teacher', {
+        const data = await fetch(`${import.meta.env.VITE_BACKEND_URI}/classes/teacher`, {
             method: 'GET',
             credentials: "include",
         })
@@ -29,7 +29,7 @@ export default function MyClasses() {
         <ul>
             {myClasses.map((data) => (
                 <li key={data.class_id}>
-                    <Link to={`http://localhost:3000/mie/class/${data.class_id}`}>
+                    <Link to={`/mie/class/${data.class_id}`}>
                         {data.class_name}
                     </Link>
                 </li>

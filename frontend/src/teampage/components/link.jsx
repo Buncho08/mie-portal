@@ -21,7 +21,7 @@ export default function TeamLink({ team_id, teamlink, setAlert }) {
         sendData.append('team_id', team_id);
         sendData.append('link_title', e.target.link_title.value)
         sendData.append('link_URL', e.target.link_URL.value)
-        const status = await fetch(`http://localhost:8000/api/team/link/${team_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/team/link/${team_id}`, {
             method: 'POST',
             body: sendData,
             headers: {
@@ -45,7 +45,7 @@ export default function TeamLink({ team_id, teamlink, setAlert }) {
 
     const hundleDeleteLink = async (e) => {
         e.preventDefault();
-        const status = await fetch(`http://localhost:8000/api/team/link/${target.target_data.link_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/team/link/${target.target_data.link_id}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRFToken': `${Cookies.get('csrftoken')}`,

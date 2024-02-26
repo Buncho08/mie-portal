@@ -15,7 +15,7 @@ export default function Assignment_teacher({ class_id, setAlert }) {
     })
 
     async function fetchAssignment(class_id) {
-        const data = await fetch(`http://localhost:8000/api/assignment/${class_id}`, {
+        const data = await fetch(`${import.meta.env.VITE_BACKEND_URI}/assignment/${class_id}`, {
             method: 'GET',
             credentials: "include",
         })
@@ -48,7 +48,7 @@ export default function Assignment_teacher({ class_id, setAlert }) {
         sendAssignment.append('ast_limit', e.target.limit.value);
         sendAssignment.append('class_id', class_id);
         e.target.reset();
-        const status = await fetch(`http://localhost:8000/api/assignment/${class_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/assignment/${class_id}`, {
             method: 'POST',
             body: sendAssignment,
             headers: {
@@ -87,7 +87,7 @@ export default function Assignment_teacher({ class_id, setAlert }) {
         sendAssignment.append('ast_title', e.target.update_title.value);
         sendAssignment.append('ast_disc', e.target.update_disc.value);
         sendAssignment.append('ast_limit', e.target.update_limit.value);
-        const status = await fetch(`http://localhost:8000/api/assignment/${ast_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/assignment/${ast_id}`, {
             method: 'PATCH',
             body: sendAssignment,
             headers: {
@@ -116,7 +116,7 @@ export default function Assignment_teacher({ class_id, setAlert }) {
 
     const hundleDeleteAssignment = async (e) => {
         e.preventDefault();
-        const status = await fetch(`http://localhost:8000/api/assignment/${target.target_data.ast_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/assignment/${target.target_data.ast_id}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRFToken': `${Cookies.get('csrftoken')}`,

@@ -30,21 +30,21 @@ export default function NotSubmissions({ user_notsubmissions }) {
                                             <td className="self-end font-semibold py-2">
                                                 <Link
                                                     className="block"
-                                                    to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`} >
+                                                    to={`/mie/class/${data.ast_classes.class_id}`} >
                                                     {data.ast_limit}
                                                 </Link>
                                             </td>
                                             <td className="">
                                                 <Link
                                                     className="block"
-                                                    to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`}>
+                                                    to={`/mie/class/${data.ast_classes.class_id}`}>
                                                     {data.ast_title}
                                                 </Link>
                                             </td>
                                             <td className="self-end">
                                                 <Link
                                                     className="block"
-                                                    to={`http://localhost:3000/mie/class/${data.ast_classes.class_id}`}>
+                                                    to={`/mie/class/${data.ast_classes.class_id}`}>
                                                     {data.ast_classes.class_name}
                                                 </Link>
                                             </td>

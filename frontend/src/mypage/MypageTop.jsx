@@ -9,7 +9,7 @@ import { useContext } from "react";
 import { useLoaderData, Link } from "react-router-dom";
 
 export async function LoadMypageData() {
-    const mypagedata = await fetch('http://localhost:8000/api/mypage', {
+    const mypagedata = await fetch(`${import.meta.env.VITE_BACKEND_URI}/mypage`, {
         method: 'GET',
         credentials: 'include'
     })

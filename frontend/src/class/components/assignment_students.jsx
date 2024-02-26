@@ -5,13 +5,13 @@ import SubTitleBar from '../../public-components/SubTitleBar';
 import SectionTitleBar from '../../public-components/SectionTitleBar'
 import { AssignmentArea } from './AssignmentArea';
 import SubmssionAssignmentArea from './SubmmisionAssignmentArea';
-import Alert from '../../public-components/Alert';
+
 
 export default function Assignment_students({ setAlert, class_id }) {
     const [assignmentData, setAssignment] = useState([]);
 
     async function fetchAssignment(class_id) {
-        const data = await fetch(`http://localhost:8000/api/assignment/${class_id}`, {
+        const data = await fetch(`${import.meta.env.VITE_BACKEND_URI}/assignment/${class_id}`, {
             method: 'GET',
             credentials: "include",
         })
@@ -36,7 +36,7 @@ export default function Assignment_students({ setAlert, class_id }) {
     }, [])
 
     const fetchSubmittion = async (ast_id, sendData) => {
-        const status = await fetch(`http://localhost:8000/api/assignment/submition/${ast_id}`, {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/assignment/submition/${ast_id}`, {
             method: 'POST',
             body: sendData,
             headers: {

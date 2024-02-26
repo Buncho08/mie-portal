@@ -3,11 +3,12 @@ import LoginForm from './components/LoginForm';
 import {
     redirect,
 } from "react-router-dom";
-
+import Logo from '/top-logo.svg';
+import Hero from '/top.png'
 import { Link, Navigate } from "react-router-dom";
 
 export async function LoadLoggedStatus() {
-    const status = await fetch('http://localhost:8000/api/check', {
+    const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/check`, {
         method: 'GET',
         credentials: "include",
     })
@@ -49,11 +50,12 @@ export default function Login() {
         signinData.append("password", e.target.password.value);
 
         await fetch(
-            "http://localhost:8000/auth/", {
-            method: 'POST',
-            credentials: "include",
-            body: signinData,
-        })
+            `${import.meta.env.VITE_AUTH_URI}/`,
+            {
+                method: 'POST',
+                credentials: "include",
+                body: signinData,
+            })
             .then((res) => {
                 if (!res.ok) {
                     flg = 1;
@@ -96,7 +98,7 @@ export default function Login() {
                     <aside className="relative block h-36 lg:order-last lg:col-span-5 lg:h-full xl:col-span-4">
                         <img
                             alt="Pattern"
-                            src="/top.png"
+                            src={Hero}
                             className="absolute inset-0 h-full w-full object-cover"
                         />
                         {/* レスポンシブ対応しています width640px 以下になると、上のバナー画像になります。 */}
@@ -110,7 +112,7 @@ export default function Login() {
                         <div className="max-w-4xl lg:max-w-3xl">
                             <a className="block text-blue-600">
                                 <span className="sr-only">Home</span>
-                                <img src="/top-logo.svg" alt="松本情報工科専門学校" />
+                                <img src={Logo} alt="松本情報工科専門学校" />
                             </a>
                             {/* トップのロゴです。a要素でクリックしてトップページへ飛ぶようになっています。 */}
 

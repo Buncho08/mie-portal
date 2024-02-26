@@ -10,7 +10,6 @@ import Signin from './signin/Signin.jsx';
 import Login from './login/Login.jsx';
 import MypageTop from './mypage/MypageTop.jsx';
 import Root from './root/root.jsx';
-import Students from './students/stdudents.jsx';
 import Classes from './class/class.jsx';
 import TeamTop from "./teamtop/TeamTop.jsx";
 import TeamPage from "./teampage/TeamPage.jsx";
@@ -19,7 +18,6 @@ import Settings from "./settings/settings.jsx";
 import SetTimeTable from "./settimetable/SetTimeTable.jsx";
 import Assignments from "./class/components/Assignments.jsx";
 import ClassesAll from "./classes/ClassesAll.jsx";
-import Resize from "./Resize/Resize.jsx";
 import AllSubmissions from "./allsubmissions/AllSubmissions.jsx";
 
 import { LoadUserData } from './root/root.jsx';
@@ -54,11 +52,6 @@ export default function App() {
                     element: <MypageTop />,
                     errorElement: <ErrorPage />,
                     loader: LoadMypageData
-                },
-                {
-                    path: 'students',
-                    element: <Students />,
-                    errorElement: <ErrorPage />
                 },
                 {
                     path: "class/:class_id",
