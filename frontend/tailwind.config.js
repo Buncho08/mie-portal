@@ -322,7 +322,8 @@ module.exports = {
         },
         animation: {
             "scale-up-center": "scale-up-center 0.3s cubic-bezier(0.390, 0.575, 0.565, 1.000) both",
-            "opacity-transition":"opacity 0.2s both"
+            "opacity-transition":"opacity 0.2s both",
+            'jump': 'jump .5s both',
         },
         keyframes: {
             "scale-up-center": {
@@ -340,7 +341,18 @@ module.exports = {
                 to: {
                     opacity:"1"
                 }
-            }
+            },
+            'jump': {
+                '0%, 100%': {
+                    transform: 'scale(100%)',
+                },
+                '10%': {
+                    transform: 'scale(80%)',
+                },
+                '50%': {
+                    transform: 'scale(120%)',
+                },
+            },
         }
       }
   },

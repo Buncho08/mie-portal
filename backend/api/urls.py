@@ -20,6 +20,7 @@ urlpatterns = [
     path('assignment/submition/<int:pk>', views.AssignmentSubmitionView.as_view(), name="assignmentsubmit"),
     path('assignment/notsubmissions', views.NotSubmissionsView.as_view(), name='notsubmissions'),
     path('assignment/status/<int:pk>', views.GetAssignmentsView.as_view(), name='aststate'),
+    path('assignment/all', views.AllAssignmentView.as_view(), name='allassignment'),
     path('timetable', views.TimeTableView.as_view(), name='timetable'),
     path('timetable/today', views.TodayTimeTableView.as_view(), name='todaytimetable'),
     path('team', views.TeamView.as_view(), name='team'),

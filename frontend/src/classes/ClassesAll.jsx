@@ -206,18 +206,16 @@ export default function ClassesAll() {
                 className="
             h-32 bg-[url('/class_bg.webp')] bg-center flex justify-around
             ">
-                <TitleBar title={"授業設定"} />
-                {
-                    userdata.user_grade === 2 && (
-                        <div className="self-end flex gap-3 items-center m-4 w-96 text-xl">
-                            <Link
-                                to={"http://localhost:3000/mie/timetable/"}
-                                className="grid justify-center items-center text-banner hover:text-midnight h-12 w-44 rounded-lg">
-                                時間割の設定へ
-                            </Link>
-                        </div>
-                    )
-                }
+                <TitleBar title={"授業一覧"} />
+
+                <div className="self-end flex gap-3 items-center m-4 w-96 text-xl">
+                    <Link
+                        to={"http://localhost:3000/mie/timetable/"}
+                        className="grid justify-center items-center text-banner hover:text-midnight h-12 w-44 rounded-lg">
+                        時間割へ
+                    </Link>
+                </div>
+
 
             </header>
             <div className="w-[70%] mx-auto pb-10">

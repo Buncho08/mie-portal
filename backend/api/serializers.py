@@ -185,7 +185,9 @@ class AssignmentSerializer(serializers.ModelSerializer):
     def get_ast_classes(self, instance):
         res = {
             'class_id':instance.ast_classes.class_id,
-            'class_name':instance.ast_classes.class_name
+            'class_name':instance.ast_classes.class_name,
+            'class_teacher':instance.ast_classes.class_teacher.get_full_name(),
+            'class_grade':instance.ast_classes.class_grade
         }
         return res
 

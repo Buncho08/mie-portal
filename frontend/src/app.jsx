@@ -20,6 +20,7 @@ import SetTimeTable from "./settimetable/SetTimeTable.jsx";
 import Assignments from "./class/components/Assignments.jsx";
 import ClassesAll from "./classes/ClassesAll.jsx";
 import Resize from "./Resize/Resize.jsx";
+import AllSubmissions from "./allsubmissions/AllSubmissions.jsx";
 
 import { LoadUserData } from './root/root.jsx';
 import { LoadLoggedStatus } from './login/Login.jsx'
@@ -32,7 +33,7 @@ import { LoadMypageData } from "./mypage/MypageTop.jsx";
 import { LoadTimeTableData } from "./settimetable/SetTimeTable.jsx";
 import { LoadAssignmentsData } from "./class/components/Assignments.jsx";
 import { LoadClassesData } from "./classes/ClassesAll.jsx";
-
+import { LoadAllAssignmentData } from "./allsubmissions/AllSubmissions.jsx";
 
 export default function App() {
     const router = createBrowserRouter([
@@ -104,9 +105,10 @@ export default function App() {
                     loader: LoadClassesData
                 },
                 {
-                    path: 'resize',
-                    element: <Resize />,
+                    path: 'submissions',
+                    element: <AllSubmissions />,
                     errorElement: <ErrorPage />,
+                    loader: LoadAllAssignmentData
                 }
             ]
         },

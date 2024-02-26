@@ -128,7 +128,7 @@ export default function SideBar() {
                                     
                                     `}
                                 >
-                                    チームページ
+                                    チームスレッド
                                 </span>
                             </Link>
                         </li>
@@ -233,7 +233,7 @@ export default function SideBar() {
 
                         <li className='grid justify-center'>
                             <Link
-                                to={'classes/'}
+                                to={user.user_grade === 2 ? 'classes/' : 'timetable/'}
                                 className={`
                                     group relative flex justify-center rounded px-2 py-1.5  
                                     ${nowPage == 'timetable' ? ('') : ('hover:text-side-gray')}
@@ -275,7 +275,7 @@ export default function SideBar() {
                                         
                                         `}
                                 >
-                                    授業
+                                    授業一覧
                                 </span>
                             </Link>
                         </li>

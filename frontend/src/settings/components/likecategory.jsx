@@ -204,9 +204,10 @@ export default function LikeCategory({ likecategory, userdata }) {
                 ))
             }
 
-            < div className="grid grid-cols-6 gap-3">
+            < div className="grid grid-cols-6 gap-3 pb-5">
                 {showLikeCategory[showCategory].map((like, likedx) => (
                     <div key={like.like_id} className={`grid justify-center items-center ${userdata.user_grade === 2 && ('relative')}`}
+
                         onClick={
                             like.conf_like
                                 ? (
@@ -235,7 +236,7 @@ export default function LikeCategory({ likecategory, userdata }) {
                             src={`http://localhost:8000/api${like.like_icon}`}
                             alt=""
                             width={100} height={100}
-                            className={`${like.conf_like ? ('') : ('grayscale')}`} />
+                            className={`${like.conf_like ? ('animate-jump animate-once animate-ease-in') : ('grayscale')}`} />
                     </div>
                 ))}
                 <div className="grid justify-center items-center">

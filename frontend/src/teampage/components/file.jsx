@@ -38,7 +38,14 @@ export default function File({ team_id, teamfile, setAlert }) {
             .catch((err) => console.log())
         setFilename('');
         e.target.reset();
-
+        if (status.error) {
+            setAlert({
+                'message': status.error,
+                'disc': 'ファイル名を変更してください。',
+                'status': 1,
+            });
+            return <></>
+        }
         setFile([...file, status]);
         setViewFlg(false);
         setAlert({

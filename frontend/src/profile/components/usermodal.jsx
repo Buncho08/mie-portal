@@ -56,7 +56,7 @@ export default function UserModal({ userdata, setViewUser }) {
 
             <div className="mx-10 mt-4">
                 <SubTitleBar title={'これすき！'} />
-                < div className="grid grid-cols-6 gap-3  overflow-y-scroll">
+                < div className="grid grid-cols-6 gap-3 h-72  overflow-y-scroll">
                     {
                         showLikeCategory.length > 0
                             ? (<>

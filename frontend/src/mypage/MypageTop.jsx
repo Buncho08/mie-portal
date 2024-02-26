@@ -40,7 +40,23 @@ export default function MypageTop() {
             <Notice user_notice={mypagedata.user_notice} />
             <>
                 {userdata.user_grade === 2
-                    ? <Classes_day_teacher user_classes={mypagedata.user_classes} />
+                    ? (
+                        <>
+                            <div className="px-side py-yspace">
+                                <Link
+                                    className="hover:text-banner"
+                                    to={`/mie/submissions`}>
+                                    <h3 className="text-2xl font-bold">
+                                        課題一覧へ→
+                                    </h3>
+                                </Link>
+                                <div className="h-[0.1px] w-7/12 bg-midnight">
+
+                                </div>
+                            </div>
+                            <Classes_day_teacher user_classes={mypagedata.user_classes} />
+                        </>
+                    )
                     : <Classes_day_students user_classes={mypagedata.user_classes} />
                 }
             </>

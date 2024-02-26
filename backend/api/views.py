@@ -501,6 +501,7 @@ class ClassesView(views.APIView):
         if class_model.exists():
 
             file.deleteDir(dirname=class_model.first().class_name, ctg='assignments')
+            file.deleteDir(dirname=class_model.first().class_name, ctg='notice')
             class_model.first().delete()
             return Response({"message" : "削除しました"}, status=status.HTTP_202_ACCEPTED)
         else:
@@ -686,6 +687,34 @@ class NotSubmissionsView(views.APIView):
 
         return Response(res, status=status.HTTP_200_OK)
 
+# 出ている課題すべてを取得
+class AllAssignmentView(views.APIView):
+    serializer_class = AssignmentSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, *args, **kwargs):
+        if 'teacher' in request.GET:
+            teacher = UserTable.objects.get(user_id=request.GET['teacher'])
+            grade = request.GET['grade']
+            class_model = Classes.objects.filter(class_teacher=teacher, class_grade=grade)
+            ast_model = Assignment.objects.filter(ast_classes=class_model.first()).order_by('ast_classes__class_grade')
+            if not ast_model.exists():
+                return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            ast_model = Assignment.objects.all().order_by('ast_classes__class_grade')
+
+        serializer = AssignmentSerializer(instance=ast_model, many=True)
+        res = {
+            'first':[],
+            'second':[]
+        }
+        grade = ['first', 'second']
+        for item in serializer.data:
+            res[grade[item['ast_classes']['class_grade']]].append(item)
+
+        return Response(res, status=status.HTTP_200_OK)
+    
+
 class TeamView(views.APIView):
     serializer_class = TeamSerializer
     permission_classes = [IsAuthenticated, ]
@@ -740,10 +769,8 @@ class TeamView(views.APIView):
                 model.delete()
                 return Response({'message':'チームを削除しました'},status=status.HTTP_200_OK)
             else:
-                print('ファイル削除できんわ')
                 return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            print('ありませんわ')
             return Response({'error':'not found'}, status=status.HTTP_400_BAD_REQUEST)
 # メッセージとチームページ情報API切り分けたい
 
