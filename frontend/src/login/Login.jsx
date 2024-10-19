@@ -3,8 +3,8 @@ import LoginForm from './components/LoginForm';
 import {
     redirect,
 } from "react-router-dom";
-import Logo from '/top-logo.svg';
-import Hero from '/top.png'
+import Logo from '../top-logo.svg';
+import Hero from '../top.png'
 import { Link, Navigate } from "react-router-dom";
 
 export async function LoadLoggedStatus() {

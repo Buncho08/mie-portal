@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import LoginForm from './components/login-form';
 import { Link, Navigate } from "react-router-dom";
-import Logo from '/top-logo.svg';
-import Hero from '/top.png'
+import Logo from '../top-logo.svg';
+import Hero from '../top.png'
 /*
     新規登録ページの親コンポーネント
     子componentは

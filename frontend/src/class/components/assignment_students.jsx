@@ -49,7 +49,6 @@ export default function Assignment_students({ setAlert, class_id }) {
             .then((data) => data)
             .catch((err) => console.log(err))
 
-        console.log(status);
         if (!status) {
             setAlert(
                 {

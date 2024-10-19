@@ -486,8 +486,9 @@ class ClassesView(views.APIView):
     def patch(self, request, pk, *args, **kwargs):
         class_model = Classes.objects.filter(class_id=pk)
         if class_model.exists():
-            serializer = ClassesSerializer(class_model.first(), data=request.data, partial=True)
+            serializer = ClassesSerializer(instance=class_model.first(), data=request.data, partial=True)
             if serializer.is_valid():
+                file.renameDir(dirname=request.data['class_name'], oldname=class_model.first().class_name, ctg='assignments')
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
@@ -569,6 +570,7 @@ class AssignmentView(views.APIView):
             if serializer.is_valid():
                 class_name = Classes.objects.get(class_id=pk).class_name
                 dirname = f"{class_name}/{serializer.validated_data['ast_title']}"
+                print(dirname)
                 if file.mkdir(dirname=dirname, ctg='assignments'):
                     serializer.save()
                 else:
@@ -644,10 +646,12 @@ class AssignmentSubmitionView(views.APIView):
                 serializer = AssignmentSubmitionSerializer(data=request.data)
                 if serializer.is_valid():
                     dirname = f'{ast_model.ast_classes.class_name}/{ast_model.ast_title}'
+                    print(dirname)
                     if file.mkdirToSavefile(file=request.FILES['assignment_file'], name=f"{user.user_stdNum}_{ast_model.ast_title}.{request.FILES['assignment_file'].name.split('.')[-1]}",dirname=dirname, ctg='assignments'):
                         serializer.save()
                         return Response(serializer.data, status=status.HTTP_200_OK)
                     else:
+                        print('aaa')
                         return Response({'error':'同じ名前のファイルが存在します。'}, status=status.HTTP_400_BAD_REQUEST)
                 else:
 

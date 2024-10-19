@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCameraRetro } from '@fortawesome/free-solid-svg-icons';
 import ImageModal from '../../Resize/ImageModal';
 import Cropper from 'cropperjs';
+import bgimg from '../../class_bg.webp';
 
 export default function UserDataEdit({ setViewEdit, userdata }) {
     const [iconCover, setIconCover] = useState(false);
@@ -25,7 +26,7 @@ export default function UserDataEdit({ setViewEdit, userdata }) {
         }
         sendData.append('user_last', e.target.user_last.value);
         sendData.append('user_first', e.target.user_first.value);
-        const status = await fetch('${import.meta.env.VITE_BACKEND_URI}/myaccount/update', {
+        const status = await fetch(`${import.meta.env.VITE_BACKEND_URI}/myaccount/update`, {
             method: 'PATCH',
             body: sendData,
             headers: {
@@ -145,7 +146,7 @@ export default function UserDataEdit({ setViewEdit, userdata }) {
                         </div>
                     </div>
                 </div>
-                <div className="bg-center bg-[url('/class_bg.webp')] w-full h-[80%]">
+                <div className={`bg-center bg-[url('${bgimg}')] w-full h-[80%]`}>
                 </div>
                 <div className="bg-white w-full h-[10%]">
                 </div>

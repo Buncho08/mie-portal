@@ -3,11 +3,12 @@ import ModalBar from "../../public-components/ModalBar";
 import SubTitleBar from "../../public-components/SubTitleBar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
-import bgimg from '/class_bg.webp';
+import bgimg from '../../class_bg.webp';
 
 export default function UserModal({ userdata, setViewUser }) {
     const usergrade = ['情報システム学科1年生', '情報システム学科2年生', '教師'];
     const [showLikeCategory, setShowLikeCategory] = useState([]);
+
     const fetchLikeCategory = async () => {
         const data = await fetch(`${import.meta.env.VITE_BACKEND_URI}/settings/like/set?user=${userdata.user_id}`, {
             method: 'GET',

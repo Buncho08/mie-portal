@@ -124,7 +124,7 @@ export default function Chat({ teammessage, team_id, bg }) {
                         )
                         : (
                             <div className="h-full grid items-center justify-center">
-                                <div className="font-bold h-24 grid items-center justify-center w-52">
+                                <div className="font-bold h-24 grid items-center justify-center w-60">
                                     <p>
                                         メッセージを送ってみましょう！
                                     </p>

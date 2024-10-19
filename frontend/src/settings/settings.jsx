@@ -5,7 +5,7 @@ import LikeCategory from "./components/likecategory";
 import UserDataEdit from "./components/UserDataEdit";
 import TitleBar from "../public-components/TitleBar";
 import SubTitleBar from "../public-components/SubTitleBar";
-import bgimg from '/class_bg.webp';
+import bgimg from "../class_bg.webp";
 
 export async function LoadUserSettingData() {
     const likecategory = await fetch(`${import.meta.env.VITE_BACKEND_URI}/settings/like`, {
@@ -30,7 +30,6 @@ export default function Settings() {
         "bg-[radial-gradient(ellipse_at_50%_50%,rgba(184,248,255,0.4)_0%,rgba(255,255,255,0)_100%),radial-gradient(ellipse_at_70%_60%,rgba(145,217,230,0.3)_0%,rgba(230,145,174,0.3)_90%),radial-gradient(ellipse_at_30%_30%,rgba(145,217,230,0.3)_0%,rgba(195,224,96,0)_60%),radial-gradient(ellipse_at_bottom_left,_rgba(192,103,28,0.2)_0%,rgba(230,145,174,0)_70%),linear-gradient(to_left,rgba(184,248,255,0.4)_0%,rgba(213,93,100,0)_35%,rgba(228,145,41,0)_65%,rgba(184,248,255,0.4)_100%)] bg-blend-[overlay,luminosity,nomal,saturation,screen,overlay] backdrop-blur-[90px]",
         "bg-[radial-gradient(ellipse_at_70%_60%,rgba(195,224,96,0)_0%,rgba(195,224,96,0)_90%),radial-gradient(ellipse_at_30%_30%,rgba(195,224,96,0.1)_0%,rgba(195,224,96,0)_60%),radial-gradient(ellipse_at_bottom_left,rgba(0,163,203,0.2)_0%,rgba(0,163,203,0)_70%),radial-gradient(ellipse_at_bottom_right,rgba(98,87,147,0.1)_0%,rgba(213,93,100,0.1)_35%,rgba(228,145,41,0.1)_65%,rgba(192,103,28,0.1)_100%)] bg-blend-overlay bg-blend-luminosity bg-blend-color-dodge bg-blend-saturation bg-blend-screen bg-blend-color backdrop-blur-[70px]"
     ]
-    const rd = Math.floor(Math.random() * 4);
 
     return (
         <div className={`h-screen`}>
@@ -77,7 +76,7 @@ export default function Settings() {
 
                     </div>
                 </div>
-                <div className={`bg-[url('${bgimg}')] bg-center w-full h-[50%]`}>
+                <div className={`bg-center bg-[url('${bgimg}')] w-full h-[50%]`}>
                 </div>
                 <div className="bg-white w-full h-[50%]">
 

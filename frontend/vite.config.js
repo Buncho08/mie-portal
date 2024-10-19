@@ -7,5 +7,11 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true
+  },
+  build: {
+    entry:'../backend/templates/mie',
+    outDir: '../backend/static',
+    name:'index',
+    filename: 'index'
   }
 })
